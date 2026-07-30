@@ -41,6 +41,7 @@ window.inicializarAsistencia = function() {
         </div>
       </div>
       <button class="asistencia-opt" data-opt="4"><span class="ic">🚌</span> <span>Voy sin auto (transporte público)</span></button>
+      <button class="asistencia-opt" data-opt="5"><span class="ic">😢</span> <span>No puedo asistir</span></button>
     `;
     actionsWrap.appendChild(dropdown);
   }
@@ -106,6 +107,8 @@ window.inicializarAsistencia = function() {
         dropdown.classList.remove('active');
         ocultarSubselects();
         mostrarTransportePublico();
+      } else if (op === '5') {
+        enviarWa('Hola Jor! Lamentablemente no voy a poder ir. Que lo pasen lindo!');
       }
     } else if (numBtn) {
       const cant = numBtn.dataset.num;

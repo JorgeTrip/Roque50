@@ -1,0 +1,20 @@
+{
+  "name": "Roque 50 años",
+  "short_name": "Roque 50",
+  "description": "Invitación a los 50 años de Roque",
+  "icons": [
+    {
+      "src": "imagenes/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "imagenes/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#160e22",
+  "background_color": "#160e22",
+  "display": "standalone"
+}

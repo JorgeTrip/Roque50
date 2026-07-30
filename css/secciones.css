@@ -65,14 +65,14 @@
   .pdata .val { font-size: 15px; margin-top: 2px; }
 }
 
-/* Primera pantalla (First Fold) que ocupa exactamente 100dvh */
+/* Primera pantalla (First Fold) fija al 100% inicial del viewport */
 .first-fold {
-  position: relative; width: 100%; min-height: 100vh; min-height: 100dvh;
+  position: relative; width: 100%; min-height: 100vh; min-height: 100svh;
   display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  box-sizing: border-box; padding-bottom: clamp(60px, 8vh, 90px);
+  box-sizing: border-box; padding-bottom: clamp(50px, 7vh, 80px);
 }
 
-/* Indicador animado de scroll al pie exacto del viewport */
+/* Indicador animado de scroll al pie exacto del primer pliegue */
 .scroll-indicator {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; color: var(--champagne); font-family: 'Space Grotesk', sans-serif;

@@ -58,43 +58,54 @@
 .p2 { top: 35.5%; left: 37.5%; width: 24.5%; height: 39%; }
 .p3 { top: 35.5%; left: 66.5%; width: 24.5%; height: 39%; }
 
-@media (max-width: 520px) {
-  .pdata .ic { font-size: 16px; margin-bottom: 3px; }
-  .pdata .lbl { font-size: 8px; }
-  .pdata .val { font-size: 11px; margin-top: 2px; }
+@media (max-width: 640px) {
+  .pdata .ic { font-size: 18px; margin-bottom: 3px; }
+  .pdata .lbl { font-size: 9px; letter-spacing: 0.12em; }
+  .pdata .val { font-size: 12.5px; margin-top: 2px; }
 }
 
 .actions {
   max-width: 520px;
-  margin: 5vh auto 0;
+  margin: 4vh auto 0;
   padding: 0 22px;
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
   position: relative;
   z-index: 2;
 }
 
 .btn {
-  flex: 1 1 190px;
+  width: 100%;
+  max-width: 440px;
   text-decoration: none;
   text-align: center;
-  padding: 14px 18px;
+  padding: 16px 20px;
   border-radius: 999px;
-  font-size: 13.5px;
-  letter-spacing: 0.05em;
+  font-size: 14px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 600;
   font-family: 'Space Grotesk', sans-serif;
   border: none;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .btn:active { transform: scale(0.97); }
 .btn.primary { background: linear-gradient(180deg, var(--champagne), #c9a561); color: var(--ink); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
 .btn.whats { background: #25D366; color: #0b1c10; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
+
+@media (min-width: 641px) {
+  .actions {
+    flex-direction: row;
+  }
+  .btn {
+    flex: 1 1 200px;
+    width: auto;
+  }
+}
 
 /* Club del 16 de Agosto */
 .facts { max-width: 640px; margin: 7vh auto 0; padding: 0 22px; position: relative; z-index: 2; }

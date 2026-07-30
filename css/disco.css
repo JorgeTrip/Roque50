@@ -1,0 +1,142 @@
+/* Capa de ambiente de luces de bola disco */
+.disco-lights {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  overflow: hidden;
+}
+
+body.disco-mode .disco-lights {
+  opacity: 1;
+}
+
+/* Oscurecimiento ambiental sutil cuando suena la música */
+body.disco-mode .backdrop::after {
+  background: radial-gradient(120% 90% at 50% 0%, rgba(10, 6, 18, 0.55) 20%, rgba(5, 3, 10, 0.8) 100%);
+  transition: background 1.2s ease-in-out;
+}
+
+/* Rayos de luz cónicos giratorios 1 */
+.disco-beam-1 {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(231, 201, 138, 0.16) 12deg,
+    transparent 24deg,
+    rgba(179, 74, 150, 0.22) 48deg,
+    transparent 65deg,
+    rgba(239, 201, 230, 0.18) 85deg,
+    transparent 110deg,
+    rgba(231, 201, 138, 0.2) 135deg,
+    transparent 160deg,
+    rgba(162, 151, 216, 0.22) 195deg,
+    transparent 220deg,
+    rgba(239, 201, 230, 0.18) 260deg,
+    transparent 285deg,
+    rgba(231, 201, 138, 0.2) 325deg,
+    transparent 360deg
+  );
+  animation: girarRayosDisco 14s linear infinite;
+  mix-blend-mode: screen;
+}
+
+/* Rayos de luz cónicos giratorios 2 */
+.disco-beam-2 {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    transparent 0deg,
+    rgba(239, 201, 230, 0.15) 18deg,
+    transparent 40deg,
+    rgba(231, 201, 138, 0.2) 70deg,
+    transparent 95deg,
+    rgba(179, 74, 150, 0.18) 130deg,
+    transparent 150deg,
+    rgba(162, 151, 216, 0.2) 210deg,
+    transparent 235deg,
+    rgba(231, 201, 138, 0.18) 290deg,
+    transparent 320deg,
+    transparent 360deg
+  );
+  animation: girarRayosContrario 20s linear infinite;
+  mix-blend-mode: color-dodge;
+}
+
+/* Capas de Puntos de Luz de Bola Disco en Barrido Horizontal Hacia la Derecha */
+.disco-dots-1, .disco-dots-2 {
+  position: absolute;
+  top: -20%;
+  left: -520px;
+  width: calc(100vw + 1040px);
+  height: 140vh;
+  pointer-events: none;
+}
+
+.disco-dots-1 {
+  background-image:
+    radial-gradient(2px 2px at 30px 40px, rgba(255, 255, 255, 0.95), transparent),
+    radial-gradient(3.5px 3.5px at 80px 120px, rgba(231, 201, 138, 0.95), transparent),
+    radial-gradient(4px 4px at 150px 80px, rgba(239, 201, 230, 0.95), transparent),
+    radial-gradient(2px 2px at 220px 180px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(3.5px 3.5px at 290px 40px, rgba(179, 74, 150, 0.85), transparent),
+    radial-gradient(2.5px 2.5px at 360px 150px, rgba(231, 201, 138, 0.9), transparent),
+    radial-gradient(4.5px 4.5px at 430px 220px, rgba(255, 255, 255, 0.95), transparent),
+    radial-gradient(2px 2px at 500px 90px, rgba(162, 151, 216, 0.9), transparent),
+    radial-gradient(3px 3px at 570px 170px, rgba(231, 201, 138, 0.95), transparent),
+    radial-gradient(2px 2px at 640px 30px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(4px 4px at 710px 110px, rgba(239, 201, 230, 0.95), transparent),
+    radial-gradient(3px 3px at 780px 200px, rgba(231, 201, 138, 0.9), transparent);
+  background-size: 520px 280px;
+  background-repeat: repeat;
+  animation: barridoHorizontalDisco1 12s linear infinite;
+  mix-blend-mode: screen;
+}
+
+.disco-dots-2 {
+  background-image:
+    radial-gradient(3px 3px at 50px 90px, rgba(255, 255, 255, 0.95), transparent),
+    radial-gradient(2px 2px at 120px 160px, rgba(239, 201, 230, 0.85), transparent),
+    radial-gradient(4.5px 4.5px at 190px 30px, rgba(231, 201, 138, 0.95), transparent),
+    radial-gradient(2.5px 2.5px at 270px 210px, rgba(162, 151, 216, 0.9), transparent),
+    radial-gradient(3px 3px at 340px 100px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(4px 4px at 410px 180px, rgba(179, 74, 150, 0.85), transparent),
+    radial-gradient(2px 2px at 480px 50px, rgba(231, 201, 138, 0.9), transparent),
+    radial-gradient(3.5px 3.5px at 560px 130px, rgba(255, 255, 255, 0.95), transparent);
+  background-size: 480px 260px;
+  background-repeat: repeat;
+  animation: barridoHorizontalDisco2 18s linear infinite;
+  mix-blend-mode: color-dodge;
+  opacity: 0.85;
+}
+
+@keyframes girarRayosDisco {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes girarRayosContrario {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes barridoHorizontalDisco1 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(520px); }
+}
+
+@keyframes barridoHorizontalDisco2 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(480px); }
+}

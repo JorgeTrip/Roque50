@@ -1,0 +1,131 @@
+/* Sección Plataforma */
+.platform-section {
+  position: relative;
+  max-width: 900px;
+  margin: -2vh auto 0;
+  padding: 0 5vw;
+}
+
+.platform-wrap {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+}
+
+.platform-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pdata {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 4px;
+  color: var(--paper);
+  z-index: 5;
+}
+
+.pdata .ic {
+  font-size: 24px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+}
+
+.pdata .lbl {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.pdata .val {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  margin-top: 4px;
+  line-height: 1.25;
+  color: var(--paper);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.p1 { top: 35.5%; left: 8.5%; width: 24.5%; height: 39%; }
+.p2 { top: 35.5%; left: 37.5%; width: 24.5%; height: 39%; }
+.p3 { top: 35.5%; left: 66.5%; width: 24.5%; height: 39%; }
+
+@media (max-width: 520px) {
+  .pdata .ic { font-size: 16px; margin-bottom: 3px; }
+  .pdata .lbl { font-size: 8px; }
+  .pdata .val { font-size: 11px; margin-top: 2px; }
+}
+
+.actions {
+  max-width: 520px;
+  margin: 5vh auto 0;
+  padding: 0 22px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.btn {
+  flex: 1 1 190px;
+  text-decoration: none;
+  text-align: center;
+  padding: 14px 18px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: linear-gradient(180deg, var(--champagne), #c9a561); color: var(--ink); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
+.btn.whats { background: #25D366; color: #0b1c10; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
+
+/* Club del 16 de Agosto */
+.facts { max-width: 640px; margin: 7vh auto 0; padding: 0 22px; position: relative; z-index: 2; }
+.facts h3 {
+  text-align: center; margin: 0 0 16px;
+  font-family: 'EB Garamond', serif; font-style: italic; font-size: 19px; color: var(--champagne);
+}
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 560px) { .chips { grid-template-columns: repeat(2, 1fr); } }
+
+.chip {
+  background: var(--chip-bg); border-radius: 14px; padding: 14px 8px;
+  text-align: center; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+}
+.chip .who { font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; color: var(--paper); }
+.chip .age { font-family: 'Anton', sans-serif; font-size: 26px; color: var(--champagne); margin-top: 4px; }
+.chip .age small { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--tela-light); margin-left: 2px; }
+.facts p.note {
+  text-align: center; font-size: 13.5px; line-height: 1.5; color: var(--tela-light);
+  margin: 16px auto 0; max-width: 520px;
+}
+
+footer {
+  text-align: center; margin: 8vh 0 4vh; padding: 0 24px;
+  position: relative; z-index: 2;
+}
+footer .fw { font-family: 'EB Garamond', serif; font-style: italic; font-size: 15px; color: var(--tela-light); }
+footer .copy { margin-top: 10px; font-size: 11px; letter-spacing: 0.04em; color: rgba(246, 238, 250, 0.55); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  html { scroll-behavior: auto; }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Roque · 50 Confessions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/secciones.css">
+<link rel="stylesheet" href="css/reproductor.css">
+<link rel="stylesheet" href="css/disco.css">
+</head>
+<body>
+
+<div class="backdrop"></div>
+<div class="disco-lights">
+  <div class="disco-beam-1"></div>
+  <div class="disco-beam-2"></div>
+  <div class="disco-dots-1"></div>
+  <div class="disco-dots-2"></div>
+</div>
+
+<audio id="audio" src="musica/cancion.m4a" autoplay loop preload="auto" playsinline>
+  <source src="musica/cancion.m4a" type="audio/mp4">
+</audio>
+
+<!-- Reproductor flotante con metadatos de cancion.m4a y vinilo animado -->
+<div class="player-card paused" id="playerCard">
+  <div class="cover-wrap">
+    <div class="vinyl-disc"></div>
+    <img id="playerCover" src="imagenes/cover.jpg" alt="Portada del álbum" />
+  </div>
+  <div class="track-info">
+    <div class="track-title" id="playerTitle">Bring Your Love</div>
+    <div class="track-artist" id="playerArtist">Madonna; Sabrina Carpenter</div>
+    <div class="track-meta" id="playerMeta">CONFESSIONS II · 2026</div>
+  </div>
+  <button id="playBtn" aria-label="Reproducir o pausar">▶</button>
+</div>
+
+<section class="hero">
+  <div class="tela-layer" id="telaLayer">
+    <img src="imagenes/tela.png" alt="Tela drapeada, tema Confessions" />
+  </div>
+
+  <div class="seal" id="sealLayer"><span>50</span></div>
+
+  <div class="tri-wrap" id="triLayer">
+    <div class="tri-shape left"></div>
+    <div class="tri-shape right"></div>
+    <div class="tri-text">
+      <div class="eyebrow">Una noche · Una leyenda</div>
+      <h1 class="name">ROQUE</h1>
+      <div class="subtitle">50 Confessions</div>
+      <div class="tagline">El cumpleaños que vas a confesar por años</div>
+    </div>
+  </div>
+</section>
+
+<section class="platform-section">
+  <div class="platform-wrap" id="platformLayer">
+    <img src="imagenes/plataforma.png" alt="Plataforma tema Confessions" />
+    <div class="pdata p1">
+      <div class="ic">🗓️</div>
+      <div class="lbl">Fecha</div>
+      <div class="val">Domingo<br>16/08</div>
+    </div>
+    <div class="pdata p2">
+      <div class="ic">🕖</div>
+      <div class="lbl">Hora</div>
+      <div class="val">19:00 hs</div>
+    </div>
+    <div class="pdata p3">
+      <div class="ic">📍</div>
+      <div class="lbl">Lugar</div>
+      <div class="val">La Reja<br>Bs. As.</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a class="btn primary" href="https://maps.app.goo.gl/FES5inxPBdQSHUpWA" target="_blank" rel="noopener">Cómo llegar</a>
+    <a class="btn whats" href="https://wa.me/541140686925?text=Hola%20Jor%21%20Nos%20vemos%20el%20domingo%2016%2F8%20en%20La%20Reja%21" target="_blank" rel="noopener">Confirmar asistencia</a>
+  </div>
+</section>
+
+<section class="facts">
+  <h3>El club del 16 de agosto</h3>
+  <div class="chips">
+    <div class="chip"><div class="who">Madonna</div><div class="age">68<small>años</small></div></div>
+    <div class="chip"><div class="who">Moria Casán</div><div class="age">80<small>años</small></div></div>
+    <div class="chip"><div class="who">Steve Carell</div><div class="age">64<small>años</small></div></div>
+    <div class="chip"><div class="who">Angela Bassett</div><div class="age">68<small>años</small></div></div>
+  </div>
+  <p class="note">Ese día no nace cualquiera. Desde hoy, Roque entra oficialmente a este club selecto — con 50 confesiones propias para contar.</p>
+</section>
+
+<footer>
+  <div class="fw">Vení a confesar 50 años de buena música.</div>
+  <div class="copy">Jorge O. Tripodi · © 2026</div>
+</footer>
+
+<script src="js/lectorEtiquetas.js"></script>
+<script src="js/paralaje.js"></script>
+<script src="js/reproductor.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

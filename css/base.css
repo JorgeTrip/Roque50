@@ -48,17 +48,17 @@ body {
 .hero {
   position: relative;
   min-height: auto;
-  padding-bottom: 1vh;
+  padding-bottom: 2vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 5vh;
+  padding-top: 4vh;
   overflow: hidden;
 }
 
 .tela-layer {
   position: relative;
-  width: min(640px, 92vw);
+  width: min(640px, 95vw);
   margin: 0 auto;
   will-change: transform;
 }
@@ -82,14 +82,14 @@ body {
 
 .tri-wrap {
   position: relative;
-  width: min(520px, 88vw);
-  margin: -36% auto 0;
+  width: min(540px, 92vw);
+  margin: -38% auto 0;
   z-index: 2;
 }
 
 @media (max-width: 600px) {
   .tri-wrap {
-    margin: -46% auto 0;
+    margin: -44% auto 0;
   }
 }
 
@@ -107,7 +107,7 @@ body {
   font-style: italic;
   font-weight: 600;
   letter-spacing: 0.16em;
-  font-size: 13.5px;
+  font-size: clamp(13px, 3.8vw, 15px);
   text-transform: uppercase;
   color: var(--champagne);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 20px rgba(22, 14, 34, 0.9);
@@ -118,7 +118,7 @@ body {
 h1.name {
   font-family: 'Anton', sans-serif;
   font-weight: 400;
-  font-size: clamp(48px, 16vw, 94px);
+  font-size: clamp(58px, 18vw, 98px);
   letter-spacing: 0.03em;
   line-height: 0.95;
   margin: 4px 0 0;
@@ -132,7 +132,7 @@ h1.name {
   font-family: 'EB Garamond', serif;
   font-style: italic;
   font-weight: 600;
-  font-size: clamp(19px, 5.2vw, 28px);
+  font-size: clamp(21px, 6vw, 30px);
   letter-spacing: 0.05em;
   margin-top: 2px;
   color: var(--champagne);
@@ -143,7 +143,7 @@ h1.name {
 
 .tagline {
   margin-top: 14px;
-  font-size: 13px;
+  font-size: clamp(12px, 3.6vw, 14px);
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;

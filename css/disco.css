@@ -19,13 +19,17 @@ body.disco-mode .backdrop::after {
   transition: background 1.2s ease-in-out;
 }
 
-/* Rayos de luz cónicos giratorios 1 */
-.disco-beam-1 {
+/* Rayos de luz cónicos giratorios de fondo */
+.disco-beam-1, .disco-beam-2 {
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
+  pointer-events: none;
+}
+
+.disco-beam-1 {
   background: conic-gradient(
     from 0deg at 50% 50%,
     transparent 0deg,
@@ -48,13 +52,7 @@ body.disco-mode .backdrop::after {
   mix-blend-mode: screen;
 }
 
-/* Rayos de luz cónicos giratorios 2 */
 .disco-beam-2 {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
   background: conic-gradient(
     from 180deg at 50% 50%,
     transparent 0deg,
@@ -74,51 +72,84 @@ body.disco-mode .backdrop::after {
   mix-blend-mode: color-dodge;
 }
 
-/* Capas de Puntos de Luz de Bola Disco en Barrido Horizontal Hacia la Derecha */
-.disco-dots-1, .disco-dots-2 {
+/* Contenedores de arcos de bola disco */
+.arc-line {
   position: absolute;
-  top: -20%;
-  left: -520px;
-  width: calc(100vw + 1040px);
-  height: 140vh;
+  left: -40vw;
+  width: 180vw;
+  height: 40px;
   pointer-events: none;
 }
 
-.disco-dots-1 {
-  background-image:
-    radial-gradient(2px 2px at 30px 40px, rgba(255, 255, 255, 0.95), transparent),
-    radial-gradient(3.5px 3.5px at 80px 120px, rgba(231, 201, 138, 0.95), transparent),
-    radial-gradient(4px 4px at 150px 80px, rgba(239, 201, 230, 0.95), transparent),
-    radial-gradient(2px 2px at 220px 180px, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(3.5px 3.5px at 290px 40px, rgba(179, 74, 150, 0.85), transparent),
-    radial-gradient(2.5px 2.5px at 360px 150px, rgba(231, 201, 138, 0.9), transparent),
-    radial-gradient(4.5px 4.5px at 430px 220px, rgba(255, 255, 255, 0.95), transparent),
-    radial-gradient(2px 2px at 500px 90px, rgba(162, 151, 216, 0.9), transparent),
-    radial-gradient(3px 3px at 570px 170px, rgba(231, 201, 138, 0.95), transparent),
-    radial-gradient(2px 2px at 640px 30px, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(4px 4px at 710px 110px, rgba(239, 201, 230, 0.95), transparent),
-    radial-gradient(3px 3px at 780px 200px, rgba(231, 201, 138, 0.9), transparent);
-  background-size: 520px 280px;
-  background-repeat: repeat;
-  animation: barridoHorizontalDisco1 12s linear infinite;
+.arc-top-1 { top: 6vh;  animation: barridoArcTop1 10s linear infinite; }
+.arc-top-2 { top: 20vh; animation: barridoArcTop2 12s linear infinite; }
+.arc-top-3 { top: 34vh; animation: barridoArcTop3 15s linear infinite; }
+
+.arc-mid   { top: 48vh; animation: barridoArcMid  14s linear infinite; }
+
+.arc-bot-1 { top: 62vh; animation: barridoArcBot1 15s linear infinite; }
+.arc-bot-2 { top: 76vh; animation: barridoArcBot2 12s linear infinite; }
+.arc-bot-3 { top: 88vh; animation: barridoArcBot3 10s linear infinite; }
+
+/* Espejuelos cuadrados nítidos */
+.sq {
+  position: absolute;
+  border-radius: 0px !important;
+  pointer-events: none;
+  background: #FFFFFF;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.95), 0 0 4px rgba(231, 201, 138, 0.9);
   mix-blend-mode: screen;
 }
 
-.disco-dots-2 {
-  background-image:
-    radial-gradient(3px 3px at 50px 90px, rgba(255, 255, 255, 0.95), transparent),
-    radial-gradient(2px 2px at 120px 160px, rgba(239, 201, 230, 0.85), transparent),
-    radial-gradient(4.5px 4.5px at 190px 30px, rgba(231, 201, 138, 0.95), transparent),
-    radial-gradient(2.5px 2.5px at 270px 210px, rgba(162, 151, 216, 0.9), transparent),
-    radial-gradient(3px 3px at 340px 100px, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(4px 4px at 410px 180px, rgba(179, 74, 150, 0.85), transparent),
-    radial-gradient(2px 2px at 480px 50px, rgba(231, 201, 138, 0.9), transparent),
-    radial-gradient(3.5px 3.5px at 560px 130px, rgba(255, 255, 255, 0.95), transparent);
-  background-size: 480px 260px;
-  background-repeat: repeat;
-  animation: barridoHorizontalDisco2 18s linear infinite;
-  mix-blend-mode: color-dodge;
-  opacity: 0.85;
+.sq:nth-child(1) { left: 10vw;  width: 8px;  height: 8px; }
+.sq:nth-child(2) { left: 45vw;  width: 11px; height: 11px; background: var(--champagne); }
+.sq:nth-child(3) { left: 80vw;  width: 8px;  height: 8px;  background: var(--tela-light); }
+.sq:nth-child(4) { left: 115vw; width: 10px; height: 10px; }
+
+/* ---------------- TRAYECTORIAS DE ARCOS DE BOLA DISCO ---------------- */
+
+/* Arcos Superiores (combados hacia arriba, mayor comba en el borde superior) */
+@keyframes barridoArcTop1 {
+  0%   { transform: translate(0, 35px) rotate(-22deg); }
+  50%  { transform: translate(65vw, -60px) rotate(0deg); }
+  100% { transform: translate(130vw, 35px) rotate(22deg); }
+}
+
+@keyframes barridoArcTop2 {
+  0%   { transform: translate(0, 22px) rotate(-15deg); }
+  50%  { transform: translate(65vw, -38px) rotate(0deg); }
+  100% { transform: translate(130vw, 22px) rotate(15deg); }
+}
+
+@keyframes barridoArcTop3 {
+  0%   { transform: translate(0, 10px) rotate(-8deg); }
+  50%  { transform: translate(65vw, -16px) rotate(0deg); }
+  100% { transform: translate(130vw, 10px) rotate(8deg); }
+}
+
+/* Arco Ecuador / Centro (Línea recta) */
+@keyframes barridoArcMid {
+  0%   { transform: translate(0, 0px) rotate(0deg); }
+  100% { transform: translate(130vw, 0px) rotate(0deg); }
+}
+
+/* Arcos Inferiores (combados hacia abajo, mayor comba en el borde inferior) */
+@keyframes barridoArcBot1 {
+  0%   { transform: translate(0, -10px) rotate(8deg); }
+  50%  { transform: translate(65vw, 16px) rotate(0deg); }
+  100% { transform: translate(130vw, -10px) rotate(-8deg); }
+}
+
+@keyframes barridoArcBot2 {
+  0%   { transform: translate(0, -22px) rotate(15deg); }
+  50%  { transform: translate(65vw, 38px) rotate(0deg); }
+  100% { transform: translate(130vw, -22px) rotate(-15deg); }
+}
+
+@keyframes barridoArcBot3 {
+  0%   { transform: translate(0, -35px) rotate(22deg); }
+  50%  { transform: translate(65vw, 60px) rotate(0deg); }
+  100% { transform: translate(130vw, -35px) rotate(-22deg); }
 }
 
 @keyframes girarRayosDisco {
@@ -129,14 +160,4 @@ body.disco-mode .backdrop::after {
 @keyframes girarRayosContrario {
   from { transform: rotate(360deg); }
   to { transform: rotate(0deg); }
-}
-
-@keyframes barridoHorizontalDisco1 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(520px); }
-}
-
-@keyframes barridoHorizontalDisco2 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(480px); }
 }

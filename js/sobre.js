@@ -21,6 +21,12 @@ window.inicializarSobre = function() {
 
     console.log(`🚀 [Sobre] Gesto directo detectado (${e ? e.type : 'clic'}). Ocultando sobre e iniciando audio...`);
     envelopeScreen.classList.add('hidden');
+    // Activar animación de caída de la tela ahora que el sobre desapareció
+    document.body.classList.add('invitacion-abierta');
+
+    // Bloquear scroll verticalmente solo durante la animación de caída (5s), luego restaurar
+    document.body.style.overflowY = 'hidden';
+    setTimeout(() => { document.body.style.overflowY = ''; }, 5200);
 
     audio.muted = false;
     const playPromise = audio.play();

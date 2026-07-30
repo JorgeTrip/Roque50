@@ -8,4 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof window.inicializarSobre === 'function') {
     window.inicializarSobre();
   }
+  if (typeof window.inicializarCuentaRegresiva === 'function') {
+    window.inicializarCuentaRegresiva();
+  }
+  if (typeof window.inicializarLightbox === 'function') {
+    window.inicializarLightbox();
+  }
 });

@@ -23,21 +23,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 8px 4px;
+  padding: 12px 4px 6px;
   color: var(--paper);
   z-index: 5;
 }
 
 .pdata .ic {
-  font-size: 24px;
+  font-size: 40px;
   margin-bottom: 6px;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
 }
 
 .pdata .lbl {
-  font-size: 10.5px;
+  font-size: 13px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--champagne);
@@ -47,7 +47,7 @@
 
 .pdata .val {
   font-family: 'EB Garamond', serif;
-  font-size: 15px;
+  font-size: 21px;
   margin-top: 4px;
   line-height: 1.25;
   color: var(--paper);
@@ -59,9 +59,10 @@
 .p3 { top: 35.5%; left: 66.5%; width: 24.5%; height: 39%; }
 
 @media (max-width: 640px) {
-  .pdata .ic { font-size: 18px; margin-bottom: 3px; }
-  .pdata .lbl { font-size: 9px; letter-spacing: 0.12em; }
-  .pdata .val { font-size: 12.5px; margin-top: 2px; }
+  .pdata { padding-top: 6px; }
+  .pdata .ic { font-size: 28px; margin-bottom: 3px; }
+  .pdata .lbl { font-size: 10.5px; letter-spacing: 0.12em; }
+  .pdata .val { font-size: 15px; margin-top: 2px; }
 }
 
 .actions {
@@ -94,8 +95,17 @@
 }
 
 .btn:active { transform: scale(0.97); }
-.btn.primary { background: linear-gradient(180deg, var(--champagne), #c9a561); color: var(--ink); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
-.btn.whats { background: #25D366; color: #0b1c10; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
+.btn.primary {
+  background: linear-gradient(135deg, #E7C98A, #C9A253);
+  color: var(--ink);
+  box-shadow: 0 8px 25px rgba(231, 201, 138, 0.35);
+}
+.btn.whats {
+  background: linear-gradient(135deg, #D83B97, #9B1B72);
+  color: #FFFFFF;
+  box-shadow: 0 8px 25px rgba(216, 59, 151, 0.45);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
 
 @media (min-width: 641px) {
   .actions {
@@ -108,25 +118,36 @@
 }
 
 /* Club del 16 de Agosto */
-.facts { max-width: 640px; margin: 7vh auto 0; padding: 0 22px; position: relative; z-index: 2; }
+.facts { max-width: 720px; margin: 7vh auto 0; padding: 0 22px; position: relative; z-index: 2; }
 .facts h3 {
-  text-align: center; margin: 0 0 16px;
-  font-family: 'EB Garamond', serif; font-style: italic; font-size: 19px; color: var(--champagne);
+  text-align: center; margin: 0 0 20px;
+  font-family: 'EB Garamond', serif; font-style: italic; font-size: 22px; color: var(--champagne);
 }
-.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-@media (max-width: 560px) { .chips { grid-template-columns: repeat(2, 1fr); } }
+.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 560px) { .chips { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
 .chip {
-  background: var(--chip-bg); border-radius: 14px; padding: 14px 8px;
+  background: var(--chip-bg); border-radius: 18px; padding: 16px 10px;
   text-align: center; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(4px);
+  display: flex; flex-direction: column; align-items: center;
 }
-.chip .who { font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; color: var(--paper); }
-.chip .age { font-family: 'Anton', sans-serif; font-size: 26px; color: var(--champagne); margin-top: 4px; }
-.chip .age small { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--tela-light); margin-left: 2px; }
+.chip-foto {
+  width: clamp(100px, 26vw, 132px);
+  height: clamp(100px, 26vw, 132px);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  margin-bottom: 12px;
+  border: 3px solid rgba(231, 201, 138, 0.45);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+.chip .who { font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; color: var(--paper); }
+.chip .age { font-family: 'Anton', sans-serif; font-size: 30px; color: var(--champagne); margin-top: 4px; }
+.chip .age small { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--tela-light); margin-left: 3px; }
 .facts p.note {
-  text-align: center; font-size: 13.5px; line-height: 1.5; color: var(--tela-light);
-  margin: 16px auto 0; max-width: 520px;
+  text-align: center; font-size: 14px; line-height: 1.5; color: var(--tela-light);
+  margin: 20px auto 0; max-width: 540px;
 }
 
 footer {
@@ -139,4 +160,28 @@ footer .copy { margin-top: 10px; font-size: 11px; letter-spacing: 0.04em; color:
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
   html { scroll-behavior: auto; }
+}
+
+/* Cuenta Regresiva al Evento — panel informativo de ancho constante */
+.countdown {
+  display: block;
+  text-align: center;
+  margin: 20px auto 0;
+  width: min(390px, calc(100vw - 32px));
+  box-sizing: border-box;
+  background: rgba(22, 14, 34, 0.45);
+  border: 1px solid rgba(231, 201, 138, 0.18);
+  border-radius: 12px;
+  padding: 10px 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: clamp(11.5px, 3.1vw, 13.5px);
+  letter-spacing: 0.06em;
+  color: var(--champagne);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 2;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }

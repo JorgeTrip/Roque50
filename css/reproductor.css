@@ -2,7 +2,7 @@
 .player-card {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  top: 16px;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -16,6 +16,7 @@
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
   max-width: min(390px, calc(100vw - 32px));
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .player-card:hover {

@@ -129,7 +129,7 @@
 }
 
 .holiday-note {
-  text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: clamp(14.5px, 3.8vw, 16px);
+  text-align: center; font-family: 'EB Garamond', serif; font-style: italic; font-size: clamp(17.5px, 4.5vw, 20px);
   color: var(--champagne); font-weight: 500; letter-spacing: 0.02em; margin: 18px auto 4px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85); position: relative; z-index: 2;
 }

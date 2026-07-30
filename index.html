@@ -7,12 +7,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/secciones.css">
-<link rel="stylesheet" href="css/reproductor.css">
-<link rel="stylesheet" href="css/disco.css">
+<link rel="stylesheet" href="css/base.css?v=3">
+<link rel="stylesheet" href="css/secciones.css?v=3">
+<link rel="stylesheet" href="css/reproductor.css?v=3">
+<link rel="stylesheet" href="css/disco.css?v=3">
+<link rel="stylesheet" href="css/sobre.css?v=3">
 </head>
 <body>
+
+<!-- Pantalla de bienvenida con sobre cerrado blanco -->
+<div class="envelope-screen" id="envelopeScreen">
+  <div class="envelope-card">
+    <div class="envelope-flap"></div>
+    <div class="envelope-seal"><span>50</span></div>
+    <div class="envelope-content">
+      <h2 class="envelope-title">Presiona aquí para abrir tu invitación</h2>
+      <p class="envelope-hint">Roque · 50 Confessions ✉️</p>
+    </div>
+  </div>
+</div>
 
 <div class="backdrop"></div>
 <div class="disco-lights">
@@ -44,7 +57,7 @@
   </div>
 </div>
 
-<audio id="audio" src="musica/cancion.m4a" autoplay loop preload="auto" playsinline>
+<audio id="audio" src="musica/cancion.m4a" loop preload="auto" playsinline>
   <source src="musica/cancion.m4a" type="audio/mp4">
 </audio>
 
@@ -66,8 +79,6 @@
   <div class="tela-layer" id="telaLayer">
     <img src="imagenes/tela.png" alt="Tela drapeada, tema Confessions" />
   </div>
-
-  <div class="seal" id="sealLayer"><span>50</span></div>
 
   <div class="tri-wrap" id="triLayer">
     <div class="tri-shape left"></div>
@@ -123,10 +134,11 @@
   <div class="copy">Jorge O. Tripodi · © 2026</div>
 </footer>
 
-<script src="js/lectorEtiquetas.js"></script>
-<script src="js/paralaje.js"></script>
-<script src="js/reproductor.js"></script>
-<script src="js/app.js"></script>
+<script src="js/lectorEtiquetas.js?v=6"></script>
+<script src="js/paralaje.js?v=6"></script>
+<script src="js/reproductor.js?v=6"></script>
+<script src="js/sobre.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 
 </body>
 </html>

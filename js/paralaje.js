@@ -7,10 +7,9 @@ window.inicializarParalaje = function() {
 
   const tela = document.getElementById('telaLayer');
   const tri = document.getElementById('triLayer');
-  const seal = document.getElementById('sealLayer');
   const platform = document.getElementById('platformLayer');
 
-  if (!tela || !tri || !seal || !platform) return;
+  if (!tela || !tri || !platform) return;
 
   let ticking = false;
 
@@ -18,7 +17,6 @@ window.inicializarParalaje = function() {
     const y = window.scrollY || window.pageYOffset;
     tela.style.transform = `translate3d(0, ${y * 0.18}px, 0)`;
     tri.style.transform = `translate3d(0, ${y * -0.05}px, 0)`;
-    seal.style.transform = `translate3d(0, ${y * 0.10}px, 0) rotate(12deg)`;
     platform.style.transform = `translate3d(0, ${y * -0.06}px, 0)`;
     ticking = false;
   }

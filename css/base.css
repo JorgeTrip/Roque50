@@ -53,7 +53,6 @@ body {
   flex-direction: column;
   align-items: center;
   padding-top: max(85px, 10vh);
-  /* overflow: hidden removido para permitir animación de caída desde fuera del viewport */
 }
 
 .tela-layer {
@@ -71,89 +70,44 @@ body {
   opacity: 0;
   filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.35));
   transform-origin: 50% 0%;
-  /* La animación se activa via JS añadiendo .invitacion-abierta al body */
 }
 
 /* Dispara la animación de caída cuando el sobre es abierto */
 body.invitacion-abierta .tela-layer img {
-  animation:
-    caerTela 5s ease-out forwards,
-    ondularTela 8s ease-in-out infinite 5s;
+  animation: caerTela 5s ease-out forwards, ondularTela 8s ease-in-out infinite 5s;
 }
 
 /* Animación de entrada: la tela cae lentamente desde fuera del viewport sin rebote */
 @keyframes caerTela {
-  0% {
-    opacity: 0;
-    transform: translateY(-120vh) scaleX(0.92) skewX(3deg);
-  }
-
-  25% {
-    opacity: 0.4;
-  }
-
-  100% {
-    opacity: 0.6;
-    transform: translateY(0) scaleX(1) skewX(0deg);
-  }
+  0% { opacity: 0; transform: translateY(-120vh) scaleX(0.92) skewX(3deg); }
+  25% { opacity: 0.4; }
+  100% { opacity: 0.6; transform: translateY(0) scaleX(1) skewX(0deg); }
 }
 
-/* Ondulación lateral continua (como tela mecida al viento, sin rebote vertical) */
+/* Ondulación lateral continua */
 @keyframes ondularTela {
-  0% {
-    transform: skewX(0deg) scaleX(1) rotate(0deg);
-  }
-
-  20% {
-    transform: skewX(1.8deg) scaleX(1.014) rotate(0.6deg);
-  }
-
-  40% {
-    transform: skewX(-1.4deg) scaleX(0.988) rotate(-0.5deg);
-  }
-
-  60% {
-    transform: skewX(1.2deg) scaleX(1.01) rotate(0.4deg);
-  }
-
-  80% {
-    transform: skewX(-0.9deg) scaleX(0.994) rotate(-0.3deg);
-  }
-
-  100% {
-    transform: skewX(0deg) scaleX(1) rotate(0deg);
-  }
+  0% { transform: skewX(0deg) scaleX(1) rotate(0deg); }
+  20% { transform: skewX(1.8deg) scaleX(1.014) rotate(0.6deg); }
+  40% { transform: skewX(-1.4deg) scaleX(0.988) rotate(-0.5deg); }
+  60% { transform: skewX(1.2deg) scaleX(1.01) rotate(0.4deg); }
+  80% { transform: skewX(-0.9deg) scaleX(0.994) rotate(-0.3deg); }
+  100% { transform: skewX(0deg) scaleX(1) rotate(0deg); }
 }
 
 .tri-wrap {
   position: relative;
   width: min(540px, 92vw);
-  /* Subir el texto para que quede dentro del área de la tela */
   margin: -80% auto 0;
   z-index: 1;
 }
 
 @media (max-width: 600px) {
-  .tri-wrap {
-    margin: -82% auto 0;
-  }
+  .tri-wrap { margin: -82% auto 0; }
 }
 
-.tri-shape {
-  height: 230px;
-}
-
-.tri-shape.left {
-  float: left;
-  width: 50%;
-  shape-outside: polygon(0% 0%, 100% 0%, 0% 100%);
-}
-
-.tri-shape.right {
-  float: right;
-  width: 50%;
-  shape-outside: polygon(0% 0%, 100% 0%, 100% 100%);
-}
+.tri-shape { height: 230px; }
+.tri-shape.left { float: left; width: 50%; shape-outside: polygon(0% 0%, 100% 0%, 0% 100%); }
+.tri-shape.right { float: right; width: 50%; shape-outside: polygon(0% 0%, 100% 0%, 100% 100%); }
 
 .tri-text {
   text-align: center;
@@ -210,7 +164,6 @@ h1.name {
   animation: fadeUp 0.9s ease forwards 0.7s;
 }
 
-/* Frase tipo dixit debajo del nombre */
 .tagline {
   margin-top: 12px;
   font-family: 'EB Garamond', serif;
@@ -225,13 +178,6 @@ h1.name {
 }
 
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }

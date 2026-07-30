@@ -11,13 +11,20 @@ window.inicializarSobre = function() {
     return;
   }
 
-  console.log('✉️ [Sobre] Inicializando pantalla de bienvenida con sobre cerrado...');
+  // Desactivar la restauración automática del scroll del navegador al refrescar
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo(0, 0);
 
   let abierto = false;
 
   const abrirInvitacion = (e) => {
     if (abierto) return;
     abierto = true;
+
+    // Asegurar que el sitio inicie desde la cima al abrir el sobre
+    window.scrollTo(0, 0);
 
     console.log(`🚀 [Sobre] Gesto directo detectado (${e ? e.type : 'clic'}). Ocultando sobre e iniciando audio...`);
     envelopeScreen.classList.add('hidden');

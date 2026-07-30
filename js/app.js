@@ -14,4 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof window.inicializarLightbox === 'function') {
     window.inicializarLightbox();
   }
+  if (typeof window.inicializarAsistencia === 'function') {
+    window.inicializarAsistencia();
+  }
 });

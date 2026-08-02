@@ -461,6 +461,9 @@ let mapInitialized = false;
 
 /* ---------- Persistencia Firebase ---------- */
 async function syncToFirebase(){
+  try {
+    localStorage.setItem("transporte_local_backup", JSON.stringify({ guests, zoneOptions, settings, destination }));
+  } catch(e){}
   if(typeof guardarDatosFirebase === "function"){
     await guardarDatosFirebase({ guests, zoneOptions, settings, destination });
   }
@@ -469,18 +472,35 @@ async function syncToFirebase(){
 async function loadData(){
   if(typeof renderSkeletons === "function") renderSkeletons();
 
+  try {
+    const b = localStorage.getItem("transporte_local_backup");
+    if(b){
+      const parsed = JSON.parse(b);
+      if(parsed.guests && parsed.guests.length){
+        guests = sanitizeGuestsList(parsed.guests);
+        if(parsed.zoneOptions) zoneOptions = parsed.zoneOptions;
+        if(parsed.settings) settings = parsed.settings;
+        if(parsed.destination) destination = parsed.destination;
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
+      }
+    }
+  } catch(e){}
+
   if(typeof suscribirDatosFirebase === "function"){
     suscribirDatosFirebase((data)=>{
       if(data && data.guests && data.guests.length){
-        guests = data.guests;
+        guests = sanitizeGuestsList(data.guests);
         zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
         settings = data.settings || {caba:3, pba:8};
         destination = data.destination || Object.assign({}, DEFAULT_DESTINATION);
         migrateGuestCoords();
         syncSettingsInputs();
         render();
-      } else {
-        guests = DEFAULT_GUESTS.slice();
+        try { localStorage.setItem("transporte_local_backup", JSON.stringify({ guests, zoneOptions, settings, destination })); } catch(e){}
+      } else if(!guests || !guests.length) {
+        guests = sanitizeGuestsList(DEFAULT_GUESTS.slice());
         zoneOptions = ZONE_DEFAULTS.slice();
         settings = {caba:3, pba:8};
         destination = Object.assign({}, DEFAULT_DESTINATION);
@@ -573,6 +593,7 @@ async function geocodeAddressOnline(query){
 }
 
 function migrateGuestCoords(){
+  if(typeof sanitizeGuestsList === "function") guests = sanitizeGuestsList(guests);
   zoneOptions.forEach(z=>{ if(!z.kind) z.kind = "zone"; });
 
   guests.forEach(g=>{
@@ -803,7 +824,25 @@ function getTransportEmoji(g){
   return "❓";
 }
 
+function sanitizeGuestsList(list){
+  if(!Array.isArray(list)) return [];
+  return list.map(g => {
+    if(!g) return g;
+    if(!Array.isArray(g.assignedPassengers)) g.assignedPassengers = [];
+    if(!Array.isArray(g.people)) g.people = deriveInitialPeople(g.names, g.personas);
+    if(typeof g.freeSpots !== "number") g.freeSpots = parseInt(g.freeSpots, 10) || 0;
+    if(!g.zone) g.zone = "";
+    if(!g.notes) g.notes = "";
+    if(!g.confirmed) g.confirmed = "pending";
+    if(!g.transport) g.transport = "pending";
+    if(!g.assignedDriverName) g.assignedDriverName = "";
+    if(g.assignmentDone === undefined) g.assignmentDone = false;
+    return g;
+  });
+}
+
 function buildDriverPanel(g){
+  if(!Array.isArray(g.assignedPassengers)) g.assignedPassengers = [];
   const candidates = passengerCandidates(g.id).slice().sort((a,b)=>{
     const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
     const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
@@ -1286,7 +1325,7 @@ document.getElementById("importFile").addEventListener("change", (e)=>{
   reader.onload = async (ev)=>{
     try{
       const data = JSON.parse(ev.target.result);
-      if(data.guests) guests = data.guests;
+      if(data.guests) guests = sanitizeGuestsList(data.guests);
       if(data.zoneOptions) zoneOptions = data.zoneOptions;
       if(data.settings) settings = data.settings;
       if(data.destination) destination = data.destination;

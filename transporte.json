@@ -1,4 +1,9 @@
 {
+  "destination": {
+    "name": "Ushuaia 1990, La Reja, Moreno, Provincia de Buenos Aires",
+    "lat": -34.649384,
+    "lon": -58.847288
+  },
   "guests": [
     {
       "id": "special1",
@@ -114,7 +119,7 @@
       "zoneLat": -34.5653361,
       "zoneLon": -58.4811158,
       "zoneRegion": "CABA",
-      "transport": "car-space",
+      "transport": "pending",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
@@ -154,9 +159,9 @@
         }
       ],
       "confirmed": "pending",
-      "zone": "Av. Pedro Goyena 1231, CABA",
-      "zoneLat": -34.624773,
-      "zoneLon": -58.441857,
+      "zone": "1231 Avenida Pedro Goyena, Caballito, Buenos Aires",
+      "zoneLat": -34.626919,
+      "zoneLon": -58.4447367,
       "zoneRegion": "CABA",
       "transport": "needs-ride",
       "freeSpots": 0,
@@ -176,9 +181,9 @@
         }
       ],
       "confirmed": "pending",
-      "zone": "Av. Boedo 347, Boedo, Buenos Aires",
-      "zoneLat": -34.621067,
-      "zoneLon": -58.411652,
+      "zone": "347 Boedo, Almagro, Buenos Aires",
+      "zoneLat": -34.6165259,
+      "zoneLon": -58.417046,
       "zoneRegion": "CABA",
       "transport": "needs-ride",
       "freeSpots": 0,
@@ -206,11 +211,11 @@
         }
       ],
       "confirmed": "tentative",
-      "zone": "Av. Rivadavia 19485, Castelar, Pcia. de Buenos Aire",
-      "zoneLat": -34.654062,
-      "zoneLon": -58.647035,
+      "zone": "19485 Avenida Rivadavia, Castelar",
+      "zoneLat": -34.6495534,
+      "zoneLon": -58.633562,
       "zoneRegion": "PBA",
-      "transport": "car-space",
+      "transport": "pending",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
@@ -236,7 +241,7 @@
       "zoneLat": -34.6284548,
       "zoneLon": -58.3647655,
       "zoneRegion": "CABA",
-      "transport": "car-space",
+      "transport": "pending",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
@@ -418,17 +423,17 @@
         }
       ],
       "confirmed": "yes",
-      "zone": "",
-      "zoneLat": null,
-      "zoneLon": null,
-      "zoneRegion": null,
+      "zone": "Ramos Mejía, Provincia de Buenos Aires",
+      "zoneLat": -34.639,
+      "zoneLon": -58.563,
+      "zoneRegion": "PBA",
       "transport": "ride-assigned",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "Fernanda",
       "notes": "Viaja en transporte público. Alternativa: podría ir con Fernanda si prefiere auto.",
-      "zoneKind": null
+      "zoneKind": "zone"
     },
     {
       "id": "g16",
@@ -788,10 +793,10 @@
         }
       ],
       "confirmed": "yes",
-      "zone": "1990 Ushuaia, La Reja Centro",
-      "zoneLat": -34.6493843,
-      "zoneLon": -58.8472878,
-      "zoneRegion": "PBA",
+      "zone": "264 Corvalán, Villa Luro, Buenos Aires",
+      "zoneLat": -34.6412177,
+      "zoneLon": -58.5064876,
+      "zoneRegion": "CABA",
       "transport": "car-no-space",
       "freeSpots": 0,
       "assignedPassengers": [],
@@ -818,7 +823,7 @@
       "zoneLat": -34.3891302,
       "zoneLon": -58.7378956,
       "zoneRegion": "PBA",
-      "transport": "car-space",
+      "transport": "pending",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
@@ -1264,25 +1269,25 @@
       "kind": "address"
     },
     {
-      "name": "Falucho, Tortuguitas",
+      "name": "3368 Falucho, Tortuguitas",
       "lat": -34.4651089,
       "lon": -58.7352137,
       "region": "PBA",
-      "kind": "zone"
+      "kind": "address"
     },
     {
-      "name": "Milán, Villa Santa Rosa",
+      "name": "718 Milán, Villa Santa Rosa",
       "lat": -34.825644,
       "lon": -58.2793142,
       "region": "PBA",
-      "kind": "zone"
+      "kind": "address"
     },
     {
-      "name": "Río de Janeiro, San Atilio, José C. Paz",
+      "name": "5732 Río de Janeiro, San Atilio, José C. Paz",
       "lat": -34.5085069,
       "lon": -58.8166622,
       "region": "PBA",
-      "kind": "zone"
+      "kind": "address"
     },
     {
       "name": "1990 Ushuaia, La Reja Centro",
@@ -1298,6 +1303,34 @@
       "lon": -58.659434,
       "region": "PBA",
       "kind": "zone"
+    },
+    {
+      "name": "264 Corvalán, Villa Luro, Buenos Aires",
+      "lat": -34.6412177,
+      "lon": -58.5064876,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "1231 Avenida Pedro Goyena, Caballito, Buenos Aires",
+      "lat": -34.626919,
+      "lon": -58.4447367,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "347 Boedo, Almagro, Buenos Aires",
+      "lat": -34.6165259,
+      "lon": -58.417046,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "19485 Avenida Rivadavia, Castelar",
+      "lat": -34.6495534,
+      "lon": -58.633562,
+      "region": "PBA",
+      "kind": "address"
     }
   ],
   "settings": {

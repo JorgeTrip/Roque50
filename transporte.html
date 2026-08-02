@@ -11,6 +11,7 @@
     --purple:#a86ce0;
     --purple-deep:#2a1b3d;
     --gold:#e8b84b;
+    --champagne:#E7C98A;
     --bg:#140f1c;
     --ink:#f2eef7;
     --muted:#b3a4c2;
@@ -70,22 +71,92 @@
     padding:16px 14px;
     text-align:left;
     border-left:4px solid var(--purple);
+    cursor:pointer;
+    user-select:none;
+    transition:transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
+  .kpi-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,0,0,0.35);
+  }
+  .kpi-card.active{
+    background:rgba(168,108,224,0.22);
+    border-color:var(--pink);
+    box-shadow:0 0 14px rgba(255,95,162,0.35);
+  }
+  .kpi-card.k-all{border-left-color:var(--purple);}
   .kpi-card.k-confirmed{border-left-color:var(--green);}
   .kpi-card.k-pending{border-left-color:var(--gold);}
   .kpi-card.k-notcoming{border-left-color:var(--gray-ink);}
+  .kpi-card.k-tpending{border-left-color:#e67e22;}
+  .kpi-card.k-carspace{border-left-color:#2ecc71;}
+  .kpi-card.k-needsride{border-left-color:#e74c3c;}
   .kpi-card.k-zone{border-left-color:var(--warn);}
+  .kpi-card.k-food{border-left-color:#3498db;}
   .kpi-num{font-size:1.7rem;font-weight:700;line-height:1;}
   .kpi-label{font-size:0.78rem;color:var(--muted);margin-top:6px;}
 
   #storageWarning{display:none;background:#3a2a12;border:1px solid #7a5a1f;color:#f0c67a;padding:9px 14px;border-radius:8px;font-size:0.82rem;margin:16px 0 0;}
 
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px;align-items:center;}
-  .toolbar input[type=text]{flex:1;min-width:160px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
-  .chip{border:1px solid var(--border);background:var(--card-bg-alt);padding:7px 13px;border-radius:20px;font-size:0.82rem;cursor:pointer;color:var(--muted);white-space:nowrap;}
-  .chip.active{background:var(--purple);color:#fff;border-color:var(--purple);}
-  .small-btn{border:1px solid var(--border);background:var(--card-bg-alt);padding:7px 12px;border-radius:8px;font-size:0.78rem;cursor:pointer;color:var(--muted);}
+  .search-toolbar{display:flex;gap:8px;align-items:center;margin:18px 0 10px;position:relative;}
+  .search-toolbar input[type=text]{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
+  .search-toolbar .primary-btn{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:600;white-space:nowrap;}
+  .search-toolbar .primary-btn:hover{background:var(--pink);border-color:var(--pink);color:#fff;}
+  .search-toolbar .small-btn{padding:8px 14px;font-size:1.1rem;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;}
   .small-btn:hover{border-color:var(--pink);color:var(--pink);}
+  .menu-wrap{position:relative;}
+  .menu-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 10px 25px rgba(0,0,0,0.6);z-index:999;min-width:230px;flex-direction:column;gap:4px;}
+  .menu-dropdown.open{display:flex;}
+  .menu-item{background:transparent;border:none;color:var(--ink);padding:10px 12px;text-align:left;font-size:0.85rem;border-radius:6px;cursor:pointer;width:100%;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+  .menu-item:hover{background:rgba(255,255,255,0.08);color:var(--pink);}
+
+  /* FAB Volver arriba */
+  .fab-scroll-top{
+    position:fixed;
+    bottom:max(20px, env(safe-area-inset-bottom, 20px));
+    right:max(20px, env(safe-area-inset-right, 20px));
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:rgba(42, 32, 53, 0.85);
+    border:1px solid var(--purple);
+    color:var(--champagne);
+    box-shadow:0 8px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    cursor:pointer;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 0.3s ease, transform 0.3s ease, border-color 0.2s ease;
+    user-select:none;
+  }
+  .fab-scroll-top.hidden{
+    opacity:0;
+    transform:translateY(20px) scale(0.8);
+    pointer-events:none;
+  }
+  .fab-scroll-top:hover{
+    border-color:var(--pink);
+    transform:translateY(-2px) scale(1.06);
+  }
+  .fab-scroll-top .chevron-up{
+    width:12px;
+    height:12px;
+    border-top:3px solid var(--champagne, #E7C98A);
+    border-left:3px solid var(--champagne, #E7C98A);
+    transform:rotate(45deg);
+    margin-top:5px;
+    display:block;
+    box-sizing:border-box;
+    animation:bounceUp 1.8s infinite ease-in-out;
+  }
+  @keyframes bounceUp{
+    0%, 20%, 50%, 80%, 100%{ transform:translateY(0) rotate(45deg); }
+    40%{ transform:translateY(-6px) rotate(45deg); }
+    60%{ transform:translateY(-3px) rotate(45deg); }
+  }
 
   .settings-panel, .map-panel{
     background:var(--card-bg);
@@ -213,27 +284,31 @@
 
   <div id="storageWarning">⚠️ No se pudo guardar automáticamente en este entorno. Usá "Exportar" seguido para no perder tus cambios, y "Importar" la próxima vez que abras la app.</div>
 
-  <div class="toolbar">
-    <input type="text" id="searchBox" placeholder="Buscar invitado...">
-    <div class="chips-scroll">
-      <button class="chip active" data-filter="all">Todos</button>
-      <button class="chip" data-filter="pending">Pendientes</button>
-      <button class="chip" data-filter="zoneMissing">Sin zona</button>
-      <button class="chip" data-filter="resolved">Resueltos</button>
-      <button class="chip" data-filter="notcoming">No vienen</button>
+  <div class="search-toolbar">
+    <input type="text" id="searchBox" placeholder="🔍 Buscar por nombre o zona...">
+    <button class="small-btn primary-btn" id="addGuestBtn" title="Agregar invitado">➕</button>
+    <div class="menu-wrap">
+      <button class="small-btn" id="menuToggleBtn" title="Menú de opciones">☰</button>
+      <div class="menu-dropdown" id="menuDropdown">
+        <button class="menu-item" id="mapToggleBtn">🗺️ Ver mapa de direcciones</button>
+        <button class="menu-item" id="settingsToggleBtn">⚙️ Configurar destino y distancias</button>
+        <button class="menu-item" id="exportBtn">⬇️ Exportar datos</button>
+        <button class="menu-item" id="importBtn">⬆️ Importar datos</button>
+        <button class="menu-item" id="reloadServerBtn" title="Restaurar datos desde el archivo transporte.json en Netlify">🔄 Cargar de Netlify</button>
+      </div>
     </div>
-  </div>
-  <div class="toolbar">
-    <button class="small-btn" id="mapToggleBtn">🗺️ Ver mapa de direcciones</button>
-    <button class="small-btn" id="settingsToggleBtn">⚙️ Configurar distancias</button>
-    <button class="small-btn" id="exportBtn">⬇️ Exportar datos</button>
-    <button class="small-btn" id="importBtn">⬆️ Importar datos</button>
-    <button class="small-btn" id="reloadServerBtn" title="Restaurar datos desde el archivo transporte.json en Netlify">🔄 Cargar de Netlify</button>
     <input type="file" id="importFile" accept="application/json" style="display:none">
-    <button class="small-btn" id="addGuestBtn">➕ Agregar invitado</button>
   </div>
 
   <div class="settings-panel" id="settingsPanel">
+    <h3>📍 Destino del Evento</h3>
+    <div class="settings-grid" style="margin-bottom:18px;">
+      <div class="field zone-field" style="grid-column: 1 / -1;">
+        <label>Dirección o nombre del lugar de la fiesta</label>
+        <input type="text" class="zone-input" id="destInput" placeholder="Buscar o ingresar dirección del destino..." autocomplete="off">
+      </div>
+    </div>
+
     <h3>⚙️ Radios de cercanía para sugerir viajes compartidos</h3>
     <div class="settings-grid">
       <div class="field">
@@ -258,11 +333,22 @@
   <footer>Los cambios se guardan automáticamente. Hacé click en cualquier campo para editarlo.</footer>
 </div>
 
+<button class="fab-scroll-top hidden" id="fabScrollTop" title="Volver al inicio" aria-label="Volver al inicio">
+  <div class="chevron-up"></div>
+</button>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ---------- Datos iniciales ---------- */
+const DEFAULT_DESTINATION = {
+  name: "Ushuaia 1990, La Reja, Moreno, Provincia de Buenos Aires",
+  lat: -34.649384,
+  lon: -58.847288
+};
+let destination = Object.assign({}, DEFAULT_DESTINATION);
+
 const ZONE_DEFAULTS = [
-  {name:"Ushuaia 1990, La Reja, Moreno, Provincia de Buenos Aires",lat:-34.649384,lon:-58.847288,region:"PBA",isDestination:true,kind:"address"},
+  {name:DEFAULT_DESTINATION.name, lat:DEFAULT_DESTINATION.lat, lon:DEFAULT_DESTINATION.lon, region:"PBA", isDestination:true, kind:"address"},
   {name:"Villa Urquiza, CABA",lat:-34.5719,lon:-58.4903,region:"CABA",kind:"zone"},
   {name:"Balvanera, CABA",lat:-34.6083,lon:-58.4020,region:"CABA",kind:"zone"},
   {name:"La Boca, CABA",lat:-34.6345,lon:-58.3631,region:"CABA",kind:"zone"},
@@ -396,13 +482,20 @@ async function loadData(){
     const g = await getStorageKey("guestsData");
     const z = await getStorageKey("zoneOptions");
     const s = await getStorageKey("settings");
+    const d = await getStorageKey("destinationData");
 
+    let useLocal = false;
     if(g){
+      useLocal = confirm("Se encontró información guardada localmente en este navegador.\n\n• Presioná ACEPTAR para usar tus datos guardados en este navegador.\n• Presioná CANCELAR para cargar la versión del archivo transporte.json de Netlify.");
+    }
+
+    if(useLocal){
       guests = JSON.parse(g);
       zoneOptions = z ? JSON.parse(z) : ZONE_DEFAULTS.slice();
       settings = s ? JSON.parse(s) : {caba:3, pba:8};
+      destination = d ? JSON.parse(d) : Object.assign({}, DEFAULT_DESTINATION);
     } else {
-      // Si no hay datos en localStorage, intentamos cargar transporte.json publicado en Netlify / servidor
+      // Intentamos cargar transporte.json publicado en Netlify / servidor
       let loadedFromServer = false;
       try {
         const resp = await fetch('./transporte.json?v=' + Date.now());
@@ -412,15 +505,25 @@ async function loadData(){
             guests = data.guests;
             zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
             settings = data.settings || {caba:3, pba:8};
+            if(data.destination) destination = data.destination;
+            else destination = Object.assign({}, DEFAULT_DESTINATION);
             loadedFromServer = true;
           }
         }
       } catch(e) {}
 
       if(!loadedFromServer){
-        guests = DEFAULT_GUESTS.slice();
-        zoneOptions = ZONE_DEFAULTS.slice();
-        settings = {caba:3, pba:8};
+        if(g){
+          guests = JSON.parse(g);
+          zoneOptions = z ? JSON.parse(z) : ZONE_DEFAULTS.slice();
+          settings = s ? JSON.parse(s) : {caba:3, pba:8};
+          destination = d ? JSON.parse(d) : Object.assign({}, DEFAULT_DESTINATION);
+        } else {
+          guests = DEFAULT_GUESTS.slice();
+          zoneOptions = ZONE_DEFAULTS.slice();
+          settings = {caba:3, pba:8};
+          destination = Object.assign({}, DEFAULT_DESTINATION);
+        }
       }
     }
 
@@ -428,12 +531,14 @@ async function loadData(){
     await saveGuests();
     await saveZones();
     await saveSettings();
+    await saveDestination();
     document.getElementById("storageWarning").style.display = "none";
   }catch(e){
     storageAvailable = false;
     guests = DEFAULT_GUESTS.slice();
     zoneOptions = ZONE_DEFAULTS.slice();
     settings = {caba:3, pba:8};
+    destination = Object.assign({}, DEFAULT_DESTINATION);
     migrateGuestCoords();
   }
 }
@@ -448,6 +553,10 @@ async function saveZones(){
 async function saveSettings(){
   try{ await setStorageKey("settings", JSON.stringify(settings)); }
   catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+}
+async function saveDestination(){
+  try{ await setStorageKey("destinationData", JSON.stringify(destination)); }
+  catch(e){ storageAvailable = false; }
 }
 
 function deriveInitialPeople(namesStr, count){
@@ -652,9 +761,14 @@ function computeProgress(){
   document.getElementById("progressDetail").textContent = `${resolved} de ${total} personas con transporte resuelto`;
 
   const nonSpecial = guests.filter(g=>!g.special);
+  const totalGuestsPeople = nonSpecial.reduce((s,g)=>s+personaCount(g),0);
   const confirmedYes = nonSpecial.filter(g=>g.confirmed==="yes").reduce((s,g)=>s+personaCount(g),0);
   const pendingCount = nonSpecial.filter(g=>["pending","tentative"].includes(g.confirmed)).reduce((s,g)=>s+personaCount(g),0);
   const notComingCount = nonSpecial.filter(g=>g.confirmed==="no").reduce((s,g)=>s+personaCount(g),0);
+
+  const transportPendingCount = nonSpecial.filter(g=>g.transport==="pending" && g.confirmed!=="no").reduce((s,g)=>s+personaCount(g),0);
+  const carSpaceCount = nonSpecial.filter(g=>g.transport==="car-space" && g.confirmed!=="no").reduce((s,g)=>s+personaCount(g),0);
+  const needsRideCount = nonSpecial.filter(g=>g.transport==="needs-ride" && g.confirmed!=="no").reduce((s,g)=>s+personaCount(g),0);
   const zoneMissingCount = nonSpecial.filter(zoneNeeded).length;
 
   const confirmedForFood = guests.filter(g=>g.confirmed==="yes" || g.special);
@@ -664,12 +778,16 @@ function computeProgress(){
   });
 
   document.getElementById("kpiGrid").innerHTML = `
-    <div class="kpi-card k-confirmed"><div class="kpi-num">${confirmedYes}</div><div class="kpi-label">✅ Personas confirmadas</div></div>
-    <div class="kpi-card k-pending"><div class="kpi-num">${pendingCount}</div><div class="kpi-label">⏳ Personas pendientes</div></div>
-    <div class="kpi-card k-notcoming"><div class="kpi-num">${notComingCount}</div><div class="kpi-label">🚫 No vienen</div></div>
-    <div class="kpi-card k-zone"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
-    <div class="kpi-card k-confirmed"><div class="kpi-num">${adultsCount}</div><div class="kpi-label">🍽️ Adultos confirmados (comida)</div></div>
-    <div class="kpi-card k-pending"><div class="kpi-num">${childrenCount}</div><div class="kpi-label">🍽️ Niñ@s confirmados (comida)</div></div>
+    <div class="kpi-card k-all ${currentFilter==='all'?'active':''}" data-kpi="all" title="Ver todos los invitados"><div class="kpi-num">${totalGuestsPeople}</div><div class="kpi-label">👥 Invitados totales</div></div>
+    <div class="kpi-card k-confirmed ${currentFilter==='confirmed'?'active':''}" data-kpi="confirmed" title="Filtrar por confirmados"><div class="kpi-num">${confirmedYes}</div><div class="kpi-label">✅ Personas confirmadas</div></div>
+    <div class="kpi-card k-pending ${currentFilter==='confirmedPending'?'active':''}" data-kpi="confirmedPending" title="Filtrar por pendientes"><div class="kpi-num">${pendingCount}</div><div class="kpi-label">⏳ Personas pendientes</div></div>
+    <div class="kpi-card k-notcoming ${currentFilter==='notcoming'?'active':''}" data-kpi="notcoming" title="Filtrar por los que no vienen"><div class="kpi-num">${notComingCount}</div><div class="kpi-label">🚫 No vienen</div></div>
+    <div class="kpi-card k-tpending ${currentFilter==='transportPending'?'active':''}" data-kpi="transportPending" title="Filtrar por sin transporte definido"><div class="kpi-num">${transportPendingCount}</div><div class="kpi-label">❓ Sin transporte definido</div></div>
+    <div class="kpi-card k-carspace ${currentFilter==='carSpace'?'active':''}" data-kpi="carSpace" title="Filtrar por autos con lugar disponible"><div class="kpi-num">${carSpaceCount}</div><div class="kpi-label">🚘 Con auto y lugar</div></div>
+    <div class="kpi-card k-needsride ${currentFilter==='needsRide'?'active':''}" data-kpi="needsRide" title="Filtrar por quienes necesitan viaje"><div class="kpi-num">${needsRideCount}</div><div class="kpi-label">🚗 Necesitan que los lleven</div></div>
+    <div class="kpi-card k-zone ${currentFilter==='zoneMissing'?'active':''}" data-kpi="zoneMissing" title="Filtrar por grupos sin zona cargada"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
+    <div class="kpi-card k-food ${currentFilter==='adults'?'active':''}" data-kpi="adults" title="Filtrar por adultos confirmados"><div class="kpi-num">${adultsCount}</div><div class="kpi-label">🍽️ Adultos confirmados (comida)</div></div>
+    <div class="kpi-card k-food ${currentFilter==='children'?'active':''}" data-kpi="children" title="Filtrar por niños confirmados"><div class="kpi-num">${childrenCount}</div><div class="kpi-label">🍽️ Niñ@s confirmados (comida)</div></div>
   `;
 }
 
@@ -702,11 +820,25 @@ function sortedGuests(){
   return {specialList, pendingList, greenList, grayList};
 }
 function matchesFilters(g){
-  if(searchTerm && !g.names.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  if(searchTerm){
+    const q = searchTerm.toLowerCase();
+    const matchName = g.names.toLowerCase().includes(q);
+    const matchZone = (g.zone||"").toLowerCase().includes(q);
+    const matchPeople = (g.people||[]).some(p=>p.name.toLowerCase().includes(q));
+    if(!matchName && !matchZone && !matchPeople) return false;
+  }
+  if(currentFilter === "all") return true;
   if(currentFilter === "pending") return !isResolved(g) && !isNotComing(g);
   if(currentFilter === "resolved") return isResolved(g);
   if(currentFilter === "notcoming") return isNotComing(g);
   if(currentFilter === "zoneMissing") return zoneNeeded(g);
+  if(currentFilter === "confirmed") return g.confirmed === "yes";
+  if(currentFilter === "confirmedPending") return ["pending","tentative"].includes(g.confirmed);
+  if(currentFilter === "transportPending") return g.transport === "pending" && g.confirmed !== "no";
+  if(currentFilter === "carSpace") return g.transport === "car-space" && g.confirmed !== "no";
+  if(currentFilter === "needsRide") return g.transport === "needs-ride" && g.confirmed !== "no";
+  if(currentFilter === "adults") return (g.confirmed === "yes" || g.special) && (g.people||[]).some(p => !p.isChild);
+  if(currentFilter === "children") return (g.confirmed === "yes" || g.special) && (g.people||[]).some(p => p.isChild);
   return true;
 }
 
@@ -1145,14 +1277,36 @@ document.getElementById("listContainer").addEventListener("blur", async (e)=>{
   }
 }, true);
 
-document.querySelectorAll(".chip").forEach(chip=>{
-  chip.addEventListener("click", ()=>{
-    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-    chip.classList.add("active");
-    currentFilter = chip.dataset.filter;
-    render();
-  });
+document.getElementById("kpiGrid").addEventListener("click", (e)=>{
+  const card = e.target.closest(".kpi-card");
+  if(!card || !card.dataset.kpi) return;
+  const kpi = card.dataset.kpi;
+  if(currentFilter === kpi){
+    currentFilter = "all";
+  } else {
+    currentFilter = kpi;
+  }
+  render();
 });
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const menuDropdown = document.getElementById("menuDropdown");
+if(menuToggleBtn && menuDropdown){
+  menuToggleBtn.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    menuDropdown.classList.toggle("open");
+  });
+  document.addEventListener("click", (e)=>{
+    if(!menuDropdown.contains(e.target) && e.target !== menuToggleBtn){
+      menuDropdown.classList.remove("open");
+    }
+  });
+  menuDropdown.addEventListener("click", (e)=>{
+    if(e.target.closest(".menu-item")){
+      menuDropdown.classList.remove("open");
+    }
+  });
+}
+
 document.getElementById("searchBox").addEventListener("input", (e)=>{ searchTerm = e.target.value; render(); });
 
 document.getElementById("addGuestBtn").addEventListener("click", async ()=>{
@@ -1164,10 +1318,10 @@ document.getElementById("addGuestBtn").addEventListener("click", async ()=>{
 });
 
 document.getElementById("exportBtn").addEventListener("click", ()=>{
-  const blob = new Blob([JSON.stringify({guests, zoneOptions, settings}, null, 2)], {type:"application/json"});
+  const blob = new Blob([JSON.stringify({destination, guests, zoneOptions, settings}, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = "transporte-cumple-roque.json";
+  a.href = url; a.download = "transporte.json";
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
@@ -1182,8 +1336,9 @@ document.getElementById("importFile").addEventListener("change", (e)=>{
       if(data.guests) guests = data.guests;
       if(data.zoneOptions) zoneOptions = data.zoneOptions;
       if(data.settings) settings = data.settings;
+      if(data.destination) destination = data.destination;
       migrateGuestCoords();
-      await saveGuests(); await saveZones(); await saveSettings();
+      await saveGuests(); await saveZones(); await saveSettings(); await saveDestination();
       syncSettingsInputs();
       render();
       autoGeocodeMissingGuests();
@@ -1202,8 +1357,9 @@ document.getElementById("reloadServerBtn").addEventListener("click", async ()=>{
         if(data.guests) guests = data.guests;
         if(data.zoneOptions) zoneOptions = data.zoneOptions;
         if(data.settings) settings = data.settings;
+        if(data.destination) destination = data.destination;
         migrateGuestCoords();
-        await saveGuests(); await saveZones(); await saveSettings();
+        await saveGuests(); await saveZones(); await saveSettings(); await saveDestination();
         syncSettingsInputs();
         render();
         autoGeocodeMissingGuests();
@@ -1217,10 +1373,12 @@ document.getElementById("reloadServerBtn").addEventListener("click", async ()=>{
   }
 });
 
-/* ---------- Configuración de distancias ---------- */
+/* ---------- Configuración de distancias y destino ---------- */
 function syncSettingsInputs(){
   document.getElementById("radiusCaba").value = settings.caba;
   document.getElementById("radiusPba").value = settings.pba;
+  const destInp = document.getElementById("destInput");
+  if(destInp) destInp.value = destination.name || "";
 }
 document.getElementById("settingsToggleBtn").addEventListener("click", ()=>{
   document.getElementById("settingsPanel").classList.toggle("open");
@@ -1231,6 +1389,32 @@ document.getElementById("radiusCaba").addEventListener("change", async (e)=>{
 document.getElementById("radiusPba").addEventListener("change", async (e)=>{
   settings.pba = parseFloat(e.target.value)||0; await saveSettings(); render();
 });
+
+const destInp = document.getElementById("destInput");
+if(destInp){
+  destInp.addEventListener("focus", (e)=>openZoneSuggestions(e.target, "destination"));
+  destInp.addEventListener("input", (e)=>openZoneSuggestions(e.target, "destination"));
+  destInp.addEventListener("blur", async (e)=>{
+    setTimeout(async ()=>{
+      const val = e.target.value.trim();
+      if(val && val !== destination.name){
+        let geo = await geocodeAddressOnline(val);
+        if(geo && geo.lat != null){
+          destination = { name: geo.name, lat: geo.lat, lon: geo.lon };
+        } else {
+          const fallback = findFallbackZone(val);
+          if(fallback){
+            destination = { name: val, lat: fallback.lat, lon: fallback.lon };
+          } else {
+            destination = { name: val, lat: null, lon: null };
+          }
+        }
+        await saveDestination();
+        if(mapInitialized) refreshMapMarkers();
+      }
+    }, 250);
+  });
+}
 
 /* ---------- Mapa ---------- */
 document.getElementById("mapToggleBtn").addEventListener("click", ()=>{
@@ -1262,9 +1446,8 @@ function refreshMapMarkers(){
     marker.addTo(leafletMap);
     mapMarkers.push(marker);
   });
-  const dest = zoneOptions.find(z=>z.isDestination);
-  if(dest){
-    const m = L.marker([dest.lat, dest.lon]).bindPopup(`🎉 Destino: fiesta en La Reja<br><b>${escHtml(dest.name)}</b>`);
+  if(destination && destination.lat != null && destination.lon != null){
+    const m = L.marker([destination.lat, destination.lon]).bindPopup(`🎉 <b>Destino del Evento</b><br>${escHtml(destination.name)}`);
     m.addTo(leafletMap);
     mapMarkers.push(m);
   }
@@ -1277,6 +1460,21 @@ function refreshMapMarkers(){
   render();
   autoGeocodeMissingGuests();
 })();
+
+/* ---------- FAB Volver Arriba ---------- */
+const fabScrollTop = document.getElementById("fabScrollTop");
+if(fabScrollTop){
+  fabScrollTop.addEventListener("click", ()=>{
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  window.addEventListener("scroll", ()=>{
+    if(window.scrollY > 150){
+      fabScrollTop.classList.remove("hidden");
+    } else {
+      fabScrollTop.classList.add("hidden");
+    }
+  }, { passive: true });
+}
 </script>
 </body>
 </html>

@@ -97,7 +97,7 @@
   .kpi-num{font-size:1.7rem;font-weight:700;line-height:1;}
   .kpi-label{font-size:0.78rem;color:var(--muted);margin-top:6px;}
 
-  #storageWarning{display:none;background:#3a2a12;border:1px solid #7a5a1f;color:#f0c67a;padding:9px 14px;border-radius:8px;font-size:0.82rem;margin:16px 0 0;}
+
 
   .search-toolbar{display:flex;gap:8px;align-items:center;margin:18px 0 10px;position:relative;}
   .search-toolbar input[type=text]{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
@@ -283,7 +283,7 @@
     <div class="kpi-grid" id="kpiGrid"></div>
   </div>
 
-  <div id="storageWarning">⚠️ No se pudo guardar automáticamente en este entorno. Usá "Exportar" seguido para no perder tus cambios, y "Importar" la próxima vez que abras la app.</div>
+
 
   <div class="search-toolbar">
     <input type="text" id="searchBox" placeholder="🔍 Buscar por nombre o zona...">
@@ -459,30 +459,7 @@ let storageAvailable = true;
 let leafletMap = null;
 let mapInitialized = false;
 
-/* ---------- Storage ---------- */
-async function getStorageKey(key){
-  try {
-    if(window.storage && typeof window.storage.get === "function"){
-      const res = await window.storage.get(key, false);
-      return res ? res.value : null;
-    }
-    return localStorage.getItem(key);
-  } catch(e) {
-    return null;
-  }
-}
-async function setStorageKey(key, value){
-  try {
-    if(window.storage && typeof window.storage.set === "function"){
-      await window.storage.set(key, value, false);
-      return;
-    }
-    localStorage.setItem(key, value);
-  } catch(e) {
-    throw e;
-  }
-}
-
+/* ---------- Persistencia Firebase ---------- */
 async function syncToFirebase(){
   if(typeof guardarDatosFirebase === "function"){
     await guardarDatosFirebase({ guests, zoneOptions, settings, destination });
@@ -492,60 +469,34 @@ async function syncToFirebase(){
 async function loadData(){
   if(typeof renderSkeletons === "function") renderSkeletons();
 
-  let firebaseActive = false;
   if(typeof suscribirDatosFirebase === "function"){
-    firebaseActive = suscribirDatosFirebase((data)=>{
-      if(data && data.guests){
-        if(data.guests) guests = data.guests;
-        if(data.zoneOptions) zoneOptions = data.zoneOptions;
-        if(data.settings) settings = data.settings;
-        if(data.destination) destination = data.destination;
+    suscribirDatosFirebase((data)=>{
+      if(data && data.guests && data.guests.length){
+        guests = data.guests;
+        zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
+        settings = data.settings || {caba:3, pba:8};
+        destination = data.destination || Object.assign({}, DEFAULT_DESTINATION);
         migrateGuestCoords();
         syncSettingsInputs();
         render();
       } else {
+        guests = DEFAULT_GUESTS.slice();
+        zoneOptions = ZONE_DEFAULTS.slice();
+        settings = {caba:3, pba:8};
+        destination = Object.assign({}, DEFAULT_DESTINATION);
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
         syncToFirebase();
       }
     });
   }
+}
 
-  if(!firebaseActive){
-    try{
-      const g = await getStorageKey("guestsData");
-      const z = await getStorageKey("zoneOptions");
-      const s = await getStorageKey("settings");
-      const d = await getStorageKey("destinationData");
-      if(g) guests = JSON.parse(g);
-      else guests = DEFAULT_GUESTS.slice();
-      if(z) zoneOptions = JSON.parse(z);
-      else zoneOptions = ZONE_DEFAULTS.slice();
-      if(s) settings = JSON.parse(s);
-      if(d) destination = JSON.parse(d);
-      migrateGuestCoords();
-      render();
-    }catch(e){
-      guests = DEFAULT_GUESTS.slice();
-      zoneOptions = ZONE_DEFAULTS.slice();
-      render();
-    }
-  }
-}
-async function saveGuests(){
-  try{ await setStorageKey("guestsData", JSON.stringify(guests)); }catch(e){}
-  await syncToFirebase();
-}
-async function saveZones(){
-  try{ await setStorageKey("zoneOptions", JSON.stringify(zoneOptions)); }catch(e){}
-  await syncToFirebase();
-}
-async function saveSettings(){
-  try{ await setStorageKey("settings", JSON.stringify(settings)); }catch(e){}
-  await syncToFirebase();
-}
-async function saveDestination(){
-  try{ await setStorageKey("destinationData", JSON.stringify(destination)); }catch(e){}
-  await syncToFirebase();
-}
+async function saveGuests(){ await syncToFirebase(); }
+async function saveZones(){ await syncToFirebase(); }
+async function saveSettings(){ await syncToFirebase(); }
+async function saveDestination(){ await syncToFirebase(); }
 
 function deriveInitialPeople(namesStr, count){
   let base = (namesStr||"").replace(/\([^)]*\)/g,"").trim();

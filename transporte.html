@@ -175,6 +175,46 @@
   .map-note{font-size:0.75rem;color:var(--muted);margin-top:8px;}
 
   .list{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .section-divider {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:32px 0 14px;
+    font-size:0.92rem;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color:var(--ink);
+  }
+  .section-divider:first-child {
+    margin-top:10px;
+  }
+  .section-divider::after {
+    content:"";
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
+  }
+  .section-divider .sec-count {
+    background:rgba(255, 255, 255, 0.08);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:2px 8px;
+    font-size:0.75rem;
+    font-weight:600;
+    color:var(--muted);
+  }
+  .section-divider.special { color:var(--gold); }
+  .section-divider.special::after { background:linear-gradient(90deg, rgba(232,184,75,0.4), transparent); }
+  
+  .section-divider.pending { color:#f39c12; }
+  .section-divider.pending::after { background:linear-gradient(90deg, rgba(243,156,18,0.4), transparent); }
+
+  .section-divider.resolved { color:var(--green); }
+  .section-divider.resolved::after { background:linear-gradient(90deg, rgba(79,191,130,0.4), transparent); }
+
+  .section-divider.notcoming { color:var(--muted); }
+  .section-divider.notcoming::after { background:linear-gradient(90deg, rgba(255,255,255,0.1), transparent); }
+
   .card{
     background:var(--card-bg);
     border:1px solid var(--border);
@@ -195,8 +235,12 @@
   .badge-zone-missing{background:rgba(255,148,102,0.15);color:var(--warn);border:1px solid rgba(255,148,102,0.4);}
   .badge-invited{background:rgba(168,108,224,0.18);color:#c9a4f0;}
 
-  .grid-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px;}
-  .field label{display:block;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted);margin-bottom:3px;}
+  .grid-fields, .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px;}
+  .settings-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:start;}
+  .field{display:flex;flex-direction:column;height:100%;}
+  .field label{display:flex;align-items:flex-end;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted);margin-bottom:4px;min-height:2.2em;}
+  .field-sub-option{display:flex;align-items:center;gap:6px;font-size:0.78rem;margin-top:6px;cursor:pointer;text-transform:none;color:var(--ink);font-weight:normal;min-height:auto !important;}
+  .field > input, .field > select, .field > textarea, .field > .notes-input-wrap, .field > .zone-input{margin-top:auto;}
   select,input[type=number],input[type=text],textarea{
     width:100%;padding:7px 8px;border-radius:7px;border:1px solid var(--border);
     font-size:0.85rem;background:var(--card-bg-alt);color:var(--ink);font-family:inherit;
@@ -331,7 +375,7 @@
       <button class="small-btn" id="menuToggleBtn" title="Menú de opciones">☰</button>
       <div class="menu-dropdown" id="menuDropdown">
         <button class="menu-item" id="mapToggleBtn">🗺️ Ver mapa de direcciones</button>
-        <button class="menu-item" id="settingsToggleBtn">⚙️ Configurar destino y distancias</button>
+        <button class="menu-item" id="settingsToggleBtn">⚙️ Configuración del evento</button>
         <button class="menu-item" id="exportBtn">⬇️ Exportar datos</button>
         <button class="menu-item" id="importBtn">⬆️ Importar datos</button>
         <button class="menu-item" id="reloadServerBtn" title="Restaurar datos desde el archivo transporte.json en Netlify">🔄 Cargar de Netlify</button>
@@ -341,13 +385,20 @@
   </div>
 
   <div class="settings-panel" id="settingsPanel">
-    <h3>🎉 Configuración del Evento</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="margin:0;">🎉 Configuración del Evento</h3>
+      <button class="small-btn" id="closeSettingsBtn" title="Cerrar configuración" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+    </div>
     <div class="settings-grid" style="margin-bottom:18px;">
       <div class="field">
         <label>Nombre del evento</label>
         <input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque" autocomplete="off">
       </div>
-      <div class="field zone-field">
+      <div class="field">
+        <label>Nombres de los anfitriones (Nosotros)</label>
+        <input type="text" id="hostNamesInput" placeholder="Ej: Roque y Gaby" autocomplete="off">
+      </div>
+      <div class="field zone-field" style="grid-column: 1 / -1;">
         <label>Dirección o nombre del lugar de la fiesta</label>
         <input type="text" class="zone-input" id="destInput" placeholder="Buscar o ingresar dirección del destino..." autocomplete="off">
       </div>
@@ -368,7 +419,10 @@
   </div>
 
   <div class="map-panel" id="mapPanel">
-    <h3>🗺️ Mapa de direcciones cargadas</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="margin:0;">🗺️ Mapa de direcciones cargadas</h3>
+      <button class="small-btn" id="closeMapBtn" title="Cerrar mapa" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+    </div>
     <div id="mapEl"></div>
     <p class="map-note">Solo se muestran como puntos las <b>direcciones puntuales</b> (con calle y altura) que hayas cargado desde el buscador. Las zonas / barrios cargados como referencia general no aparecen como marcador, porque no representan una ubicación exacta.</p>
   </div>
@@ -921,7 +975,7 @@ function confirmedOptionsHtml(g){
 }
 
 function getTransportEmoji(g){
-  if(g.special) return "👑";
+  if(g.special) return "🌟";
   if(g.confirmed === "no") return "🚫";
   if(g.transport === "car-space"){
     return g.assignmentDone ? "🚘✅" : "🚘";
@@ -1102,20 +1156,56 @@ async function copyWhatsappMessage(gId, btnEl){
   }
 }
 
+function getSpecialBadgeText(g){
+  if(g.transport === "car-space") return "⭐ Anfitriones — tienen auto con lugar";
+  if(g.transport === "car-no-space") return "⭐ Anfitriones — auto lleno";
+  if(g.transport === "needs-ride") return "⭐ Anfitriones — necesitan viaje";
+  if(g.transport === "ride-assigned") return `⭐ Anfitriones — viajan con ${g.assignedDriverName || "conductor"}`;
+  if(g.transport === "public") return "⭐ Anfitriones — transporte público";
+  if(g.transport === "host") return "⭐ Anfitriones — están en la quinta";
+  return "⭐ Anfitriones";
+}
+
 function renderSpecialCard(g){
   const missing = !g.zone.trim();
+  const badgeText = getSpecialBadgeText(g);
+
+  let extra = "";
+  if(g.transport === "car-space"){
+    extra = buildDriverPanel(g);
+  }
+  if(g.transport === "needs-ride"){
+    const drivers = driverCandidates(g.id).slice().sort((a,b)=>{
+      const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
+      const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
+      return da-db;
+    });
+    const opts = drivers.map(d=>`<option value="${d.id}" ${g.assignedDriverName===d.names?"selected":""}>${escHtml(d.names)}${d.zone?` (${escHtml(d.zone)})`:""}</option>`).join("");
+    extra = `
+      <div class="sub-panel">
+        <label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Asignar conductor</label>
+        <select data-action="assignDriverToRow" data-id="${g.id}">
+          <option value="">— Elegir invitado con auto y lugar —</option>
+          ${opts}
+        </select>
+      </div>`;
+  }
+
   return `
     <div class="card special" data-id="${g.id}">
       <div class="card-top">
-        <div class="card-title">👑 ${escHtml(g.names)} <span class="badge badge-special">⭐ No son invitados — tienen auto</span></div>
+        <div class="card-title">🌟 ${escHtml(g.names)} <span class="badge badge-special">${badgeText}</span></div>
       </div>
       <div class="grid-fields">
         <div class="field zone-field">
           <label>Salen desde ${missing?'<span class="badge badge-zone-missing">⚠️ Falta</span>':''}</label>
           <input type="text" class="zone-input ${missing?"missing":""}" data-id="${g.id}" value="${escAttr(g.zone)}" placeholder="Buscar zona o dirección..." autocomplete="off">
         </div>
+        <div class="field"><label>Transporte</label>
+          <select data-action="transport" data-id="${g.id}">${transportOptionsHtml(g)}</select>
+        </div>
       </div>
-      ${buildDriverPanel(g)}
+      ${extra}
       <div class="notes-field">
         <label>Notas</label>
         <div class="notes-input-wrap">
@@ -1241,16 +1331,24 @@ function render(){
 
   if(currentFilter === "all"){
     const visibleSpecial = groupContiguousTransport(specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase())));
-    if(visibleSpecial.length){ html += `<div class="section-divider">Nuestro auto</div>` + visibleSpecial.map(renderCard).join(""); }
+    if(visibleSpecial.length){
+      html += `<div class="section-divider special">🌟 Nosotros <span class="sec-count">${visibleSpecial.length}</span></div>` + visibleSpecial.map(renderCard).join("");
+    }
   }
 
   const visiblePending = groupContiguousTransport(pendingList.filter(matchesFilters));
   const visibleGreen = groupContiguousTransport(greenList.filter(matchesFilters));
   const visibleGray = groupContiguousTransport(grayList.filter(matchesFilters));
 
-  if(visiblePending.length){ html += `<div class="section-divider">Falta resolver (${visiblePending.length})</div>` + visiblePending.map(renderCard).join(""); }
-  if(visibleGreen.length){ html += `<div class="section-divider">Resuelto (${visibleGreen.length})</div>` + visibleGreen.map(renderCard).join(""); }
-  if(visibleGray.length){ html += `<div class="section-divider">No vienen (${visibleGray.length})</div>` + visibleGray.map(renderCard).join(""); }
+  if(visiblePending.length){
+    html += `<div class="section-divider pending">⏳ Falta resolver <span class="sec-count">${visiblePending.length}</span></div>` + visiblePending.map(renderCard).join("");
+  }
+  if(visibleGreen.length){
+    html += `<div class="section-divider resolved">✅ Resuelto <span class="sec-count">${visibleGreen.length}</span></div>` + visibleGreen.map(renderCard).join("");
+  }
+  if(visibleGray.length){
+    html += `<div class="section-divider notcoming">🚫 No vienen <span class="sec-count">${visibleGray.length}</span></div>` + visibleGray.map(renderCard).join("");
+  }
   if(!html){ html = `<div class="empty-msg">No hay invitados que coincidan con este filtro.</div>`; }
   container.innerHTML = html;
   if(mapInitialized) refreshMapMarkers();
@@ -1662,6 +1760,11 @@ function syncSettingsInputs(){
   document.getElementById("radiusPba").value = settings.pba;
   const evInp = document.getElementById("eventNameInput");
   if(evInp) evInp.value = (settings && settings.eventName) ? settings.eventName : "Cumple 50 de Roque";
+  const hostInp = document.getElementById("hostNamesInput");
+  if(hostInp){
+    const specialGuest = guests.find(g => g.special);
+    hostInp.value = (settings && settings.hostNames) ? settings.hostNames : (specialGuest ? specialGuest.names : "Roque y Gaby");
+  }
   const destInp = document.getElementById("destInput");
   if(destInp) destInp.value = destination.name || "";
   updateHeaderDynamic();
@@ -1676,6 +1779,22 @@ if(evInp){
     settings.eventName = e.target.value;
     await saveSettings();
     updateHeaderDynamic();
+  });
+}
+const hostInp = document.getElementById("hostNamesInput");
+if(hostInp){
+  hostInp.addEventListener("input", async (e)=>{
+    if(!settings) settings = {};
+    const val = e.target.value;
+    settings.hostNames = val;
+    const specialGuest = guests.find(g => g.special);
+    if(specialGuest){
+      specialGuest.names = val || "Anfitriones";
+      refreshGroupName(specialGuest);
+      await saveGuests();
+    }
+    await saveSettings();
+    render();
   });
 }
 document.getElementById("radiusCaba").addEventListener("change", async (e)=>{
@@ -1713,6 +1832,18 @@ if(destInp){
 }
 
 /* ---------- Mapa ---------- */
+const closeMapBtn = document.getElementById("closeMapBtn");
+if(closeMapBtn){
+  closeMapBtn.addEventListener("click", ()=>{
+    document.getElementById("mapPanel").classList.remove("open");
+  });
+}
+const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+if(closeSettingsBtn){
+  closeSettingsBtn.addEventListener("click", ()=>{
+    document.getElementById("settingsPanel").classList.remove("open");
+  });
+}
 document.getElementById("mapToggleBtn").addEventListener("click", ()=>{
   const panel = document.getElementById("mapPanel");
   panel.classList.toggle("open");

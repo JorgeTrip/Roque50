@@ -946,18 +946,48 @@ function sanitizeGuestsList(list){
 
 function buildDriverPanel(g){
   if(!Array.isArray(g.assignedPassengers)) g.assignedPassengers = [];
-  const candidates = passengerCandidates(g.id).slice().sort((a,b)=>{
-    const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
-    const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
-    return da-db;
-  });
-  const passengerRows = candidates.map(c=>`
-    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${getTransportEmoji(c)} ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
-  `).join("") || `<span style="color:var(--muted)">No hay invitados pendientes de transporte para asignar por ahora.</span>`;
-  const alreadyAssignedNotInList = g.assignedPassengers.map(id=>guests.find(x=>x.id===id)).filter(p=>p && !candidates.includes(p));
-  const alreadyRows = alreadyAssignedNotInList.map(c=>`
-    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
-  `).join("");
+  
+  const assignedCount = g.assignedPassengers.length;
+  const isFull = g.freeSpots > 0 && assignedCount >= g.freeSpots;
+  const isDoneOrFull = !!g.assignmentDone || isFull;
+
+  const assignedGuests = g.assignedPassengers.map(id => guests.find(x => x.id === id)).filter(Boolean);
+
+  let assignmentSectionHtml = "";
+
+  if(isDoneOrFull){
+    if(assignedGuests.length > 0){
+      const assignedRows = assignedGuests.map(c => `
+        <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
+      `).join("");
+      assignmentSectionHtml = `
+        <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Pasajeros asignados</label></div>
+        <div class="passenger-list">${assignedRows}</div>`;
+    } else {
+      assignmentSectionHtml = `
+        <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Pasajeros asignados</label></div>
+        <div style="color:var(--muted);font-size:0.82rem;margin-top:4px;">Sin pasajeros asignados.</div>`;
+    }
+  } else {
+    const candidates = passengerCandidates(g.id).slice().sort((a,b)=>{
+      const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
+      const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
+      return da-db;
+    });
+    const candidateRows = candidates.map(c=>`
+      <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${getTransportEmoji(c)} ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
+    `).join("") || `<span style="color:var(--muted)">No hay invitados pendientes de transporte para asignar por ahora.</span>`;
+
+    const alreadyAssignedNotInCandidates = assignedGuests.filter(p => !candidates.includes(p));
+    const alreadyRows = alreadyAssignedNotInCandidates.map(c => `
+      <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
+    `).join("");
+
+    assignmentSectionHtml = `
+      <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Asignar pasajeros</label></div>
+      <div class="passenger-list">${alreadyRows}${candidateRows}</div>`;
+  }
+
   return `
     <div class="sub-panel driver">
       <div class="grid-fields">
@@ -965,9 +995,8 @@ function buildDriverPanel(g){
           <input type="number" min="0" data-action="freeSpots" data-id="${g.id}" value="${g.freeSpots}">
         </div>
       </div>
-      <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Asignar pasajeros</label></div>
-      <div class="passenger-list">${alreadyRows}${passengerRows}</div>
-      <label class="assign-done">
+      ${assignmentSectionHtml}
+      <label class="assign-done" style="margin-top:8px;">
         <input type="checkbox" data-action="assignmentDone" data-id="${g.id}" ${g.assignmentDone?"checked":""}>
         Marcar asignación como resuelta (aunque queden lugares libres)
       </label>

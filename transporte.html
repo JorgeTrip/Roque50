@@ -263,11 +263,16 @@
   input[type=checkbox]{flex-shrink:0;}
   .sub-panel{margin-top:10px;padding:10px 12px;background:var(--card-bg-alt);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;}
   .sub-panel.driver{background:var(--card-bg-alt);border-color:var(--border);}
-  .passenger-list{display:flex;flex-direction:column;gap:5px;margin:6px 0;max-height:170px;overflow-y:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
-  .passenger-list label{display:flex;align-items:flex-start;gap:6px;font-size:0.82rem;font-weight:400;color:var(--ink);padding:2px 0;}
-  .passenger-list input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;}
-  .near-tag{color:var(--green);font-size:0.72rem;}
-  .far-tag{color:var(--muted);font-size:0.72rem;}
+  .passenger-list{display:flex;flex-direction:column;gap:8px;margin:8px 0;max-height:220px;overflow-y:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+  .passenger-list label.passenger-item,
+  .passenger-list label{display:flex;align-items:flex-start;gap:8px;font-size:0.84rem;font-weight:400;color:var(--ink);padding:6px 6px;border-bottom:1px solid rgba(255,255,255,0.06);line-height:1.5;border-radius:6px;}
+  .passenger-list label:last-child{border-bottom:none;}
+  .passenger-list input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:pointer;}
+  .passenger-text{flex:1;min-width:0;line-height:1.5;word-break:break-word;}
+  .passenger-name{font-weight:500;}
+  .passenger-zone{color:var(--muted);font-style:italic;font-size:0.8rem;margin-left:3px;}
+  .near-tag{color:var(--green);font-size:0.75rem;margin-left:4px;display:inline-block;white-space:nowrap;}
+  .far-tag{color:var(--muted);font-size:0.75rem;margin-left:4px;display:inline-block;white-space:nowrap;}
   .assign-done{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.82rem;}
   .people-panel{margin-top:12px;}
   .people-list{display:flex;flex-direction:column;gap:6px;margin:6px 0;}
@@ -338,17 +343,19 @@
     .field label{font-size:0.78rem;}
     .badge{font-size:0.75rem;padding:3px 9px;}
     .sub-panel{font-size:0.9rem;}
-    .passenger-list label{font-size:0.9rem;}
+    .passenger-list{gap:10px;padding:10px;max-height:240px;}
+    .passenger-list label.passenger-item,
+    .passenger-list label{font-size:0.88rem;padding:8px 6px;gap:10px;line-height:1.6;min-height:auto;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .passenger-list label:last-child{border-bottom:none;}
+    .passenger-list input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex-shrink:0;}
+    .passenger-text{font-size:0.88rem;line-height:1.6;}
+    .passenger-zone{font-size:0.82rem;line-height:1.5;display:inline;}
     .child-toggle{font-size:0.88rem;}
     .wa-copy-btn .wa-btn-text{display:none;}
     .wa-copy-btn{padding:8px 12px;font-size:1.1rem;align-self:stretch;height:auto;justify-content:center;min-width:44px;}
     .grid-fields{grid-template-columns:1fr;gap:10px;}
     #mapEl{height:280px;}
-  }
-    .passenger-list label{min-height:36px;padding:3px 0;}
-    .passenger-list input[type=checkbox]{width:18px;height:18px;flex-shrink:0;}
     .person-row{gap:6px;}
-    .child-toggle{font-size:0.88rem;}
     .child-toggle input[type=checkbox]{width:20px;height:20px;}
   }
 </style>
@@ -1024,7 +1031,7 @@ function buildDriverPanel(g){
   if(isDoneOrFull){
     if(assignedGuests.length > 0){
       const assignedRows = assignedGuests.map(c => `
-        <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
+        <label class="passenger-item"><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> <span class="passenger-text"><span class="passenger-name">${getTransportEmoji(c)} ${escHtml(c.names)}</span></span></label>
       `).join("");
       assignmentSectionHtml = `
         <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Pasajeros asignados</label></div>
@@ -1041,12 +1048,12 @@ function buildDriverPanel(g){
       return da-db;
     });
     const candidateRows = candidates.map(c=>`
-      <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${getTransportEmoji(c)} ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
+      <label class="passenger-item"><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> <span class="passenger-text"><span class="passenger-name">${getTransportEmoji(c)} ${escHtml(c.names)}</span> ${c.zone?`<span class="passenger-zone">(${escHtml(c.zone)})</span>`:""} ${distanceTag(g,c)}</span></label>
     `).join("") || `<span style="color:var(--muted)">No hay invitados pendientes de transporte para asignar por ahora.</span>`;
 
     const alreadyAssignedNotInCandidates = assignedGuests.filter(p => !candidates.includes(p));
     const alreadyRows = alreadyAssignedNotInCandidates.map(c => `
-      <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
+      <label class="passenger-item"><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> <span class="passenger-text"><span class="passenger-name">${getTransportEmoji(c)} ${escHtml(c.names)}</span></span></label>
     `).join("");
 
     assignmentSectionHtml = `

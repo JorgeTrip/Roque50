@@ -195,7 +195,7 @@
     font-size:0.85rem;background:var(--card-bg-alt);color:var(--ink);font-family:inherit;
   }
   select.missing,input.missing{border-color:var(--warn);background:rgba(255,148,102,0.06);}
-  textarea{resize:vertical;min-height:40px;}
+  textarea{resize:vertical;height:42px;min-height:42px;}
 
   .zone-field{position:relative;}
   .zone-suggestions{
@@ -223,6 +223,31 @@
   .child-toggle{display:flex;align-items:center;gap:4px;font-size:0.78rem;color:var(--muted);white-space:nowrap;text-transform:none;letter-spacing:0;}
   .notes-field{margin-top:10px;}
   .notes-field label{font-size:0.72rem;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+  .notes-input-wrap{display:flex;gap:10px;align-items:stretch;}
+  .notes-input-wrap textarea{flex:1;margin:0;display:block;resize:vertical;min-height:42px;box-sizing:border-box;}
+  .wa-copy-btn{
+    background:rgba(37,211,102,0.12);
+    border:1px solid #25D366;
+    color:#25D366;
+    font-weight:600;
+    white-space:nowrap;
+    padding:8px 12px;
+    border-radius:8px;
+    align-self:stretch;
+    height:auto;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    font-size:0.82rem;
+    box-sizing:border-box;
+    transition:all 0.2s ease;
+  }
+  .wa-copy-btn:hover{
+    background:#25D366;
+    color:#0e1a12;
+  }
   .driver-tag{font-size:0.78rem;color:var(--green);font-weight:600;margin-top:6px;}
   .empty-msg{text-align:center;padding:30px;color:var(--muted);font-size:0.9rem;}
   .chips-scroll{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
@@ -249,7 +274,9 @@
     select,input[type=number],input[type=text],textarea{
       font-size:16px !important;
       padding:10px 12px;
+      box-sizing:border-box;
     }
+    .notes-input-wrap textarea{min-height:44px;}
 
     .card{padding:14px 12px;}
     .card-title{font-size:1.08rem;}
@@ -258,10 +285,11 @@
     .sub-panel{font-size:0.9rem;}
     .passenger-list label{font-size:0.9rem;}
     .child-toggle{font-size:0.88rem;}
-    .menu-item{font-size:0.95rem;padding:12px 14px;}
+    .wa-copy-btn .wa-btn-text{display:none;}
+    .wa-copy-btn{padding:8px 12px;font-size:1.1rem;align-self:stretch;height:auto;justify-content:center;min-width:44px;}
     .grid-fields{grid-template-columns:1fr;gap:10px;}
     #mapEl{height:280px;}
-  }}
+  }
     .passenger-list label{min-height:36px;padding:3px 0;}
     .passenger-list input[type=checkbox]{width:18px;height:18px;}
     .person-row{gap:6px;}
@@ -707,8 +735,10 @@ async function resolveZoneEntry(newEntry){
 
 /* ---------- Lógica de negocio ---------- */
 function isResolved(row){
+  if(row.confirmed === "no") return false;
+  if(row.transport === "ride-assigned") return true;
   if(row.confirmed !== "yes") return false;
-  if(["car-no-space","public","ride-assigned","host"].includes(row.transport)) return true;
+  if(["car-no-space","public","host"].includes(row.transport)) return true;
   if(row.transport === "car-space") return !!row.assignmentDone;
   return false;
 }
@@ -777,15 +807,80 @@ function distanceTag(a,b){
   return `<span class="far-tag">${d.toFixed(1)} km</span>`;
 }
 
+function groupContiguousTransport(list){
+  if(!Array.isArray(list) || list.length <= 1) return list;
+
+  const result = [];
+  const addedIds = new Set();
+
+  function addGuestWithPassengers(g){
+    if(addedIds.has(g.id)) return;
+    addedIds.add(g.id);
+    result.push(g);
+
+    const passengerIds = new Set(g.assignedPassengers || []);
+    list.forEach(p => {
+      if(!addedIds.has(p.id)){
+        const isAssignedById = passengerIds.has(p.id);
+        const isAssignedByName = (p.transport === "ride-assigned" && p.assignedDriverName && (p.assignedDriverName === g.names || g.names.includes(p.assignedDriverName) || p.assignedDriverName.includes(g.names)));
+        if(isAssignedById || isAssignedByName){
+          addGuestWithPassengers(p);
+        }
+      }
+    });
+  }
+
+  list.forEach(g => {
+    const isDriver = (Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0) || g.special || g.transport === "car-space";
+    if(isDriver && !addedIds.has(g.id)){
+      addGuestWithPassengers(g);
+    }
+  });
+
+  list.forEach(g => {
+    if(!addedIds.has(g.id)){
+      addGuestWithPassengers(g);
+    }
+  });
+
+  return result;
+}
+
 function sortedGuests(){
   const specialList = [], pendingList = [], greenList = [], grayList = [];
-  guests.forEach(g=>{
-    if(g.special) specialList.push(g);
-    else if(isNotComing(g)) grayList.push(g);
-    else if(isResolved(g)) greenList.push(g);
-    else pendingList.push(g);
+  const passengerToDriver = new Map();
+
+  guests.forEach(d => {
+    if(Array.isArray(d.assignedPassengers)){
+      d.assignedPassengers.forEach(pId => passengerToDriver.set(pId, d));
+    }
   });
-  return {specialList, pendingList, greenList, grayList};
+
+  guests.forEach(g => {
+    if(g.special){
+      specialList.push(g);
+    } else if(isNotComing(g)){
+      grayList.push(g);
+    } else {
+      const driver = passengerToDriver.get(g.id) || guests.find(d => d.names && g.assignedDriverName && (g.assignedDriverName === d.names || d.names.includes(g.assignedDriverName)));
+      if(driver && driver.special){
+        specialList.push(g);
+      } else if(driver && isResolved(driver)){
+        greenList.push(g);
+      } else if(isResolved(g)){
+        greenList.push(g);
+      } else {
+        pendingList.push(g);
+      }
+    }
+  });
+
+  return {
+    specialList: groupContiguousTransport(specialList),
+    pendingList: groupContiguousTransport(pendingList),
+    greenList: groupContiguousTransport(greenList),
+    grayList: groupContiguousTransport(grayList)
+  };
 }
 function matchesFilters(g){
   if(searchTerm){
@@ -879,6 +974,98 @@ function buildDriverPanel(g){
     </div>`;
 }
 
+function getLocalityName(){
+  let loc = "";
+  if(destination && destination.name){
+    const parts = destination.name.split(",").map(s=>s.trim()).filter(Boolean);
+    if(parts.length > 1){
+      loc = parts[1];
+    } else if(parts.length === 1){
+      loc = parts[0];
+    }
+  }
+  return loc || "La Reja";
+}
+
+function generateWhatsappMessage(g){
+  const firstPersonName = (g.people && g.people[0] && g.people[0].name && g.people[0].name.trim())
+    ? g.people[0].name.trim()
+    : (g.names ? g.names.split(",")[0].trim() : "hola");
+
+  const eventName = (settings && settings.eventName) ? settings.eventName : "Cumple 50 de Roque";
+  const locality = getLocalityName();
+  const totalPeople = (g.people && g.people.length) ? g.people.length : 1;
+
+  if(g.transport === "car-space"){
+    return `¡Hola ${firstPersonName}! ¿Cómo estás?
+Te escribo porque estoy encargándome a organizar la logística de los traslados para el ${eventName}.
+Quería consultarte si pensás ir en auto y, de ser así, si te ofrecerías a llevar a alguien que te quede de paso (sin ningún compromiso, es solo para ir organizándonos 😊).
+Si te parece bien la idea, avisame cuántos lugares libres tendrías disponibles. En cuanto tenga a alguien de tu zona que necesite viaje, les intercambio los teléfonos así coordinan directo entre ustedes para el día del evento. 
+Espero tu respuesta. Muchas gracias! 🤗`;
+  }
+
+  if(g.transport === "needs-ride" || g.transport === "public"){
+    const te_los = totalPeople > 1 ? "los" : "te";
+    const extraInfo = totalPeople > 1 ? " En ese caso, confirmame cuántos serían en total los que viajan con vos." : "";
+    return `¡Hola ${firstPersonName}! ¿Cómo estás?
+Te escribo porque estoy ayudando a coordinar el tema de los viajes para el ${eventName}.
+Si necesitás que ${te_los} acerquemos en auto, avisame así te busco lugar.${extraInfo}
+Apenas tenga un auto disponible con espacio en tu zona, te aviso e intercambio tu contacto con el del conductor para que se hablen directamente y coordinen los detalles para el día del evento. ¡Un abrazo!`;
+  }
+
+  if(g.transport === "pending"){
+    return `¡Hola ${firstPersonName}! ¿Cómo estás?
+Te escribo porque estoy organizando los traslados para el ${eventName} en ${locality}.
+Como estoy acomodando el tema de los viajes, quería consultarte si ya sabés cómo vas a ir:
+- Si vas en auto: Avisame si de casualidad tendrías algún lugar libre por si a alguien de tu zona le sirve ir con vos (sin compromiso!).
+- Si necesitás que te llevemos: Confirmame cuántos viajarían con vos incluido así te buscamos lugar en el auto de algún invitado que vaya para allá.
+En cuanto tenga cruzadas las zonas y los lugares disponibles, te pongo en contacto directo con el conductor o pasajero, según tu caso para que coordinen los detalles para el día del evento. ¡Te mando un abrazo!`;
+  }
+
+  return "";
+}
+
+function getWhatsappButtonHtml(g){
+  const allowedStates = ["car-space", "needs-ride", "public", "pending"];
+  if(!allowedStates.includes(g.transport)) return "";
+  return `
+    <button class="small-btn wa-copy-btn" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje de WhatsApp para el primer invitado">
+      💬 <span class="wa-btn-text">Copiar WhatsApp</span>
+    </button>`;
+}
+
+async function copyWhatsappMessage(gId, btnEl){
+  const g = guests.find(x => x.id === gId);
+  if(!g) return;
+  const msg = generateWhatsappMessage(g);
+  if(!msg) return;
+  try {
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(msg);
+    } else {
+      const txtArea = document.createElement("textarea");
+      txtArea.value = msg;
+      txtArea.style.position = "fixed";
+      txtArea.style.opacity = "0";
+      document.body.appendChild(txtArea);
+      txtArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(txtArea);
+    }
+    const origHtml = btnEl.innerHTML;
+    btnEl.innerHTML = '✅ <span class="wa-btn-text">¡Copiado!</span>';
+    btnEl.style.borderColor = "#4fbf82";
+    btnEl.style.color = "#4fbf82";
+    setTimeout(()=>{
+      btnEl.innerHTML = origHtml;
+      btnEl.style.borderColor = "";
+      btnEl.style.color = "";
+    }, 2000);
+  } catch(e) {
+    alert("No se pudo copiar automáticamente.");
+  }
+}
+
 function renderSpecialCard(g){
   const missing = !g.zone.trim();
   return `
@@ -895,7 +1082,10 @@ function renderSpecialCard(g){
       ${buildDriverPanel(g)}
       <div class="notes-field">
         <label>Notas</label>
-        <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+        <div class="notes-input-wrap">
+          <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+          ${getWhatsappButtonHtml(g)}
+        </div>
       </div>
     </div>`;
 }
@@ -983,9 +1173,28 @@ function renderCard(g){
       ${extra}
       <div class="notes-field">
         <label>Notas</label>
-        <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+        <div class="notes-input-wrap">
+          <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+          ${getWhatsappButtonHtml(g)}
+        </div>
       </div>
     </div>`;
+}
+
+function sortedGuests(){
+  const specialList = [], pendingList = [], greenList = [], grayList = [];
+  guests.forEach(g=>{
+    if(g.special) specialList.push(g);
+    else if(isNotComing(g)) grayList.push(g);
+    else if(isResolved(g)) greenList.push(g);
+    else pendingList.push(g);
+  });
+  return {
+    specialList: groupContiguousTransport(specialList),
+    pendingList: groupContiguousTransport(pendingList),
+    greenList: groupContiguousTransport(greenList),
+    grayList: groupContiguousTransport(grayList)
+  };
 }
 
 function render(){
@@ -995,13 +1204,13 @@ function render(){
   let html = "";
 
   if(currentFilter === "all"){
-    const visibleSpecial = specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase()));
+    const visibleSpecial = groupContiguousTransport(specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase())));
     if(visibleSpecial.length){ html += `<div class="section-divider">Nuestro auto</div>` + visibleSpecial.map(renderCard).join(""); }
   }
 
-  const visiblePending = pendingList.filter(matchesFilters);
-  const visibleGreen = greenList.filter(matchesFilters);
-  const visibleGray = grayList.filter(matchesFilters);
+  const visiblePending = groupContiguousTransport(pendingList.filter(matchesFilters));
+  const visibleGreen = groupContiguousTransport(greenList.filter(matchesFilters));
+  const visibleGray = groupContiguousTransport(grayList.filter(matchesFilters));
 
   if(visiblePending.length){ html += `<div class="section-divider">Falta resolver (${visiblePending.length})</div>` + visiblePending.map(renderCard).join(""); }
   if(visibleGreen.length){ html += `<div class="section-divider">Resuelto (${visibleGreen.length})</div>` + visibleGreen.map(renderCard).join(""); }
@@ -1131,11 +1340,20 @@ document.addEventListener("input", (e)=>{
   if(t.dataset.action === "notes"){
     const g = guests.find(x=>x.id===t.dataset.id);
     if(g) g.notes = t.value;
+    t.style.height = "auto";
+    t.style.height = Math.max(42, t.scrollHeight) + "px";
   }
   if(t.dataset.action === "personName"){
     const g = guests.find(x=>x.id===t.dataset.id);
     const idx = parseInt(t.dataset.idx);
     if(g && g.people && g.people[idx]) g.people[idx].name = t.value;
+  }
+});
+
+document.getElementById("listContainer").addEventListener("focusin", (e)=>{
+  if(e.target && e.target.dataset && e.target.dataset.action === "notes"){
+    e.target.style.height = "auto";
+    e.target.style.height = Math.max(42, e.target.scrollHeight) + "px";
   }
 });
 
@@ -1176,6 +1394,11 @@ document.addEventListener("click", async (e)=>{
   const id = t.dataset.id;
   const g = guests.find(x=>x.id===id);
 
+  if(action === "copyWhatsapp"){
+    const btn = t.closest("button");
+    copyWhatsappMessage(id || (btn && btn.dataset.id), btn || t);
+    return;
+  }
   if(action === "delete"){
     if(confirm("¿Eliminar a este invitado de la lista?")){
       guests = guests.filter(x=>x.id!==id);
@@ -1255,7 +1478,10 @@ document.addEventListener("change", async (e)=>{
 });
 
 document.getElementById("listContainer").addEventListener("blur", async (e)=>{
-  if(e.target.dataset && e.target.dataset.action === "notes"){ await saveGuests(); }
+  if(e.target.dataset && e.target.dataset.action === "notes"){
+    e.target.style.height = "";
+    await saveGuests();
+  }
   if(e.target.dataset && e.target.dataset.action === "personName"){
     const g = guests.find(x=>x.id===e.target.dataset.id);
     if(g){ refreshGroupName(g); await saveGuests(); render(); }

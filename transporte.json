@@ -20,7 +20,7 @@
       "zoneLon": -58.3968662,
       "zoneRegion": "CABA",
       "transport": "car-space",
-      "freeSpots": 2,
+      "freeSpots": 3,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "",
@@ -236,7 +236,7 @@
       "zoneLat": -34.6284548,
       "zoneLon": -58.3647655,
       "zoneRegion": "CABA",
-      "transport": "pending",
+      "transport": "car-space",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
@@ -403,7 +403,7 @@
         "g16",
         "g15"
       ],
-      "assignmentDone": true,
+      "assignmentDone": false,
       "assignedDriverName": "",
       "notes": "Puede llevar a Marisol, Omar y Walter, y todavía le quedaría un lugar libre en Paternal.",
       "zoneKind": "zone"
@@ -439,7 +439,7 @@
           "isChild": false
         }
       ],
-      "confirmed": "pending",
+      "confirmed": "yes",
       "zone": "Ramos Mejía, Provincia de Buenos Aires",
       "zoneLat": -34.639,
       "zoneLon": -58.563,
@@ -501,16 +501,16 @@
       ],
       "confirmed": "yes",
       "zone": "718 Milán, Villa Santa Rosa",
-      "zoneLat": null,
-      "zoneLon": null,
-      "zoneRegion": null,
+      "zoneLat": -34.825644,
+      "zoneLon": -58.2793142,
+      "zoneRegion": "PBA",
       "transport": "car-no-space",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "",
       "notes": "Vienen con auto lleno.",
-      "zoneKind": null
+      "zoneKind": "zone"
     },
     {
       "id": "g19",
@@ -609,16 +609,16 @@
       ],
       "confirmed": "yes",
       "zone": "5732 Río de Janeiro, San Atilio, José C. Paz",
-      "zoneLat": null,
-      "zoneLon": null,
-      "zoneRegion": null,
+      "zoneLat": -34.5085069,
+      "zoneLon": -58.8166622,
+      "zoneRegion": "PBA",
       "transport": "public",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "",
       "notes": "Viajan en transporte público.",
-      "zoneKind": null
+      "zoneKind": "zone"
     },
     {
       "id": "g23",
@@ -750,21 +750,21 @@
         },
         {
           "name": "Martín",
-          "isChild": false
+          "isChild": true
         }
       ],
       "confirmed": "pending",
       "zone": "1821 Levalle, William C. Morris",
-      "zoneLat": null,
-      "zoneLon": null,
-      "zoneRegion": null,
+      "zoneLat": -34.5791243,
+      "zoneLon": -58.659434,
+      "zoneRegion": "PBA",
       "transport": "needs-ride",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "",
       "notes": "No trabajan ese día; quedó en confirmar.",
-      "zoneKind": null
+      "zoneKind": "zone"
     },
     {
       "id": "g28",
@@ -789,16 +789,16 @@
       ],
       "confirmed": "yes",
       "zone": "1990 Ushuaia, La Reja Centro",
-      "zoneLat": null,
-      "zoneLon": null,
-      "zoneRegion": null,
-      "transport": "host",
+      "zoneLat": -34.6493843,
+      "zoneLon": -58.8472878,
+      "zoneRegion": "PBA",
+      "transport": "car-no-space",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,
       "assignedDriverName": "",
       "notes": "Dueños de la casa donde es el festejo. No necesitan transporte.",
-      "zoneKind": null
+      "zoneKind": "address"
     },
     {
       "id": "g29",
@@ -1285,9 +1285,17 @@
       "kind": "zone"
     },
     {
-      "name": "Ushuaia, La Reja Centro",
+      "name": "1990 Ushuaia, La Reja Centro",
       "lat": -34.6493843,
       "lon": -58.8472878,
+      "region": "PBA",
+      "isDestination": true,
+      "kind": "address"
+    },
+    {
+      "name": "1821 Levalle, William C. Morris",
+      "lat": -34.5791243,
+      "lon": -58.659434,
       "region": "PBA",
       "kind": "zone"
     }

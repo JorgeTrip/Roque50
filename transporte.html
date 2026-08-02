@@ -262,7 +262,7 @@
 <script>
 /* ---------- Datos iniciales ---------- */
 const ZONE_DEFAULTS = [
-  {name:"La Reja, Moreno, Provincia de Buenos Aires",lat:-34.6180,lon:-58.8830,region:"PBA",isDestination:true,kind:"zone"},
+  {name:"Ushuaia 1990, La Reja, Moreno, Provincia de Buenos Aires",lat:-34.649384,lon:-58.847288,region:"PBA",isDestination:true,kind:"address"},
   {name:"Villa Urquiza, CABA",lat:-34.5719,lon:-58.4903,region:"CABA",kind:"zone"},
   {name:"Balvanera, CABA",lat:-34.6083,lon:-58.4020,region:"CABA",kind:"zone"},
   {name:"La Boca, CABA",lat:-34.6345,lon:-58.3631,region:"CABA",kind:"zone"},
@@ -1255,7 +1255,7 @@ function refreshMapMarkers(){
   if(!leafletMap) return;
   mapMarkers.forEach(m=>leafletMap.removeLayer(m));
   mapMarkers = [];
-  guests.filter(g=>g.zoneLat && g.zoneLon && g.zoneKind === "address").forEach(g=>{
+  guests.filter(g=>g.zoneLat != null && g.zoneLon != null).forEach(g=>{
     const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
     const marker = L.circleMarker([g.zoneLat, g.zoneLon], {radius:8, color:color, fillColor:color, fillOpacity:0.85, weight:1.5});
     marker.bindPopup(`<b>${escHtml(g.names)}</b><br>${escHtml(g.zone)}`);
@@ -1264,7 +1264,7 @@ function refreshMapMarkers(){
   });
   const dest = zoneOptions.find(z=>z.isDestination);
   if(dest){
-    const m = L.marker([dest.lat, dest.lon]).bindPopup("🎉 Destino: fiesta en La Reja");
+    const m = L.marker([dest.lat, dest.lon]).bindPopup(`🎉 Destino: fiesta en La Reja<br><b>${escHtml(dest.name)}</b>`);
     m.addTo(leafletMap);
     mapMarkers.push(m);
   }

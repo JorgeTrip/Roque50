@@ -850,6 +850,20 @@ function confirmedOptionsHtml(g){
   return Object.entries(CONFIRMED_LABELS).map(([k,v])=>`<option value="${k}" ${g.confirmed===k?"selected":""}>${v}</option>`).join("");
 }
 
+function getTransportEmoji(g){
+  if(g.special) return "👑";
+  if(g.confirmed === "no") return "🚫";
+  if(g.transport === "car-space"){
+    return g.assignmentDone ? "🚘✅" : "🚘";
+  }
+  if(g.transport === "car-no-space") return "🚗";
+  if(g.transport === "needs-ride") return "🙋‍♂️";
+  if(g.transport === "ride-assigned") return "🚗🤝";
+  if(g.transport === "public") return "🚌";
+  if(g.transport === "host") return "🏡";
+  return "❓";
+}
+
 function buildDriverPanel(g){
   const candidates = passengerCandidates(g.id).slice().sort((a,b)=>{
     const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
@@ -857,11 +871,11 @@ function buildDriverPanel(g){
     return da-db;
   });
   const passengerRows = candidates.map(c=>`
-    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
+    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${getTransportEmoji(c)} ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
   `).join("") || `<span style="color:var(--muted)">No hay invitados pendientes de transporte para asignar por ahora.</span>`;
   const alreadyAssignedNotInList = g.assignedPassengers.map(id=>guests.find(x=>x.id===id)).filter(p=>p && !candidates.includes(p));
   const alreadyRows = alreadyAssignedNotInList.map(c=>`
-    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${escHtml(c.names)}</label>
+    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${getTransportEmoji(c)} ${escHtml(c.names)}</label>
   `).join("");
   return `
     <div class="sub-panel driver">
@@ -884,7 +898,7 @@ function renderSpecialCard(g){
   return `
     <div class="card special" data-id="${g.id}">
       <div class="card-top">
-        <div class="card-title">🚗 ${escHtml(g.names)} <span class="badge badge-special">⭐ No son invitados — tienen auto</span></div>
+        <div class="card-title">👑 ${escHtml(g.names)} <span class="badge badge-special">⭐ No son invitados — tienen auto</span></div>
       </div>
       <div class="grid-fields">
         <div class="field zone-field">
@@ -958,7 +972,7 @@ function renderCard(g){
   return `
     <div class="${cls}" data-id="${g.id}">
       <div class="card-top">
-        <div class="card-title">${escHtml(g.names)} ${badges}</div>
+        <div class="card-title">${getTransportEmoji(g)} ${escHtml(g.names)} ${badges}</div>
         <button class="small-btn" data-action="delete" data-id="${g.id}" title="Eliminar">🗑️</button>
       </div>
       <div class="grid-fields">

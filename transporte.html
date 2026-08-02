@@ -226,38 +226,42 @@
   .driver-tag{font-size:0.78rem;color:var(--green);font-weight:600;margin-top:6px;}
   .empty-msg{text-align:center;padding:30px;color:var(--muted);font-size:0.9rem;}
   .chips-scroll{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-  .chips-scroll::-webkit-scrollbar{display:none;}
-
-  /* ---------- Optimización Móvil (Mobile-First UX) ---------- */
+  .chips-scroll::-webkit-scrollbar{display:none;}  /* ---------- Optimización Móvil (Mobile-First UX) ---------- */
   @media (max-width:600px){
-    header{padding:20px 14px 18px;}
-    header h1{font-size:1.25rem;}
-    header p{font-size:0.82rem;}
+    header{padding:22px 16px 18px;}
+    header h1{font-size:1.45rem;}
+    header p{font-size:0.92rem;}
     .wrap{padding:12px 10px 0;}
-    .progress-card{padding:14px 14px;margin-top:-20px;}
-    .progress-top strong{font-size:0.95rem;}
-    .progress-pct{font-size:1.2rem;}
+    .progress-card{padding:16px;margin-top:-20px;}
+    .progress-top strong{font-size:1.05rem;}
+    .progress-pct{font-size:1.35rem;}
+    .progress-detail{font-size:0.85rem;}
     .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
     .kpi-card{padding:12px 10px;}
-    .kpi-num{font-size:1.35rem;}
-    .kpi-label{font-size:0.70rem;}
+    .kpi-num{font-size:1.55rem;}
+    .kpi-label{font-size:0.82rem;font-weight:500;}
 
     .toolbar{gap:6px;}
     .toolbar input[type=text]{font-size:16px;padding:10px 12px;width:100%;}
-    .chips-scroll{width:100%;padding-bottom:4px;}
-    .chip{padding:8px 14px;font-size:0.82rem;min-height:38px;display:inline-flex;align-items:center;}
-    .small-btn{padding:9px 12px;font-size:0.82rem;min-height:40px;display:inline-flex;align-items:center;justify-content:center;}
+    .small-btn{padding:9px 12px;font-size:0.9rem;min-height:42px;display:inline-flex;align-items:center;justify-content:center;}
 
-    /* Evitar auto-zoom molesto en iOS Safari */
+    /* Evitar auto-zoom molesto en iOS Safari y mejorar legibilidad */
     select,input[type=number],input[type=text],textarea{
       font-size:16px !important;
-      padding:9px 10px;
+      padding:10px 12px;
     }
 
-    .card{padding:12px;}
-    .card-title{font-size:0.95rem;}
-    .grid-fields{grid-template-columns:1fr;gap:8px;}
-    #mapEl{height:270px;}
+    .card{padding:14px 12px;}
+    .card-title{font-size:1.08rem;}
+    .field label{font-size:0.78rem;}
+    .badge{font-size:0.75rem;padding:3px 9px;}
+    .sub-panel{font-size:0.9rem;}
+    .passenger-list label{font-size:0.9rem;}
+    .child-toggle{font-size:0.88rem;}
+    .menu-item{font-size:0.95rem;padding:12px 14px;}
+    .grid-fields{grid-template-columns:1fr;gap:10px;}
+    #mapEl{height:280px;}
+  }}
     .passenger-list label{min-height:36px;padding:3px 0;}
     .passenger-list input[type=checkbox]{width:18px;height:18px;}
     .person-row{gap:6px;}
@@ -268,8 +272,8 @@
 <body>
 
 <header>
-  <h1>🚗 Transporte — Cumple 50 de Roque</h1>
-  <p>La Reja · organizá invitaciones, confirmaciones y viajes compartidos</p>
+  <h1 id="headerTitle">🚗 Transporte — Cumple 50 de Roque</h1>
+  <p id="headerSubtitle">La Reja · organizá invitaciones, confirmaciones y viajes compartidos</p>
 </header>
 
 <div class="wrap">
@@ -302,9 +306,13 @@
   </div>
 
   <div class="settings-panel" id="settingsPanel">
-    <h3>📍 Destino del Evento</h3>
+    <h3>🎉 Configuración del Evento</h3>
     <div class="settings-grid" style="margin-bottom:18px;">
-      <div class="field zone-field" style="grid-column: 1 / -1;">
+      <div class="field">
+        <label>Nombre del evento</label>
+        <input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque" autocomplete="off">
+      </div>
+      <div class="field zone-field">
         <label>Dirección o nombre del lugar de la fiesta</label>
         <input type="text" class="zone-input" id="destInput" placeholder="Buscar o ingresar dirección del destino..." autocomplete="off">
       </div>
@@ -1366,15 +1374,48 @@ document.getElementById("reloadServerBtn").addEventListener("click", async ()=>{
 });
 
 /* ---------- Configuración de distancias y destino ---------- */
+function updateHeaderDynamic(){
+  const name = (settings && settings.eventName) ? settings.eventName : "Cumple 50 de Roque";
+  document.title = `Transporte — ${name}`;
+  const headerTitle = document.getElementById("headerTitle");
+  if(headerTitle) headerTitle.textContent = `🚗 Transporte — ${name}`;
+
+  let loc = "";
+  if(destination && destination.name){
+    const parts = destination.name.split(",").map(s=>s.trim()).filter(Boolean);
+    if(parts.length > 1){
+      loc = parts[1];
+    } else if(parts.length === 1){
+      loc = parts[0];
+    }
+  }
+  if(!loc) loc = "La Reja";
+
+  const headerSub = document.getElementById("headerSubtitle");
+  if(headerSub) headerSub.textContent = `${loc} · organizá invitaciones, confirmaciones y viajes compartidos`;
+}
+
 function syncSettingsInputs(){
   document.getElementById("radiusCaba").value = settings.caba;
   document.getElementById("radiusPba").value = settings.pba;
+  const evInp = document.getElementById("eventNameInput");
+  if(evInp) evInp.value = (settings && settings.eventName) ? settings.eventName : "Cumple 50 de Roque";
   const destInp = document.getElementById("destInput");
   if(destInp) destInp.value = destination.name || "";
+  updateHeaderDynamic();
 }
 document.getElementById("settingsToggleBtn").addEventListener("click", ()=>{
   document.getElementById("settingsPanel").classList.toggle("open");
 });
+const evInp = document.getElementById("eventNameInput");
+if(evInp){
+  evInp.addEventListener("input", async (e)=>{
+    if(!settings) settings = {};
+    settings.eventName = e.target.value;
+    await saveSettings();
+    updateHeaderDynamic();
+  });
+}
 document.getElementById("radiusCaba").addEventListener("change", async (e)=>{
   settings.caba = parseFloat(e.target.value)||0; await saveSettings(); render();
 });
@@ -1402,6 +1443,7 @@ if(destInp){
           }
         }
         await saveDestination();
+        updateHeaderDynamic();
         if(mapInitialized) refreshMapMarkers();
       }
     }, 250);

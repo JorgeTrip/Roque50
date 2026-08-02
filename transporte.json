@@ -1,0 +1,1299 @@
+{
+  "guests": [
+    {
+      "id": "special1",
+      "names": "Roque y Jorge (nosotros)",
+      "people": [
+        {
+          "name": "Roque",
+          "isChild": false
+        },
+        {
+          "name": "Jorge",
+          "isChild": false
+        }
+      ],
+      "personas": 2,
+      "confirmed": "yes",
+      "zone": "2145 México, Balvanera, Buenos Aires",
+      "zoneLat": -34.6159837,
+      "zoneLon": -58.3968662,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 2,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Salimos temprano hacia La Reja. Podemos llevar hasta 2 personas que quieran viajar antes.",
+      "special": true,
+      "zoneKind": "address"
+    },
+    {
+      "id": "g1",
+      "names": "Matías, Yuly y Briana",
+      "people": [
+        {
+          "name": "Matías",
+          "isChild": false
+        },
+        {
+          "name": "Yuly",
+          "isChild": false
+        },
+        {
+          "name": "Briana",
+          "isChild": true
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "1536 La Fronda, Villa General Mitre, Buenos Aires",
+      "zoneLat": -34.6123261,
+      "zoneLon": -58.4679815,
+      "zoneRegion": "CABA",
+      "transport": "car-no-space",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Van con auto, pero probablemente sumen a la familia de Yuly y el auto quede lleno.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g2",
+      "names": "Julia, Fernando, Melisa, Santino, Mirko",
+      "people": [
+        {
+          "name": "Julia",
+          "isChild": false
+        },
+        {
+          "name": "Fernando",
+          "isChild": false
+        },
+        {
+          "name": "Melisa",
+          "isChild": false
+        },
+        {
+          "name": "Santino",
+          "isChild": true
+        },
+        {
+          "name": "Mirko",
+          "isChild": true
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "3082 Melincué, Villa del Parque, Buenos Aires",
+      "zoneLat": -34.6020147,
+      "zoneLon": -58.4924632,
+      "zoneRegion": "CABA",
+      "transport": "ride-assigned",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "Matías, Yuly y Briana",
+      "notes": "Probablemente viajen con Matías, Yuly y Briana (auto lleno).",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g3",
+      "names": "Leo y Fabián",
+      "people": [
+        {
+          "name": "Leo",
+          "isChild": false
+        },
+        {
+          "name": "Fabián",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "4249 Tomás Alberto Le Breton, Villa Urquiza, Buenos Aires",
+      "zoneLat": -34.5653361,
+      "zoneLon": -58.4811158,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Tienen auto; falta confirmar si van con lugar disponible.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g4",
+      "names": "Arturo",
+      "people": [
+        {
+          "name": "Arturo",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "280 Larrea, Balvanera, Buenos Aires",
+      "zoneLat": -34.6065589,
+      "zoneLon": -58.4020993,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Necesita que lo lleven desde Balvanera.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g5",
+      "names": "José",
+      "people": [
+        {
+          "name": "José",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "Av. Pedro Goyena 1231, CABA",
+      "zoneLat": -34.624773,
+      "zoneLon": -58.441857,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g6",
+      "names": "Gabriel",
+      "people": [
+        {
+          "name": "Gabriel",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "Av. Boedo 347, Boedo, Buenos Aires",
+      "zoneLat": -34.621067,
+      "zoneLon": -58.411652,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Vio el mensaje; probablemente no venga.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g7",
+      "names": "Sole, Ger y Ema",
+      "people": [
+        {
+          "name": "Sole",
+          "isChild": false
+        },
+        {
+          "name": "Ger",
+          "isChild": false
+        },
+        {
+          "name": "Ema",
+          "isChild": true
+        }
+      ],
+      "confirmed": "tentative",
+      "zone": "Av. Rivadavia 19485, Castelar, Pcia. de Buenos Aire",
+      "zoneLat": -34.654062,
+      "zoneLon": -58.647035,
+      "zoneRegion": "PBA",
+      "transport": "car-space",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Confirma más adelante según el clima (el festejo es al aire libre).",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g8",
+      "names": "Daniela y Ariel",
+      "people": [
+        {
+          "name": "Daniela",
+          "isChild": false
+        },
+        {
+          "name": "Ariel",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "321 Necochea, La Boca, Buenos Aires",
+      "zoneLat": -34.6284548,
+      "zoneLon": -58.3647655,
+      "zoneRegion": "CABA",
+      "transport": "pending",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Tienen auto; falta confirmar si van con lugar disponible.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g9",
+      "names": "Glenda, Gabriel y Lautaro",
+      "people": [
+        {
+          "name": "Glenda",
+          "isChild": false
+        },
+        {
+          "name": "Gabriel",
+          "isChild": false
+        },
+        {
+          "name": "Lautaro",
+          "isChild": true
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "2145 México, Balvanera, Buenos Aires",
+      "zoneLat": -34.6159837,
+      "zoneLon": -58.3968662,
+      "zoneRegion": "CABA",
+      "transport": "pending",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Tienen auto; falta confirmar si van con lugar disponible.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g10",
+      "names": "Pablo y Fernando",
+      "people": [
+        {
+          "name": "Pablo",
+          "isChild": false
+        },
+        {
+          "name": "Fernando",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "223 Avenida Entre Ríos, Balvanera, Buenos Aires",
+      "zoneLat": -34.6118255,
+      "zoneLon": -58.3919264,
+      "zoneRegion": "CABA",
+      "transport": "ride-assigned",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "Viviana y Silvio",
+      "notes": "No tienen auto y les queda lejos. Viviana y Silvio finalmente los llevan.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g11",
+      "names": "Micaela y Tiziano",
+      "people": [
+        {
+          "name": "Micaela",
+          "isChild": false
+        },
+        {
+          "name": "Tiziano",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "3368 Falucho, Tortuguitas",
+      "zoneLat": -34.4742,
+      "zoneLon": -58.7562,
+      "zoneRegion": "PBA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Vienen en transporte público.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g12",
+      "names": "Adrián y Marcela",
+      "people": [
+        {
+          "name": "Adrián",
+          "isChild": false
+        },
+        {
+          "name": "Marcela",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "pending",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "",
+      "zoneKind": null
+    },
+    {
+      "id": "g13",
+      "names": "Mariela, Mathias y Benjamín",
+      "people": [
+        {
+          "name": "Mariela",
+          "isChild": false
+        },
+        {
+          "name": "Mathias",
+          "isChild": true
+        },
+        {
+          "name": "Benjamín",
+          "isChild": true
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "1135 Pichincha, San Cristóbal, Buenos Aires",
+      "zoneLat": -34.6223685,
+      "zoneLon": -58.3981482,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 2,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Auto con 2 lugares libres en Balvanera, disponibles para otros invitados de la zona.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g14",
+      "names": "Fernanda",
+      "people": [
+        {
+          "name": "Fernanda",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "Paternal, CABA",
+      "zoneLat": -34.5975,
+      "zoneLon": -58.4703,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 4,
+      "assignedPassengers": [
+        "g19",
+        "g16",
+        "g15"
+      ],
+      "assignmentDone": true,
+      "assignedDriverName": "",
+      "notes": "Puede llevar a Marisol, Omar y Walter, y todavía le quedaría un lugar libre en Paternal.",
+      "zoneKind": "zone"
+    },
+    {
+      "id": "g15",
+      "names": "Omar",
+      "people": [
+        {
+          "name": "Omar",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "ride-assigned",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "Fernanda",
+      "notes": "Viaja en transporte público. Alternativa: podría ir con Fernanda si prefiere auto.",
+      "zoneKind": null
+    },
+    {
+      "id": "g16",
+      "names": "Walter",
+      "people": [
+        {
+          "name": "Walter",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "Ramos Mejía, Provincia de Buenos Aires",
+      "zoneLat": -34.639,
+      "zoneLon": -58.563,
+      "zoneRegion": "PBA",
+      "transport": "ride-assigned",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "Fernanda",
+      "notes": "Vio el mensaje pero no respondió. Posible pasajero con Fernanda si confirma y define zona.",
+      "zoneKind": "zone"
+    },
+    {
+      "id": "g17",
+      "names": "Ana y Pablo",
+      "people": [
+        {
+          "name": "Ana",
+          "isChild": false
+        },
+        {
+          "name": "Pablo",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "45 Azara, Barracas, Buenos Aires",
+      "zoneLat": -34.6323809,
+      "zoneLon": -58.3726779,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Quedó en confirmar.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g18",
+      "names": "Pato, Rodrigo, Joaquín y Cristina",
+      "people": [
+        {
+          "name": "Pato",
+          "isChild": false
+        },
+        {
+          "name": "Rodrigo",
+          "isChild": false
+        },
+        {
+          "name": "Joaquín",
+          "isChild": false
+        },
+        {
+          "name": "Cristina",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "718 Milán, Villa Santa Rosa",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "car-no-space",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Vienen con auto lleno.",
+      "zoneKind": null
+    },
+    {
+      "id": "g19",
+      "names": "Marisol (de Coto)",
+      "people": [
+        {
+          "name": "Marisol",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "Paternal, CABA",
+      "zoneLat": -34.5975,
+      "zoneLon": -58.4703,
+      "zoneRegion": "CABA",
+      "transport": "ride-assigned",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "Fernanda",
+      "notes": "La lleva Fernanda desde Paternal.",
+      "zoneKind": "zone"
+    },
+    {
+      "id": "g20",
+      "names": "Julieta y su novio",
+      "people": [
+        {
+          "name": "Julieta",
+          "isChild": false
+        },
+        {
+          "name": "su novio",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "Berazategui, Berazategui",
+      "zoneLat": -34.7632677,
+      "zoneLon": -58.2116604,
+      "zoneRegion": "PBA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Quedó en hablar con el novio y confirmar.",
+      "zoneKind": "zone"
+    },
+    {
+      "id": "g21",
+      "names": "Liliana y Jazmín",
+      "people": [
+        {
+          "name": "Liliana",
+          "isChild": false
+        },
+        {
+          "name": "Jazmín",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "3765 Nicolás Granada, Castelar",
+      "zoneLat": -34.6659834,
+      "zoneLon": -58.6606385,
+      "zoneRegion": "PBA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Creen que tienen auto; falta confirmar modo y disponibilidad.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g22",
+      "names": "Yanina, David, Sahira y Anias",
+      "people": [
+        {
+          "name": "Yanina",
+          "isChild": false
+        },
+        {
+          "name": "David",
+          "isChild": false
+        },
+        {
+          "name": "Sahira",
+          "isChild": false
+        },
+        {
+          "name": "Anias",
+          "isChild": true
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "5732 Río de Janeiro, San Atilio, José C. Paz",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "public",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Viajan en transporte público.",
+      "zoneKind": null
+    },
+    {
+      "id": "g23",
+      "names": "Romina, Constanza, Mariana y Camila",
+      "people": [
+        {
+          "name": "Romina",
+          "isChild": false
+        },
+        {
+          "name": "Constanza",
+          "isChild": false
+        },
+        {
+          "name": "Mariana",
+          "isChild": false
+        },
+        {
+          "name": "Camila",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "372 Julián Baltasar Álvarez, Villa Crespo, Buenos Aires",
+      "zoneLat": -34.600917,
+      "zoneLon": -58.4367062,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g24",
+      "names": "Fanny, Patricio y Susana",
+      "people": [
+        {
+          "name": "Fanny",
+          "isChild": false
+        },
+        {
+          "name": "Patricio",
+          "isChild": false
+        },
+        {
+          "name": "Susana",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "3870 Zarraga, Villa Ortúzar, Buenos Aires",
+      "zoneLat": -34.5781224,
+      "zoneLon": -58.4658688,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 3,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g25",
+      "names": "Andrés, Emilia y Benjamín",
+      "people": [
+        {
+          "name": "Andrés",
+          "isChild": false
+        },
+        {
+          "name": "Emilia",
+          "isChild": false
+        },
+        {
+          "name": "Benjamín",
+          "isChild": true
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "2870 Francisco Bauzá, Villa Real, Buenos Aires",
+      "zoneLat": -34.6154284,
+      "zoneLon": -58.5288275,
+      "zoneRegion": "CABA",
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Quedó en confirmar.",
+      "zoneKind": "address"
+    },
+    {
+      "id": "g26",
+      "names": "Cinthia",
+      "people": [
+        {
+          "name": "Cinthia",
+          "isChild": false
+        }
+      ],
+      "confirmed": "no",
+      "zone": "",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "not-coming",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "No viene.",
+      "zoneKind": null
+    },
+    {
+      "id": "g27",
+      "names": "Carolina, Diego y Martín",
+      "people": [
+        {
+          "name": "Carolina",
+          "isChild": false
+        },
+        {
+          "name": "Diego",
+          "isChild": false
+        },
+        {
+          "name": "Martín",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "1821 Levalle, William C. Morris",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "needs-ride",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "No trabajan ese día; quedó en confirmar.",
+      "zoneKind": null
+    },
+    {
+      "id": "g28",
+      "names": "Adriana, Hugo y los mellis",
+      "people": [
+        {
+          "name": "Adriana",
+          "isChild": false
+        },
+        {
+          "name": "Hugo",
+          "isChild": false
+        },
+        {
+          "name": "Guadalupe",
+          "isChild": true
+        },
+        {
+          "name": "Franco",
+          "isChild": true
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "1990 Ushuaia, La Reja Centro",
+      "zoneLat": null,
+      "zoneLon": null,
+      "zoneRegion": null,
+      "transport": "host",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "Dueños de la casa donde es el festejo. No necesitan transporte.",
+      "zoneKind": null
+    },
+    {
+      "id": "g29",
+      "names": "Sergio y Antonella",
+      "people": [
+        {
+          "name": "Sergio",
+          "isChild": false
+        },
+        {
+          "name": "Antonella",
+          "isChild": false
+        }
+      ],
+      "confirmed": "pending",
+      "zone": "Ingeniero Maschwitz, Ingeniero Maschwitz",
+      "zoneLat": -34.3891302,
+      "zoneLon": -58.7378956,
+      "zoneRegion": "PBA",
+      "transport": "car-space",
+      "freeSpots": 0,
+      "assignedPassengers": [],
+      "assignmentDone": false,
+      "assignedDriverName": "",
+      "notes": "",
+      "zoneKind": "zone"
+    },
+    {
+      "id": "g30",
+      "names": "Viviana, Silvio",
+      "people": [
+        {
+          "name": "Viviana",
+          "isChild": false
+        },
+        {
+          "name": "Silvio",
+          "isChild": false
+        }
+      ],
+      "confirmed": "yes",
+      "zone": "Balvanera, CABA",
+      "zoneLat": -34.6083,
+      "zoneLon": -58.402,
+      "zoneRegion": "CABA",
+      "transport": "car-space",
+      "freeSpots": 2,
+      "assignedPassengers": [
+        "g10"
+      ],
+      "assignmentDone": true,
+      "assignedDriverName": "",
+      "notes": "Tienen auto y finalmente pueden llevar a Pablo y Fernando.",
+      "zoneKind": "zone"
+    }
+  ],
+  "zoneOptions": [
+    {
+      "name": "La Reja, Moreno, Provincia de Buenos Aires",
+      "lat": -34.618,
+      "lon": -58.883,
+      "region": "PBA",
+      "isDestination": true,
+      "kind": "zone"
+    },
+    {
+      "name": "Villa Urquiza, CABA",
+      "lat": -34.5719,
+      "lon": -58.4903,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Balvanera, CABA",
+      "lat": -34.6083,
+      "lon": -58.402,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "La Boca, CABA",
+      "lat": -34.6345,
+      "lon": -58.3631,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Paternal, CABA",
+      "lat": -34.5975,
+      "lon": -58.4703,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Almagro, CABA",
+      "lat": -34.6083,
+      "lon": -58.4205,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Belgrano, CABA",
+      "lat": -34.5627,
+      "lon": -58.457,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Caballito, CABA",
+      "lat": -34.6187,
+      "lon": -58.4406,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Flores, CABA",
+      "lat": -34.628,
+      "lon": -58.4633,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Palermo, CABA",
+      "lat": -34.5875,
+      "lon": -58.4306,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Recoleta, CABA",
+      "lat": -34.5875,
+      "lon": -58.3931,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Núñez, CABA",
+      "lat": -34.5453,
+      "lon": -58.4637,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Villa Devoto, CABA",
+      "lat": -34.5978,
+      "lon": -58.5219,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Villa del Parque, CABA",
+      "lat": -34.6031,
+      "lon": -58.4919,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Mataderos, CABA",
+      "lat": -34.6572,
+      "lon": -58.5133,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Liniers, CABA",
+      "lat": -34.6428,
+      "lon": -58.525,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "San Telmo, CABA",
+      "lat": -34.6212,
+      "lon": -58.3731,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Boedo, CABA",
+      "lat": -34.6295,
+      "lon": -58.4177,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Floresta, CABA",
+      "lat": -34.628,
+      "lon": -58.483,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Once, CABA",
+      "lat": -34.6083,
+      "lon": -58.4083,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Constitución, CABA",
+      "lat": -34.627,
+      "lon": -58.381,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Barracas, CABA",
+      "lat": -34.642,
+      "lon": -58.381,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Chacarita, CABA",
+      "lat": -34.585,
+      "lon": -58.453,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Colegiales, CABA",
+      "lat": -34.574,
+      "lon": -58.449,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Saavedra, CABA",
+      "lat": -34.554,
+      "lon": -58.488,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Villa Pueyrredón, CABA",
+      "lat": -34.585,
+      "lon": -58.503,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Villa Luro, CABA",
+      "lat": -34.639,
+      "lon": -58.501,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Monte Castro, CABA",
+      "lat": -34.618,
+      "lon": -58.51,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Parque Patricios, CABA",
+      "lat": -34.639,
+      "lon": -58.403,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Villa Lugano, CABA",
+      "lat": -34.679,
+      "lon": -58.472,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Nueva Pompeya, CABA",
+      "lat": -34.652,
+      "lon": -58.418,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "Moreno, Provincia de Buenos Aires",
+      "lat": -34.652,
+      "lon": -58.79,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Merlo, Provincia de Buenos Aires",
+      "lat": -34.665,
+      "lon": -58.728,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Morón, Provincia de Buenos Aires",
+      "lat": -34.6534,
+      "lon": -58.6198,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "San Justo, Provincia de Buenos Aires",
+      "lat": -34.6836,
+      "lon": -58.5631,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Ituzaingó, Provincia de Buenos Aires",
+      "lat": -34.66,
+      "lon": -58.669,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Castelar, Provincia de Buenos Aires",
+      "lat": -34.65,
+      "lon": -58.645,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Ramos Mejía, Provincia de Buenos Aires",
+      "lat": -34.639,
+      "lon": -58.563,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Haedo, Provincia de Buenos Aires",
+      "lat": -34.642,
+      "lon": -58.59,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Ciudadela, Provincia de Buenos Aires",
+      "lat": -34.636,
+      "lon": -58.539,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "San Antonio de Padua, Provincia de Buenos Aires",
+      "lat": -34.658,
+      "lon": -58.768,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "3082 Melincué, Villa del Parque, Buenos Aires",
+      "lat": -34.6020147,
+      "lon": -58.4924632,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "4249 Tomás Alberto Le Breton, Villa Urquiza, Buenos Aires",
+      "lat": -34.5653361,
+      "lon": -58.4811158,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "280 Larrea, Balvanera, Buenos Aires",
+      "lat": -34.6065589,
+      "lon": -58.4020993,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "Avenida Boedo, Boedo, Buenos Aires",
+      "lat": -34.6337258,
+      "lon": -58.4160726,
+      "region": "CABA",
+      "kind": "zone"
+    },
+    {
+      "name": "321 Necochea, La Boca, Buenos Aires",
+      "lat": -34.6284548,
+      "lon": -58.3647655,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "2145 México, Balvanera, Buenos Aires",
+      "lat": -34.6159837,
+      "lon": -58.3968662,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "1135 Pichincha, San Cristóbal, Buenos Aires",
+      "lat": -34.6223685,
+      "lon": -58.3981482,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "45 Azara, Barracas, Buenos Aires",
+      "lat": -34.6323809,
+      "lon": -58.3726779,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "Berazategui, Berazategui",
+      "lat": -34.7632677,
+      "lon": -58.2116604,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "3765 Nicolás Granada, Castelar",
+      "lat": -34.6659834,
+      "lon": -58.6606385,
+      "region": "PBA",
+      "kind": "address"
+    },
+    {
+      "name": "372 Julián Baltasar Álvarez, Villa Crespo, Buenos Aires",
+      "lat": -34.600917,
+      "lon": -58.4367062,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "3870 Zarraga, Villa Ortúzar, Buenos Aires",
+      "lat": -34.5781224,
+      "lon": -58.4658688,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "2870 Francisco Bauzá, Villa Real, Buenos Aires",
+      "lat": -34.6154284,
+      "lon": -58.5288275,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "Levalle, William C. Morris",
+      "lat": -34.5791243,
+      "lon": -58.659434,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Ingeniero Maschwitz, Ingeniero Maschwitz",
+      "lat": -34.3891302,
+      "lon": -58.7378956,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "1536 La Fronda, Villa General Mitre, Buenos Aires",
+      "lat": -34.6123261,
+      "lon": -58.4679815,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "223 Avenida Entre Ríos, Balvanera, Buenos Aires",
+      "lat": -34.6118255,
+      "lon": -58.3919264,
+      "region": "CABA",
+      "kind": "address"
+    },
+    {
+      "name": "Falucho, Tortuguitas",
+      "lat": -34.4651089,
+      "lon": -58.7352137,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Milán, Villa Santa Rosa",
+      "lat": -34.825644,
+      "lon": -58.2793142,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Río de Janeiro, San Atilio, José C. Paz",
+      "lat": -34.5085069,
+      "lon": -58.8166622,
+      "region": "PBA",
+      "kind": "zone"
+    },
+    {
+      "name": "Ushuaia, La Reja Centro",
+      "lat": -34.6493843,
+      "lon": -58.8472878,
+      "region": "PBA",
+      "kind": "zone"
+    }
+  ],
+  "settings": {
+    "caba": 3,
+    "pba": 8
+  }
+}

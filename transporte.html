@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transporte — Cumple 50 de Roque</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{
+    --pink:#ff5fa2;
+    --purple:#a86ce0;
+    --purple-deep:#2a1b3d;
+    --gold:#e8b84b;
+    --bg:#140f1c;
+    --ink:#f2eef7;
+    --muted:#b3a4c2;
+    --green:#4fbf82;
+    --green-bg:rgba(79,191,130,0.12);
+    --gray-bg:rgba(255,255,255,0.04);
+    --gray-ink:#8f8397;
+    --warn:#ff9466;
+    --card-bg:#1d1528;
+    --card-bg-alt:#251b33;
+    --border:#3a2d4d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    padding-bottom:60px;
+  }
+  header{
+    background:linear-gradient(120deg,var(--purple-deep),#5c2a63 60%,#8a3a63);
+    color:#fff;
+    padding:28px 20px 22px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  header h1{margin:0 0 4px;font-size:1.5rem;letter-spacing:0.3px;}
+  header p{margin:0;opacity:0.85;font-size:0.9rem;}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 0;}
+  .progress-card{
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 20px;
+    margin-top:-28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    position:relative;z-index:2;
+  }
+  .progress-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .progress-top strong{font-size:1.05rem;}
+  .progress-pct{font-size:1.4rem;font-weight:700;color:var(--pink);}
+  .bar-outer{height:14px;background:#2a2035;border-radius:8px;overflow:hidden;}
+  .bar-inner{height:100%;background:linear-gradient(90deg,var(--gold),var(--pink));border-radius:8px;transition:width .3s ease;}
+  .progress-detail{font-size:0.78rem;color:var(--muted);margin-top:6px;}
+
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px;
+    margin-top:16px;
+  }
+  .kpi-card{
+    background:var(--card-bg-alt);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 14px;
+    text-align:left;
+    border-left:4px solid var(--purple);
+  }
+  .kpi-card.k-confirmed{border-left-color:var(--green);}
+  .kpi-card.k-pending{border-left-color:var(--gold);}
+  .kpi-card.k-notcoming{border-left-color:var(--gray-ink);}
+  .kpi-card.k-zone{border-left-color:var(--warn);}
+  .kpi-num{font-size:1.7rem;font-weight:700;line-height:1;}
+  .kpi-label{font-size:0.78rem;color:var(--muted);margin-top:6px;}
+
+  #storageWarning{display:none;background:#3a2a12;border:1px solid #7a5a1f;color:#f0c67a;padding:9px 14px;border-radius:8px;font-size:0.82rem;margin:16px 0 0;}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px;align-items:center;}
+  .toolbar input[type=text]{flex:1;min-width:160px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
+  .chip{border:1px solid var(--border);background:var(--card-bg-alt);padding:7px 13px;border-radius:20px;font-size:0.82rem;cursor:pointer;color:var(--muted);white-space:nowrap;}
+  .chip.active{background:var(--purple);color:#fff;border-color:var(--purple);}
+  .small-btn{border:1px solid var(--border);background:var(--card-bg-alt);padding:7px 12px;border-radius:8px;font-size:0.78rem;cursor:pointer;color:var(--muted);}
+  .small-btn:hover{border-color:var(--pink);color:var(--pink);}
+
+  .settings-panel, .map-panel{
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-top:12px;
+    display:none;
+  }
+  .settings-panel.open, .map-panel.open{display:block;}
+  .settings-panel h3, .map-panel h3{margin:0 0 10px;font-size:0.95rem;}
+  .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+  .settings-grid .field label{display:block;font-size:0.75rem;color:var(--muted);margin-bottom:4px;}
+  #mapEl{width:100%;height:380px;border-radius:10px;overflow:hidden;}
+  .map-note{font-size:0.75rem;color:var(--muted);margin-top:8px;}
+
+  .list{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+  .card.resolved{background:var(--green-bg);border-color:rgba(79,191,130,0.35);}
+  .card.notcoming{background:var(--gray-bg);border-color:var(--border);opacity:0.8;}
+  .card.special{background:rgba(232,184,75,0.10);border-color:var(--gold);}
+  .badge-special{background:var(--gold);color:#3a2a05;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .card-title{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .badge{font-size:0.68rem;padding:2px 8px;border-radius:12px;font-weight:600;white-space:nowrap;}
+  .badge-resolved{background:var(--green);color:#0e1a12;}
+  .badge-notcoming{background:#5a525f;color:#fff;}
+  .badge-zone-missing{background:rgba(255,148,102,0.15);color:var(--warn);border:1px solid rgba(255,148,102,0.4);}
+  .badge-invited{background:rgba(168,108,224,0.18);color:#c9a4f0;}
+
+  .grid-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px;}
+  .field label{display:block;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted);margin-bottom:3px;}
+  select,input[type=number],input[type=text],textarea{
+    width:100%;padding:7px 8px;border-radius:7px;border:1px solid var(--border);
+    font-size:0.85rem;background:var(--card-bg-alt);color:var(--ink);font-family:inherit;
+  }
+  select.missing,input.missing{border-color:var(--warn);background:rgba(255,148,102,0.06);}
+  textarea{resize:vertical;min-height:40px;}
+
+  .zone-field{position:relative;}
+  .zone-suggestions{
+    position:absolute;z-index:50;background:var(--card-bg-alt);border:1px solid var(--border);
+    border-radius:8px;margin-top:2px;max-height:240px;overflow-y:auto;box-shadow:0 10px 24px rgba(0,0,0,0.5);
+    width:100%;
+  }
+  .zone-suggestions .sugg-item{padding:8px 10px;font-size:0.83rem;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:8px;}
+  .zone-suggestions .sugg-item:last-child{border-bottom:none;}
+  .zone-suggestions .sugg-item:hover{background:rgba(168,108,224,0.15);}
+  .zone-suggestions .sugg-tag{font-size:0.68rem;color:var(--muted);white-space:nowrap;}
+  .zone-suggestions .sugg-custom{color:var(--gold);font-style:italic;}
+
+  .sub-panel{margin-top:10px;padding:10px 12px;background:var(--card-bg-alt);border:1px dashed var(--border);border-radius:8px;font-size:0.82rem;}
+  .sub-panel.driver{background:rgba(232,184,75,0.06);border-color:rgba(232,184,75,0.3);}
+  .passenger-list{display:flex;flex-direction:column;gap:5px;margin:6px 0;max-height:170px;overflow-y:auto;}
+  .passenger-list label{display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:400;color:var(--ink);}
+  .near-tag{color:var(--green);font-size:0.72rem;}
+  .far-tag{color:var(--muted);font-size:0.72rem;}
+  .assign-done{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.82rem;}
+  .people-panel{margin-top:12px;}
+  .people-list{display:flex;flex-direction:column;gap:6px;margin:6px 0;}
+  .person-row{display:flex;align-items:center;gap:8px;}
+  .person-row input[type=text]{flex:1;}
+  .child-toggle{display:flex;align-items:center;gap:4px;font-size:0.78rem;color:var(--muted);white-space:nowrap;text-transform:none;letter-spacing:0;}
+  .notes-field{margin-top:10px;}
+  .notes-field label{font-size:0.72rem;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+  .driver-tag{font-size:0.78rem;color:var(--green);font-weight:600;margin-top:6px;}
+  .empty-msg{text-align:center;padding:30px;color:var(--muted);font-size:0.9rem;}
+  .chips-scroll{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .chips-scroll::-webkit-scrollbar{display:none;}
+
+  /* ---------- Optimización Móvil (Mobile-First UX) ---------- */
+  @media (max-width:600px){
+    header{padding:20px 14px 18px;}
+    header h1{font-size:1.25rem;}
+    header p{font-size:0.82rem;}
+    .wrap{padding:12px 10px 0;}
+    .progress-card{padding:14px 14px;margin-top:-20px;}
+    .progress-top strong{font-size:0.95rem;}
+    .progress-pct{font-size:1.2rem;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+    .kpi-card{padding:12px 10px;}
+    .kpi-num{font-size:1.35rem;}
+    .kpi-label{font-size:0.70rem;}
+
+    .toolbar{gap:6px;}
+    .toolbar input[type=text]{font-size:16px;padding:10px 12px;width:100%;}
+    .chips-scroll{width:100%;padding-bottom:4px;}
+    .chip{padding:8px 14px;font-size:0.82rem;min-height:38px;display:inline-flex;align-items:center;}
+    .small-btn{padding:9px 12px;font-size:0.82rem;min-height:40px;display:inline-flex;align-items:center;justify-content:center;}
+
+    /* Evitar auto-zoom molesto en iOS Safari */
+    select,input[type=number],input[type=text],textarea{
+      font-size:16px !important;
+      padding:9px 10px;
+    }
+
+    .card{padding:12px;}
+    .card-title{font-size:0.95rem;}
+    .grid-fields{grid-template-columns:1fr;gap:8px;}
+    #mapEl{height:270px;}
+    .passenger-list label{min-height:36px;padding:3px 0;}
+    .passenger-list input[type=checkbox]{width:18px;height:18px;}
+    .person-row{gap:6px;}
+    .child-toggle{font-size:0.75rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚗 Transporte — Cumple 50 de Roque</h1>
+  <p>La Reja · organizá invitaciones, confirmaciones y viajes compartidos</p>
+</header>
+
+<div class="wrap">
+  <div class="progress-card">
+    <div class="progress-top">
+      <strong>Transporte resuelto</strong>
+      <span class="progress-pct" id="pctText">0%</span>
+    </div>
+    <div class="bar-outer"><div class="bar-inner" id="barInner" style="width:0%"></div></div>
+    <div class="progress-detail" id="progressDetail"></div>
+    <div class="kpi-grid" id="kpiGrid"></div>
+  </div>
+
+  <div id="storageWarning">⚠️ No se pudo guardar automáticamente en este entorno. Usá "Exportar" seguido para no perder tus cambios, y "Importar" la próxima vez que abras la app.</div>
+
+  <div class="toolbar">
+    <input type="text" id="searchBox" placeholder="Buscar invitado...">
+    <div class="chips-scroll">
+      <button class="chip active" data-filter="all">Todos</button>
+      <button class="chip" data-filter="pending">Pendientes</button>
+      <button class="chip" data-filter="zoneMissing">Sin zona</button>
+      <button class="chip" data-filter="resolved">Resueltos</button>
+      <button class="chip" data-filter="notcoming">No vienen</button>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="small-btn" id="mapToggleBtn">🗺️ Ver mapa de direcciones</button>
+    <button class="small-btn" id="settingsToggleBtn">⚙️ Configurar distancias</button>
+    <button class="small-btn" id="exportBtn">⬇️ Exportar datos</button>
+    <button class="small-btn" id="importBtn">⬆️ Importar datos</button>
+    <button class="small-btn" id="reloadServerBtn" title="Restaurar datos desde el archivo transporte.json en Netlify">🔄 Cargar de Netlify</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none">
+    <button class="small-btn" id="addGuestBtn">➕ Agregar invitado</button>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <h3>⚙️ Radios de cercanía para sugerir viajes compartidos</h3>
+    <div class="settings-grid">
+      <div class="field">
+        <label>Distancia máxima en CABA (km)</label>
+        <input type="number" min="0" step="0.5" id="radiusCaba">
+      </div>
+      <div class="field">
+        <label>Distancia máxima en Provincia de Buenos Aires (km)</label>
+        <input type="number" min="0" step="0.5" id="radiusPba">
+      </div>
+    </div>
+    <p class="map-note">Cuando dos invitados tengan direcciones cargadas y estén dentro de este radio, se van a marcar como "cerca" al armar los viajes compartidos.</p>
+  </div>
+
+  <div class="map-panel" id="mapPanel">
+    <h3>🗺️ Mapa de direcciones cargadas</h3>
+    <div id="mapEl"></div>
+    <p class="map-note">Solo se muestran como puntos las <b>direcciones puntuales</b> (con calle y altura) que hayas cargado desde el buscador. Las zonas / barrios cargados como referencia general no aparecen como marcador, porque no representan una ubicación exacta.</p>
+  </div>
+
+  <div class="list" id="listContainer"></div>
+  <footer>Los cambios se guardan automáticamente. Hacé click en cualquier campo para editarlo.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ---------- Datos iniciales ---------- */
+const ZONE_DEFAULTS = [
+  {name:"La Reja, Moreno, Provincia de Buenos Aires",lat:-34.6180,lon:-58.8830,region:"PBA",isDestination:true,kind:"zone"},
+  {name:"Villa Urquiza, CABA",lat:-34.5719,lon:-58.4903,region:"CABA",kind:"zone"},
+  {name:"Balvanera, CABA",lat:-34.6083,lon:-58.4020,region:"CABA",kind:"zone"},
+  {name:"La Boca, CABA",lat:-34.6345,lon:-58.3631,region:"CABA",kind:"zone"},
+  {name:"Paternal, CABA",lat:-34.5975,lon:-58.4703,region:"CABA",kind:"zone"},
+  {name:"Almagro, CABA",lat:-34.6083,lon:-58.4205,region:"CABA",kind:"zone"},
+  {name:"Belgrano, CABA",lat:-34.5627,lon:-58.4570,region:"CABA",kind:"zone"},
+  {name:"Caballito, CABA",lat:-34.6187,lon:-58.4406,region:"CABA",kind:"zone"},
+  {name:"Flores, CABA",lat:-34.6280,lon:-58.4633,region:"CABA",kind:"zone"},
+  {name:"Palermo, CABA",lat:-34.5875,lon:-58.4306,region:"CABA",kind:"zone"},
+  {name:"Recoleta, CABA",lat:-34.5875,lon:-58.3931,region:"CABA",kind:"zone"},
+  {name:"Núñez, CABA",lat:-34.5453,lon:-58.4637,region:"CABA",kind:"zone"},
+  {name:"Villa Devoto, CABA",lat:-34.5978,lon:-58.5219,region:"CABA",kind:"zone"},
+  {name:"Villa del Parque, CABA",lat:-34.6031,lon:-58.4919,region:"CABA",kind:"zone"},
+  {name:"Mataderos, CABA",lat:-34.6572,lon:-58.5133,region:"CABA",kind:"zone"},
+  {name:"Liniers, CABA",lat:-34.6428,lon:-58.5250,region:"CABA",kind:"zone"},
+  {name:"San Telmo, CABA",lat:-34.6212,lon:-58.3731,region:"CABA",kind:"zone"},
+  {name:"Boedo, CABA",lat:-34.6295,lon:-58.4177,region:"CABA",kind:"zone"},
+  {name:"Floresta, CABA",lat:-34.6280,lon:-58.4830,region:"CABA",kind:"zone"},
+  {name:"Once, CABA",lat:-34.6083,lon:-58.4083,region:"CABA",kind:"zone"},
+  {name:"Constitución, CABA",lat:-34.6270,lon:-58.3810,region:"CABA",kind:"zone"},
+  {name:"Barracas, CABA",lat:-34.6420,lon:-58.3810,region:"CABA",kind:"zone"},
+  {name:"Chacarita, CABA",lat:-34.5850,lon:-58.4530,region:"CABA",kind:"zone"},
+  {name:"Colegiales, CABA",lat:-34.5740,lon:-58.4490,region:"CABA",kind:"zone"},
+  {name:"Saavedra, CABA",lat:-34.5540,lon:-58.4880,region:"CABA",kind:"zone"},
+  {name:"Villa Pueyrredón, CABA",lat:-34.5850,lon:-58.5030,region:"CABA",kind:"zone"},
+  {name:"Villa Luro, CABA",lat:-34.6390,lon:-58.5010,region:"CABA",kind:"zone"},
+  {name:"Monte Castro, CABA",lat:-34.6180,lon:-58.5100,region:"CABA",kind:"zone"},
+  {name:"Parque Patricios, CABA",lat:-34.6390,lon:-58.4030,region:"CABA",kind:"zone"},
+  {name:"Villa Lugano, CABA",lat:-34.6790,lon:-58.4720,region:"CABA",kind:"zone"},
+  {name:"Nueva Pompeya, CABA",lat:-34.6520,lon:-58.4180,region:"CABA",kind:"zone"},
+  {name:"Moreno, Provincia de Buenos Aires",lat:-34.6520,lon:-58.7900,region:"PBA",kind:"zone"},
+  {name:"Merlo, Provincia de Buenos Aires",lat:-34.6650,lon:-58.7280,region:"PBA",kind:"zone"},
+  {name:"Morón, Provincia de Buenos Aires",lat:-34.6534,lon:-58.6198,region:"PBA",kind:"zone"},
+  {name:"San Justo, Provincia de Buenos Aires",lat:-34.6836,lon:-58.5631,region:"PBA",kind:"zone"},
+  {name:"Ituzaingó, Provincia de Buenos Aires",lat:-34.6600,lon:-58.6690,region:"PBA",kind:"zone"},
+  {name:"Castelar, Provincia de Buenos Aires",lat:-34.6500,lon:-58.6450,region:"PBA",kind:"zone"},
+  {name:"Ramos Mejía, Provincia de Buenos Aires",lat:-34.6390,lon:-58.5630,region:"PBA",kind:"zone"},
+  {name:"Haedo, Provincia de Buenos Aires",lat:-34.6420,lon:-58.5900,region:"PBA",kind:"zone"},
+  {name:"Ciudadela, Provincia de Buenos Aires",lat:-34.6360,lon:-58.5390,region:"PBA",kind:"zone"},
+  {name:"San Antonio de Padua, Provincia de Buenos Aires",lat:-34.6580,lon:-58.7680,region:"PBA",kind:"zone"},
+  {name:"Berazategui, Provincia de Buenos Aires",lat:-34.7633,lon:-58.2117,region:"PBA",kind:"zone"},
+  {name:"Tortuguitas, Provincia de Buenos Aires",lat:-34.4742,lon:-58.7562,region:"PBA",kind:"zone"},
+  {name:"William C. Morris, Provincia de Buenos Aires",lat:-34.5828,lon:-58.6472,region:"PBA",kind:"zone"},
+  {name:"Villa Crespo, CABA",lat:-34.5997,lon:-58.4447,region:"CABA",kind:"zone"},
+  {name:"Villa Real, CABA",lat:-34.6186,lon:-58.5230,region:"CABA",kind:"zone"},
+  {name:"Villa General Mitre, CABA",lat:-34.6123,lon:-58.4680,region:"CABA",kind:"zone"}
+];
+
+const DEFAULT_GUESTS = [
+ {id:"special1",names:"Roque y Jorge (nosotros)",people:[{name:"Roque",isChild:false},{name:"Jorge",isChild:false}],personas:2,confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-space",freeSpots:2,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Salimos temprano hacia La Reja. Podemos llevar hasta 2 personas que quieran viajar antes.",special:true},
+ {id:"g1",names:"Matías, Yuly y Briana",people:[{name:"Matías",isChild:false},{name:"Yuly",isChild:false},{name:"Briana",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-no-space",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Van con auto, pero probablemente sumen a la familia de Yuly y el auto quede lleno."},
+ {id:"g2",names:"Familia de Yuly",people:[{name:"Integrante 1",isChild:false},{name:"Integrante 2",isChild:false},{name:"Integrante 3",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"ride-assigned",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"Matías, Yuly y Briana",notes:"Probablemente viajen con Matías, Yuly y Briana (auto lleno)."},
+ {id:"g3",names:"Leo y Fabián",people:[{name:"Leo",isChild:false},{name:"Fabián",isChild:false}],confirmed:"yes",zone:"Villa Urquiza, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Tienen auto; falta confirmar si van con lugar disponible."},
+ {id:"g4",names:"Arturo",people:[{name:"Arturo",isChild:false}],confirmed:"yes",zone:"Balvanera, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"needs-ride",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Necesita que lo lleven desde Balvanera."},
+ {id:"g5",names:"José",people:[{name:"José",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
+ {id:"g6",names:"Gabriel",people:[{name:"Gabriel",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Vio el mensaje; probablemente no venga."},
+ {id:"g7",names:"Sole, Ger y Ema",people:[{name:"Sole",isChild:false},{name:"Ger",isChild:false},{name:"Ema",isChild:false}],confirmed:"tentative",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Confirma más adelante según el clima (el festejo es al aire libre)."},
+ {id:"g8",names:"Daniela y Ariel",people:[{name:"Daniela",isChild:false},{name:"Ariel",isChild:false}],confirmed:"yes",zone:"La Boca, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Tienen auto; falta confirmar si van con lugar disponible."},
+ {id:"g9",names:"Glenda, Gabriel y Lautaro",people:[{name:"Glenda",isChild:false},{name:"Gabriel",isChild:false},{name:"Lautaro",isChild:false}],confirmed:"yes",zone:"Balvanera, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Tienen auto; falta confirmar si van con lugar disponible."},
+ {id:"g10",names:"Pablo y Fernando",people:[{name:"Pablo",isChild:false},{name:"Fernando",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"ride-assigned",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"Viviana y Silvio",notes:"No tienen auto y les queda lejos. Viviana y Silvio finalmente los llevan."},
+ {id:"g11",names:"Micaela y Tiziano",people:[{name:"Micaela",isChild:false},{name:"Tiziano",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"public",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Vienen en transporte público."},
+ {id:"g12",names:"Adrián y Marcela",people:[{name:"Adrián",isChild:false},{name:"Marcela",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
+ {id:"g13",names:"Mariela, Mathias y Benjamín",people:[{name:"Mariela",isChild:false},{name:"Mathias",isChild:true},{name:"Benjamín",isChild:true}],confirmed:"yes",zone:"Balvanera, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-space",freeSpots:2,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Auto con 2 lugares libres en Balvanera, disponibles para otros invitados de la zona."},
+ {id:"g14",names:"Fernanda",people:[{name:"Fernanda",isChild:false}],confirmed:"yes",zone:"Paternal, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-space",freeSpots:4,assignedPassengers:["g19"],assignmentDone:true,assignedDriverName:"",notes:"Puede llevar a Marisol, Omar y Walter, y todavía le quedaría un lugar libre en Paternal."},
+ {id:"g15",names:"Omar",people:[{name:"Omar",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"public",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Viaja en transporte público. Alternativa: podría ir con Fernanda si prefiere auto."},
+ {id:"g16",names:"Walter",people:[{name:"Walter",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Vio el mensaje pero no respondió. Posible pasajero con Fernanda si confirma y define zona."},
+ {id:"g17",names:"Ana y Pablo",people:[{name:"Ana",isChild:false},{name:"Pablo",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Quedó en confirmar."},
+ {id:"g18",names:"Pato, Rodrigo, Joaquín y Cristina",people:[{name:"Pato",isChild:false},{name:"Rodrigo",isChild:false},{name:"Joaquín",isChild:false},{name:"Cristina",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-no-space",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Vienen con auto lleno."},
+ {id:"g19",names:"Marisol (de Coto)",people:[{name:"Marisol",isChild:false}],confirmed:"yes",zone:"Paternal, CABA",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"ride-assigned",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"Fernanda",notes:"La lleva Fernanda desde Paternal."},
+ {id:"g20",names:"Julieta y su novio",people:[{name:"Julieta",isChild:false},{name:"su novio",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Quedó en hablar con el novio y confirmar."},
+ {id:"g21",names:"Liliana y Jazmín",people:[{name:"Liliana",isChild:false},{name:"Jazmín",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Creen que tienen auto; falta confirmar modo y disponibilidad."},
+ {id:"g22",names:"Yanina, David, Sahira y Anias",people:[{name:"Yanina",isChild:false},{name:"David",isChild:false},{name:"Sahira",isChild:false},{name:"Anias",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"public",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Viajan en transporte público."},
+ {id:"g23",names:"Romina, Constanza, Mariana y Camila",people:[{name:"Romina",isChild:false},{name:"Constanza",isChild:false},{name:"Mariana",isChild:false},{name:"Camila",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
+ {id:"g24",names:"Fanny, Patricio y Susana",people:[{name:"Fanny",isChild:false},{name:"Patricio",isChild:false},{name:"Susana",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
+ {id:"g25",names:"Andrés, Emilia y Benjamín",people:[{name:"Andrés",isChild:false},{name:"Emilia",isChild:false},{name:"Benjamín",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Quedó en confirmar."},
+ {id:"g26",names:"Cinthia",people:[{name:"Cinthia",isChild:false}],confirmed:"no",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"not-coming",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"No viene."},
+ {id:"g27",names:"Carolina, Diego y Martín",people:[{name:"Carolina",isChild:false},{name:"Diego",isChild:false},{name:"Martín",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"No trabajan ese día; quedó en confirmar."},
+ {id:"g28",names:"Adriana, Hugo y los mellis",people:[{name:"Adriana",isChild:false},{name:"Hugo",isChild:false},{name:"Mellizo/a 1",isChild:true},{name:"Mellizo/a 2",isChild:true}],confirmed:"yes",zone:"La Reja, Moreno, Provincia de Buenos Aires",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"host",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Dueños de la casa donde es el festejo. No necesitan transporte."},
+ {id:"g29",names:"Sergio y Antonella",people:[{name:"Sergio",isChild:false},{name:"Antonella",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
+ {id:"g30",names:"Viviana y Silvio",people:[{name:"Viviana",isChild:false},{name:"Silvio",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-space",freeSpots:2,assignedPassengers:["g10"],assignmentDone:true,assignedDriverName:"",notes:"Tienen auto y finalmente pueden llevar a Pablo y Fernando."},
+ {id:"g31",names:"Dante y Nahara (hijos de Viviana y Silvio)",people:[{name:"Dante",isChild:true},{name:"Nahara",isChild:true}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Asistencia incierta. Si vienen, el auto de sus padres no tendría lugar para más pasajeros."}
+];
+
+const TRANSPORT_LABELS = {
+  "pending":"Sin definir",
+  "car-no-space":"Auto propio — sin lugar",
+  "car-space":"Auto propio — con lugar",
+  "public":"Transporte público",
+  "needs-ride":"Necesita que lo lleven",
+  "ride-assigned":"Transporte asignado (con otro invitado)",
+  "host":"Anfitriones — no necesitan transporte",
+  "not-coming":"No viene"
+};
+const CONFIRMED_LABELS = {yes:"Sí, confirmado",no:"No viene",pending:"Pendiente",tentative:"Tal vez / a confirmar"};
+
+let guests = [];
+let zoneOptions = [];
+let settings = {caba:3, pba:8};
+let currentFilter = "all";
+let searchTerm = "";
+let storageAvailable = true;
+let leafletMap = null;
+let mapInitialized = false;
+
+/* ---------- Storage ---------- */
+async function getStorageKey(key){
+  try {
+    if(window.storage && typeof window.storage.get === "function"){
+      const res = await window.storage.get(key, false);
+      return res ? res.value : null;
+    }
+    return localStorage.getItem(key);
+  } catch(e) {
+    return null;
+  }
+}
+async function setStorageKey(key, value){
+  try {
+    if(window.storage && typeof window.storage.set === "function"){
+      await window.storage.set(key, value, false);
+      return;
+    }
+    localStorage.setItem(key, value);
+  } catch(e) {
+    throw e;
+  }
+}
+
+async function loadData(){
+  try{
+    const g = await getStorageKey("guestsData");
+    const z = await getStorageKey("zoneOptions");
+    const s = await getStorageKey("settings");
+
+    if(g){
+      guests = JSON.parse(g);
+      zoneOptions = z ? JSON.parse(z) : ZONE_DEFAULTS.slice();
+      settings = s ? JSON.parse(s) : {caba:3, pba:8};
+    } else {
+      // Si no hay datos en localStorage, intentamos cargar transporte.json publicado en Netlify / servidor
+      let loadedFromServer = false;
+      try {
+        const resp = await fetch('./transporte.json?v=' + Date.now());
+        if(resp.ok){
+          const data = await resp.json();
+          if(data.guests && data.guests.length){
+            guests = data.guests;
+            zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
+            settings = data.settings || {caba:3, pba:8};
+            loadedFromServer = true;
+          }
+        }
+      } catch(e) {}
+
+      if(!loadedFromServer){
+        guests = DEFAULT_GUESTS.slice();
+        zoneOptions = ZONE_DEFAULTS.slice();
+        settings = {caba:3, pba:8};
+      }
+    }
+
+    migrateGuestCoords();
+    await saveGuests();
+    await saveZones();
+    await saveSettings();
+    document.getElementById("storageWarning").style.display = "none";
+  }catch(e){
+    storageAvailable = false;
+    guests = DEFAULT_GUESTS.slice();
+    zoneOptions = ZONE_DEFAULTS.slice();
+    settings = {caba:3, pba:8};
+    migrateGuestCoords();
+  }
+}
+async function saveGuests(){
+  try{ await setStorageKey("guestsData", JSON.stringify(guests)); }
+  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+}
+async function saveZones(){
+  try{ await setStorageKey("zoneOptions", JSON.stringify(zoneOptions)); }
+  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+}
+async function saveSettings(){
+  try{ await setStorageKey("settings", JSON.stringify(settings)); }
+  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+}
+
+function deriveInitialPeople(namesStr, count){
+  let base = (namesStr||"").replace(/\([^)]*\)/g,"").trim();
+  let pieces = base.split(",").flatMap(p=>p.split(/\s+y\s+/i)).map(s=>s.trim()).filter(Boolean);
+  if(!count || count<1) count = pieces.length || 1;
+  let arr = [];
+  for(let i=0;i<count;i++){ arr.push({name: pieces[i] || `Integrante ${i+1}`, isChild:false}); }
+  return arr;
+}
+
+function findFallbackZone(query){
+  if(!query || typeof query !== "string") return null;
+  const q = query.toLowerCase();
+  const list = (zoneOptions && zoneOptions.length) ? zoneOptions : ZONE_DEFAULTS;
+  const match = list.find(z => {
+    if(!z.name || z.lat == null) return false;
+    const bName = baseName(z.name);
+    return bName.length >= 3 && (q.includes(bName) || bName.includes(q));
+  });
+  if(match && match.lat != null) return match;
+  return null;
+}
+
+async function geocodeAddressOnline(query){
+  if(!query || !query.trim()) return null;
+  const cleanQ = query.trim();
+
+  try {
+    const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(cleanQ)}&countrycodes=ar&addressdetails=1&limit=1&accept-language=es`;
+    const res = await fetch(nomUrl, {headers:{"Accept":"application/json"}});
+    const data = await res.json();
+    if(Array.isArray(data) && data.length > 0){
+      const r = data[0];
+      const lat = parseFloat(r.lat);
+      const lon = parseFloat(r.lon);
+      const region = guessRegion(lat, lon);
+      const isAddr = !!(r.address && (r.address.house_number || r.address.road));
+      return {
+        name: cleanQ,
+        lat, lon, region,
+        kind: isAddr ? "address" : "zone"
+      };
+    }
+  } catch(e) {}
+
+  try {
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=1&lang=es`;
+    const res2 = await fetch(photonUrl);
+    const data2 = await res2.json();
+    if(data2 && data2.features && data2.features.length > 0){
+      const f = data2.features[0];
+      const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+      const region = guessRegion(lat, lon);
+      const isAddr = !!(f.properties && f.properties.housenumber);
+      return {
+        name: cleanQ,
+        lat, lon, region,
+        kind: isAddr ? "address" : "zone"
+      };
+    }
+  } catch(e) {}
+
+  const fallback = findFallbackZone(cleanQ);
+  if(fallback){
+    return {
+      name: cleanQ,
+      lat: fallback.lat,
+      lon: fallback.lon,
+      region: fallback.region,
+      kind: fallback.kind || "zone"
+    };
+  }
+  return null;
+}
+
+function migrateGuestCoords(){
+  zoneOptions.forEach(z=>{ if(!z.kind) z.kind = "zone"; });
+
+  guests.forEach(g=>{
+    if(!g.special && !Array.isArray(g.people)){
+      g.people = deriveInitialPeople(g.names, g.personas);
+    }
+    if(g.zone && !g.zoneLat){
+      let match = zoneOptions.find(z=>z.name === g.zone);
+      if(!match) match = findFallbackZone(g.zone);
+      if(match){ g.zoneLat = match.lat; g.zoneLon = match.lon; g.zoneRegion = match.region; g.zoneKind = match.kind; }
+    }
+    if(g.zoneLat===undefined) g.zoneLat = null;
+    if(g.zoneLon===undefined) g.zoneLon = null;
+    if(g.zoneRegion===undefined) g.zoneRegion = null;
+    if(g.zoneKind===undefined || g.zoneKind===null){
+      if(g.zone){
+        const match = zoneOptions.find(z=>z.name === g.zone);
+        g.zoneKind = match ? match.kind : (g.zoneLat ? "address" : null);
+      } else {
+        g.zoneKind = null;
+      }
+    }
+  });
+}
+
+async function autoGeocodeMissingGuests(){
+  let updated = false;
+  for(const g of guests){
+    if(g.zone && !g.zoneLat){
+      const geo = await geocodeAddressOnline(g.zone);
+      if(geo && geo.lat != null){
+        g.zoneLat = geo.lat;
+        g.zoneLon = geo.lon;
+        g.zoneRegion = geo.region;
+        g.zoneKind = geo.kind;
+        updated = true;
+      }
+    }
+  }
+  if(updated){
+    await saveGuests();
+    render();
+  }
+}
+
+/* ---------- Geo helpers ---------- */
+function haversine(lat1,lon1,lat2,lon2){
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function guessRegion(lat,lon){
+  if(lat <= -34.53 && lat >= -34.71 && lon <= -58.34 && lon >= -58.53) return "CABA";
+  return "PBA";
+}
+
+/* ---------- Normalización de nombres de zona (estilo Google Maps) ---------- */
+function baseName(name){
+  return (name||"").split(",")[0].trim().toLowerCase();
+}
+
+async function resolveZoneEntry(newEntry){
+  const idx = zoneOptions.findIndex(z => baseName(z.name) === baseName(newEntry.name));
+  if(idx === -1){
+    let lat = newEntry.lat, lon = newEntry.lon, region = newEntry.region, kind = newEntry.kind;
+    if(lat == null && newEntry.name){
+      const fallback = findFallbackZone(newEntry.name);
+      if(fallback){
+        lat = fallback.lat; lon = fallback.lon; region = fallback.region; kind = fallback.kind;
+      }
+    }
+    if(lat != null){
+      zoneOptions.push({name:newEntry.name, lat, lon, region, kind:kind||"zone"});
+      await saveZones();
+    }
+    return {name:newEntry.name, lat, lon, region, kind:kind||null};
+  }
+  const existing = zoneOptions[idx];
+  const existingHasQualifier = existing.name.includes(",");
+  const newHasQualifier = (newEntry.name||"").includes(",");
+  let finalName = existing.name;
+  if(!existingHasQualifier && newHasQualifier){ finalName = newEntry.name; }
+  const finalLat = (existing.lat != null) ? existing.lat : newEntry.lat;
+  const finalLon = (existing.lon != null) ? existing.lon : newEntry.lon;
+  const finalRegion = existing.region || newEntry.region;
+  const finalKind = existing.kind || newEntry.kind || "zone";
+
+  if(finalName !== existing.name){
+    const oldName = existing.name;
+    guests.forEach(g=>{
+      if(g.zone === oldName){
+        g.zone = finalName; g.zoneLat = finalLat; g.zoneLon = finalLon; g.zoneRegion = finalRegion; g.zoneKind = finalKind;
+      }
+    });
+    await saveGuests();
+  }
+  zoneOptions[idx] = {name:finalName, lat:finalLat, lon:finalLon, region:finalRegion, kind:finalKind, isDestination:existing.isDestination};
+  await saveZones();
+  return {name:finalName, lat:finalLat, lon:finalLon, region:finalRegion, kind:finalKind};
+}
+
+/* ---------- Lógica de negocio ---------- */
+function isResolved(row){
+  if(row.confirmed !== "yes") return false;
+  if(["car-no-space","public","ride-assigned","host"].includes(row.transport)) return true;
+  if(row.transport === "car-space") return !!row.assignmentDone;
+  return false;
+}
+function isNotComing(row){ return row.confirmed === "no"; }
+function zoneNeeded(row){
+  return !["host","not-coming"].includes(row.transport) && !row.zone.trim();
+}
+
+function personaCount(g){ return g.people ? g.people.length : (g.personas||0); }
+
+function computeProgress(){
+  const relevant = guests.filter(g => !isNotComing(g) && !g.special);
+  const total = relevant.reduce((s,g)=>s+personaCount(g),0);
+  const resolved = relevant.filter(isResolved).reduce((s,g)=>s+personaCount(g),0);
+  const pct = total ? Math.round(resolved/total*100) : 0;
+  document.getElementById("pctText").textContent = pct + "%";
+  document.getElementById("barInner").style.width = pct + "%";
+  document.getElementById("progressDetail").textContent = `${resolved} de ${total} personas con transporte resuelto`;
+
+  const nonSpecial = guests.filter(g=>!g.special);
+  const confirmedYes = nonSpecial.filter(g=>g.confirmed==="yes").reduce((s,g)=>s+personaCount(g),0);
+  const pendingCount = nonSpecial.filter(g=>["pending","tentative"].includes(g.confirmed)).reduce((s,g)=>s+personaCount(g),0);
+  const notComingCount = nonSpecial.filter(g=>g.confirmed==="no").reduce((s,g)=>s+personaCount(g),0);
+  const zoneMissingCount = nonSpecial.filter(zoneNeeded).length;
+
+  const confirmedForFood = guests.filter(g=>g.confirmed==="yes" || g.special);
+  let adultsCount = 0, childrenCount = 0;
+  confirmedForFood.forEach(g=>{
+    (g.people||[]).forEach(p=>{ if(p.isChild) childrenCount++; else adultsCount++; });
+  });
+
+  document.getElementById("kpiGrid").innerHTML = `
+    <div class="kpi-card k-confirmed"><div class="kpi-num">${confirmedYes}</div><div class="kpi-label">✅ Personas confirmadas</div></div>
+    <div class="kpi-card k-pending"><div class="kpi-num">${pendingCount}</div><div class="kpi-label">⏳ Personas pendientes</div></div>
+    <div class="kpi-card k-notcoming"><div class="kpi-num">${notComingCount}</div><div class="kpi-label">🚫 No vienen</div></div>
+    <div class="kpi-card k-zone"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
+    <div class="kpi-card k-confirmed"><div class="kpi-num">${adultsCount}</div><div class="kpi-label">🍽️ Adultos confirmados (comida)</div></div>
+    <div class="kpi-card k-pending"><div class="kpi-num">${childrenCount}</div><div class="kpi-label">🍽️ Niñ@s confirmados (comida)</div></div>
+  `;
+}
+
+function driverCandidates(excludeId){
+  return guests.filter(g => g.transport === "car-space" && g.id !== excludeId);
+}
+function passengerCandidates(driverId){
+  return guests.filter(g =>
+    g.id !== driverId &&
+    ["pending","needs-ride"].includes(g.transport) &&
+    g.confirmed !== "no"
+  );
+}
+function distanceTag(a,b){
+  if(!a.zoneLat || !b.zoneLat) return `<span class="far-tag">sin coordenadas</span>`;
+  const d = haversine(a.zoneLat,a.zoneLon,b.zoneLat,b.zoneLon);
+  const threshold = (b.zoneRegion === "CABA") ? settings.caba : settings.pba;
+  if(d <= threshold) return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
+  return `<span class="far-tag">${d.toFixed(1)} km</span>`;
+}
+
+function sortedGuests(){
+  const specialList = [], pendingList = [], greenList = [], grayList = [];
+  guests.forEach(g=>{
+    if(g.special) specialList.push(g);
+    else if(isNotComing(g)) grayList.push(g);
+    else if(isResolved(g)) greenList.push(g);
+    else pendingList.push(g);
+  });
+  return {specialList, pendingList, greenList, grayList};
+}
+function matchesFilters(g){
+  if(searchTerm && !g.names.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  if(currentFilter === "pending") return !isResolved(g) && !isNotComing(g);
+  if(currentFilter === "resolved") return isResolved(g);
+  if(currentFilter === "notcoming") return isNotComing(g);
+  if(currentFilter === "zoneMissing") return zoneNeeded(g);
+  return true;
+}
+
+/* ---------- Render ---------- */
+function transportOptionsHtml(g){
+  return Object.entries(TRANSPORT_LABELS).map(([k,v])=>`<option value="${k}" ${g.transport===k?"selected":""}>${v}</option>`).join("");
+}
+function confirmedOptionsHtml(g){
+  return Object.entries(CONFIRMED_LABELS).map(([k,v])=>`<option value="${k}" ${g.confirmed===k?"selected":""}>${v}</option>`).join("");
+}
+
+function buildDriverPanel(g){
+  const candidates = passengerCandidates(g.id).slice().sort((a,b)=>{
+    const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
+    const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
+    return da-db;
+  });
+  const passengerRows = candidates.map(c=>`
+    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" ${g.assignedPassengers.includes(c.id)?"checked":""}> ${escHtml(c.names)} ${c.zone?`<em style="color:var(--muted)">(${escHtml(c.zone)})</em>`:""} ${distanceTag(g,c)}</label>
+  `).join("") || `<span style="color:var(--muted)">No hay invitados pendientes de transporte para asignar por ahora.</span>`;
+  const alreadyAssignedNotInList = g.assignedPassengers.map(id=>guests.find(x=>x.id===id)).filter(p=>p && !candidates.includes(p));
+  const alreadyRows = alreadyAssignedNotInList.map(c=>`
+    <label><input type="checkbox" data-action="togglePassenger" data-driver="${g.id}" data-passenger="${c.id}" checked> ${escHtml(c.names)}</label>
+  `).join("");
+  return `
+    <div class="sub-panel driver">
+      <div class="grid-fields">
+        <div class="field"><label>Lugares libres en el auto</label>
+          <input type="number" min="0" data-action="freeSpots" data-id="${g.id}" value="${g.freeSpots}">
+        </div>
+      </div>
+      <div style="margin-top:8px;"><label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Asignar pasajeros</label></div>
+      <div class="passenger-list">${alreadyRows}${passengerRows}</div>
+      <label class="assign-done">
+        <input type="checkbox" data-action="assignmentDone" data-id="${g.id}" ${g.assignmentDone?"checked":""}>
+        Marcar asignación como resuelta (aunque queden lugares libres)
+      </label>
+    </div>`;
+}
+
+function renderSpecialCard(g){
+  const missing = !g.zone.trim();
+  return `
+    <div class="card special" data-id="${g.id}">
+      <div class="card-top">
+        <div class="card-title">🚗 ${escHtml(g.names)} <span class="badge badge-special">⭐ No son invitados — tienen auto</span></div>
+      </div>
+      <div class="grid-fields">
+        <div class="field zone-field">
+          <label>Salen desde ${missing?'<span class="badge badge-zone-missing">⚠️ Falta</span>':''}</label>
+          <input type="text" class="zone-input ${missing?"missing":""}" data-id="${g.id}" value="${escAttr(g.zone)}" placeholder="Buscar zona o dirección..." autocomplete="off">
+        </div>
+      </div>
+      ${buildDriverPanel(g)}
+      <div class="notes-field">
+        <label>Notas</label>
+        <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+      </div>
+    </div>`;
+}
+
+function personRow(g, idx){
+  const p = g.people[idx];
+  return `
+    <div class="person-row">
+      <input type="text" data-action="personName" data-id="${g.id}" data-idx="${idx}" value="${escAttr(p.name)}" placeholder="Nombre">
+      <label class="child-toggle">
+        <input type="checkbox" data-action="personChild" data-id="${g.id}" data-idx="${idx}" ${p.isChild?"checked":""}> Niñ@
+      </label>
+      <button class="small-btn" data-action="removePerson" data-id="${g.id}" data-idx="${idx}" title="Quitar integrante">✕</button>
+    </div>`;
+}
+function refreshGroupName(g){
+  if(g.people && g.people.length){
+    g.names = g.people.map(p=>p.name.trim() || "Sin nombre").join(", ");
+  }
+}
+
+function renderCard(g){
+  if(g.special) return renderSpecialCard(g);
+  const resolved = isResolved(g);
+  const notComing = isNotComing(g);
+  let cls = "card";
+  if(notComing) cls += " notcoming";
+  else if(resolved) cls += " resolved";
+
+  let badges = `<span class="badge badge-invited">✉️ Invitado</span>`;
+  if(resolved) badges += `<span class="badge badge-resolved">✅ Resuelto</span>`;
+  if(notComing) badges += `<span class="badge badge-notcoming">🚫 No viene</span>`;
+
+  const missing = zoneNeeded(g);
+
+  let extra = "";
+  if(g.transport === "car-space"){
+    extra = buildDriverPanel(g);
+  }
+  if(g.transport === "needs-ride"){
+    const drivers = driverCandidates(g.id).slice().sort((a,b)=>{
+      const da = (a.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,a.zoneLat,a.zoneLon) : 9999;
+      const db = (b.zoneLat && g.zoneLat) ? haversine(g.zoneLat,g.zoneLon,b.zoneLat,b.zoneLon) : 9999;
+      return da-db;
+    });
+    const opts = drivers.map(d=>`<option value="${d.id}" ${g.assignedDriverName===d.names?"selected":""}>${escHtml(d.names)}${d.zone?` (${escHtml(d.zone)})`:""}</option>`).join("");
+    extra = `
+      <div class="sub-panel">
+        <label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Asignar conductor</label>
+        <select data-action="assignDriverToRow" data-id="${g.id}">
+          <option value="">— Elegir invitado con auto y lugar —</option>
+          ${opts}
+        </select>
+      </div>`;
+  }
+  if(g.transport === "ride-assigned" && g.assignedDriverName){
+    extra = `<div class="driver-tag">🚘 Lo/la lleva: ${escHtml(g.assignedDriverName)}</div>`;
+  }
+
+  return `
+    <div class="${cls}" data-id="${g.id}">
+      <div class="card-top">
+        <div class="card-title">${escHtml(g.names)} ${badges}</div>
+        <button class="small-btn" data-action="delete" data-id="${g.id}" title="Eliminar">🗑️</button>
+      </div>
+      <div class="grid-fields">
+        <div class="field">
+          <label>Confirmación</label>
+          <select data-action="confirmed" data-id="${g.id}">${confirmedOptionsHtml(g)}</select>
+        </div>
+        <div class="field zone-field">
+          <label>Zona o dirección ${missing?'<span class="badge badge-zone-missing">⚠️ Falta</span>':''}</label>
+          <input type="text" class="zone-input ${missing?"missing":""}" data-id="${g.id}" value="${escAttr(g.zone)}" placeholder="Buscar zona o dirección..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Transporte</label>
+          <select data-action="transport" data-id="${g.id}">${transportOptionsHtml(g)}</select>
+        </div>
+      </div>
+      <div class="people-panel">
+        <label style="font-size:0.72rem;text-transform:uppercase;color:var(--muted);">Integrantes (${g.people.length})</label>
+        <div class="people-list">${g.people.map((p,idx)=>personRow(g,idx)).join("")}</div>
+        <button class="small-btn" data-action="addPerson" data-id="${g.id}">➕ Agregar integrante</button>
+      </div>
+      ${extra}
+      <div class="notes-field">
+        <label>Notas</label>
+        <textarea data-action="notes" data-id="${g.id}" placeholder="Comentarios, contexto...">${escHtml(g.notes)}</textarea>
+      </div>
+    </div>`;
+}
+
+function render(){
+  computeProgress();
+  const {specialList, pendingList, greenList, grayList} = sortedGuests();
+  const container = document.getElementById("listContainer");
+  let html = "";
+
+  if(currentFilter === "all"){
+    const visibleSpecial = specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase()));
+    if(visibleSpecial.length){ html += `<div class="section-divider">Nuestro auto</div>` + visibleSpecial.map(renderCard).join(""); }
+  }
+
+  const visiblePending = pendingList.filter(matchesFilters);
+  const visibleGreen = greenList.filter(matchesFilters);
+  const visibleGray = grayList.filter(matchesFilters);
+
+  if(visiblePending.length){ html += `<div class="section-divider">Falta resolver (${visiblePending.length})</div>` + visiblePending.map(renderCard).join(""); }
+  if(visibleGreen.length){ html += `<div class="section-divider">Resuelto (${visibleGreen.length})</div>` + visibleGreen.map(renderCard).join(""); }
+  if(visibleGray.length){ html += `<div class="section-divider">No vienen (${visibleGray.length})</div>` + visibleGray.map(renderCard).join(""); }
+  if(!html){ html = `<div class="empty-msg">No hay invitados que coincidan con este filtro.</div>`; }
+  container.innerHTML = html;
+  if(mapInitialized) refreshMapMarkers();
+}
+
+function escHtml(s){ return (s||"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function escAttr(s){ return escHtml(s); }
+
+/* ---------- Autocomplete de zonas ---------- */
+let zoneSearchBox = null;
+let zoneSearchTimer = null;
+let zoneSearchTargetId = null;
+
+function closeZoneSuggestions(){
+  if(zoneSearchBox){ zoneSearchBox.remove(); zoneSearchBox = null; }
+  zoneSearchTargetId = null;
+}
+
+function openZoneSuggestions(inputEl, id){
+  closeZoneSuggestions();
+  zoneSearchTargetId = id;
+  const rect = inputEl.getBoundingClientRect();
+  const box = document.createElement("div");
+  box.className = "zone-suggestions";
+  box.style.position = "absolute";
+  box.style.left = (rect.left + window.scrollX) + "px";
+  box.style.top = (rect.bottom + window.scrollY + 2) + "px";
+  box.style.width = rect.width + "px";
+  document.body.appendChild(box);
+  zoneSearchBox = box;
+  return box;
+}
+
+function renderSuggestionBox(box, localMatches, query, remoteHtml, statusMsg){
+  const localHtml = localMatches.map(z=>`
+    <div class="sugg-item" data-kind="local" data-name="${escAttr(z.name)}" data-lat="${z.lat}" data-lon="${z.lon}" data-region="${z.region}" data-zkind="${z.kind||'zone'}">
+      <span>⭐ ${escHtml(z.name)}</span><span class="sugg-tag">guardada</span>
+    </div>`).join("");
+  const status = statusMsg ? `<div class="sugg-item" style="cursor:default;color:var(--muted);">${statusMsg}</div>` : "";
+  const custom = `<div class="sugg-item sugg-custom" data-kind="custom" data-name="${escAttr(query)}">
+      <span>✏️ Usar tal cual: "${escHtml(query)}"</span><span class="sugg-tag">sin coordenadas</span>
+    </div>`;
+  box.innerHTML = localHtml + status + (remoteHtml||"") + custom;
+}
+
+async function updateZoneSuggestions(inputEl, id, query){
+  const box = zoneSearchBox && zoneSearchTargetId === id ? zoneSearchBox : openZoneSuggestions(inputEl, id);
+  const localMatches = zoneOptions.filter(z => z.name.toLowerCase().includes(query.toLowerCase())).slice(0,6);
+
+  if(query.trim().length < 3){
+    renderSuggestionBox(box, localMatches, query, "", "Escribí al menos 3 letras para buscar direcciones puntuales...");
+    return;
+  }
+  renderSuggestionBox(box, localMatches, query, "", "🔎 Buscando direcciones...");
+
+  const results = [];
+  // Nominatim: mejor para direcciones puntuales con altura (ej: "Azara 45, Barracas, CABA")
+  try{
+    const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=ar&addressdetails=1&limit=6&accept-language=es`;
+    const res = await fetch(nomUrl, {headers:{"Accept":"application/json"}});
+    const data = await res.json();
+    data.forEach(r=>{
+      const a = r.address || {};
+      const streetPart = [a.house_number, a.road].filter(Boolean).join(" ");
+      const areaPart = a.suburb || a.neighbourhood || a.city_district || a.town || a.village || "";
+      const cityPart = a.city || a.county || "";
+      const label = [streetPart || r.display_name.split(",")[0], areaPart, cityPart].filter(Boolean).join(", ");
+      results.push({
+        label, lat: parseFloat(r.lat), lon: parseFloat(r.lon),
+        kind: a.house_number ? "address" : "zone", source:"Google Maps / OSM"
+      });
+    });
+  }catch(e){ /* seguimos con Photon */ }
+
+  // Photon: complementa con lugares/barrios que Nominatim no siempre trae bien
+  try{
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=-34.62&lon=-58.6&limit=5&lang=es`;
+    const res2 = await fetch(photonUrl);
+    const data2 = await res2.json();
+    (data2.features||[]).forEach(f=>{
+      const p = f.properties;
+      const label = [p.housenumber ? `${p.name} ${p.housenumber}` : p.name, p.street, p.city, p.state].filter(Boolean).join(", ");
+      const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+      if(label) results.push({label, lat, lon, kind: p.housenumber ? "address" : "zone", source:"Google Maps / OSM"});
+    });
+  }catch(e){ /* si tampoco anda Photon, seguimos con lo que haya */ }
+
+  if(zoneSearchTargetId !== id) return;
+
+  // dedupe por nombre
+  const seen = new Set();
+  const uniqueResults = results.filter(r=>{
+    const k = r.label.toLowerCase();
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  }).slice(0,8);
+
+  if(!uniqueResults.length){
+    renderSuggestionBox(box, localMatches, query, "", "No se encontraron direcciones para esa búsqueda. Podés revisar la escritura o usarla tal cual.");
+    return;
+  }
+  const remoteHtml = uniqueResults.map(r=>`
+    <div class="sugg-item" data-kind="remote" data-name="${escAttr(r.label)}" data-lat="${r.lat}" data-lon="${r.lon}" data-zkind="${r.kind}">
+      <span>${r.kind==="address"?"🏠":"📍"} ${escHtml(r.label)}</span><span class="sugg-tag">${r.kind==="address"?"dirección":"zona"} · ${r.source}</span>
+    </div>`).join("");
+  renderSuggestionBox(box, localMatches, query, remoteHtml, "");
+}
+
+document.addEventListener("focus", (e)=>{
+  if(e.target.classList && e.target.classList.contains("zone-input")){
+    const id = e.target.dataset.id;
+    updateZoneSuggestions(e.target, id, e.target.value || "");
+  }
+}, true);
+
+document.addEventListener("input", (e)=>{
+  const t = e.target;
+  if(t.classList && t.classList.contains("zone-input")){
+    clearTimeout(zoneSearchTimer);
+    const id = t.dataset.id;
+    zoneSearchTimer = setTimeout(()=>updateZoneSuggestions(t, id, t.value), 350);
+  }
+  if(t.dataset.action === "notes"){
+    const g = guests.find(x=>x.id===t.dataset.id);
+    if(g) g.notes = t.value;
+  }
+  if(t.dataset.action === "personName"){
+    const g = guests.find(x=>x.id===t.dataset.id);
+    const idx = parseInt(t.dataset.idx);
+    if(g && g.people && g.people[idx]) g.people[idx].name = t.value;
+  }
+});
+
+document.addEventListener("click", async (e)=>{
+  const item = e.target.closest(".sugg-item");
+  if(item && zoneSearchTargetId && item.dataset.kind){
+    const g = guests.find(x=>x.id===zoneSearchTargetId);
+    const kind = item.dataset.kind;
+    let resolved;
+    if(kind === "custom"){
+      resolved = await resolveZoneEntry({name:item.dataset.name, lat:null, lon:null, region:null, kind:null});
+    } else {
+      const lat = parseFloat(item.dataset.lat), lon = parseFloat(item.dataset.lon);
+      const region = item.dataset.region || guessRegion(lat, lon);
+      const zkind = item.dataset.zkind || "zone";
+      resolved = await resolveZoneEntry({name:item.dataset.name, lat, lon, region, kind:zkind});
+    }
+    g.zone = resolved.name;
+    g.zoneLat = resolved.lat;
+    g.zoneLon = resolved.lon;
+    g.zoneRegion = resolved.region;
+    g.zoneKind = resolved.kind;
+    closeZoneSuggestions();
+    await saveGuests();
+    render();
+    return;
+  }
+  if(!e.target.closest(".zone-suggestions") && !e.target.classList.contains("zone-input")){
+    closeZoneSuggestions();
+  }
+});
+
+/* ---------- Otras acciones ---------- */
+document.addEventListener("click", async (e)=>{
+  const t = e.target;
+  const action = t.dataset.action;
+  if(!action) return;
+  const id = t.dataset.id;
+  const g = guests.find(x=>x.id===id);
+
+  if(action === "delete"){
+    if(confirm("¿Eliminar a este invitado de la lista?")){
+      guests = guests.filter(x=>x.id!==id);
+      await saveGuests(); render();
+    }
+    return;
+  }
+  if(action === "addPerson"){
+    if(!g.people) g.people = [];
+    g.people.push({name:"", isChild:false});
+    refreshGroupName(g);
+    await saveGuests(); render();
+    return;
+  }
+  if(action === "removePerson"){
+    const idx = parseInt(t.dataset.idx);
+    if(g.people && g.people.length > 1){
+      g.people.splice(idx,1);
+      refreshGroupName(g);
+      await saveGuests(); render();
+    } else {
+      alert("Un invitado necesita al menos un integrante. Si querés eliminarlo del todo, usá el botón 🗑️.");
+    }
+    return;
+  }
+  if(action === "togglePassenger"){
+    const driverId = t.dataset.driver, passId = t.dataset.passenger;
+    const driver = guests.find(x=>x.id===driverId);
+    const passenger = guests.find(x=>x.id===passId);
+    if(t.checked){
+      if(!driver.assignedPassengers.includes(passId)) driver.assignedPassengers.push(passId);
+      passenger.transport = "ride-assigned";
+      passenger.assignedDriverName = driver.names;
+    } else {
+      driver.assignedPassengers = driver.assignedPassengers.filter(x=>x!==passId);
+      if(passenger.assignedDriverName === driver.names){
+        passenger.transport = "needs-ride";
+        passenger.assignedDriverName = "";
+      }
+    }
+    await saveGuests(); render();
+    return;
+  }
+});
+
+document.addEventListener("change", async (e)=>{
+  const t = e.target;
+  const action = t.dataset.action;
+  if(action === "radiusCaba" || t.id === "radiusCaba"){ }
+  if(!action) return;
+  const id = t.dataset.id;
+  const g = guests.find(x=>x.id===id);
+  if(!g) return;
+
+  if(action === "transport"){ g.transport = t.value; if(t.value!=="car-space"){ g.assignmentDone=false; } }
+  else if(action === "confirmed"){
+    g.confirmed = t.value;
+    if(t.value === "no") g.transport = "not-coming";
+    else if(g.transport === "not-coming") g.transport = "pending";
+  }
+  else if(action === "personChild"){
+    const idx = parseInt(t.dataset.idx);
+    if(g.people && g.people[idx]){ g.people[idx].isChild = t.checked; }
+  }
+  else if(action === "freeSpots"){ g.freeSpots = Math.max(0, parseInt(t.value)||0); }
+  else if(action === "assignmentDone"){ g.assignmentDone = t.checked; }
+  else if(action === "notes"){ g.notes = t.value; }
+  else if(action === "assignDriverToRow"){
+    const driver = guests.find(x=>x.id===t.value);
+    if(driver){
+      g.transport = "ride-assigned";
+      g.assignedDriverName = driver.names;
+      if(!driver.assignedPassengers.includes(g.id)) driver.assignedPassengers.push(g.id);
+    } else { g.assignedDriverName = ""; }
+  }
+  await saveGuests(); render();
+});
+
+document.getElementById("listContainer").addEventListener("blur", async (e)=>{
+  if(e.target.dataset && e.target.dataset.action === "notes"){ await saveGuests(); }
+  if(e.target.dataset && e.target.dataset.action === "personName"){
+    const g = guests.find(x=>x.id===e.target.dataset.id);
+    if(g){ refreshGroupName(g); await saveGuests(); render(); }
+  }
+  if(e.target.classList && e.target.classList.contains("zone-input")){
+    const g = guests.find(x=>x.id===e.target.dataset.id);
+    if(g && !zoneSearchTargetId && g.zone !== e.target.value){
+      let resolved = await resolveZoneEntry({name:e.target.value, lat:null, lon:null, region:null, kind:null});
+      if(!resolved.lat && e.target.value.trim()){
+        const geo = await geocodeAddressOnline(e.target.value);
+        if(geo && geo.lat != null){
+          resolved = await resolveZoneEntry(geo);
+        }
+      }
+      g.zone = resolved.name; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+      await saveGuests();
+      render();
+    }
+  }
+}, true);
+
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    currentFilter = chip.dataset.filter;
+    render();
+  });
+});
+document.getElementById("searchBox").addEventListener("input", (e)=>{ searchTerm = e.target.value; render(); });
+
+document.getElementById("addGuestBtn").addEventListener("click", async ()=>{
+  const name = prompt("Nombre(s) del/los invitado(s):");
+  if(!name || !name.trim()) return;
+  guests.push({id:"g"+Date.now(), names:name.trim(), people:[{name:name.trim(), isChild:false}], confirmed:"pending", zone:"", zoneLat:null, zoneLon:null, zoneRegion:null,
+    transport:"pending", freeSpots:0, assignedPassengers:[], assignmentDone:false, assignedDriverName:"", notes:""});
+  await saveGuests(); render();
+});
+
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify({guests, zoneOptions, settings}, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "transporte-cumple-roque.json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById("importBtn").addEventListener("click", ()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change", (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev)=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(data.guests) guests = data.guests;
+      if(data.zoneOptions) zoneOptions = data.zoneOptions;
+      if(data.settings) settings = data.settings;
+      migrateGuestCoords();
+      await saveGuests(); await saveZones(); await saveSettings();
+      syncSettingsInputs();
+      render();
+      autoGeocodeMissingGuests();
+      alert("Datos importados correctamente.");
+    }catch(err){ alert("El archivo no tiene un formato válido."); }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById("reloadServerBtn").addEventListener("click", async ()=>{
+  if(confirm("¿Cargar los datos originales desde el archivo transporte.json de Netlify? Se reemplazarán los datos guardados en este navegador.")){
+    try {
+      const res = await fetch('./transporte.json?v=' + Date.now());
+      if(res.ok){
+        const data = await res.json();
+        if(data.guests) guests = data.guests;
+        if(data.zoneOptions) zoneOptions = data.zoneOptions;
+        if(data.settings) settings = data.settings;
+        migrateGuestCoords();
+        await saveGuests(); await saveZones(); await saveSettings();
+        syncSettingsInputs();
+        render();
+        autoGeocodeMissingGuests();
+        alert("Datos cargados correctamente desde Netlify.");
+      } else {
+        alert("No se pudo cargar el archivo transporte.json del servidor.");
+      }
+    } catch(e) {
+      alert("Error al conectar con Netlify.");
+    }
+  }
+});
+
+/* ---------- Configuración de distancias ---------- */
+function syncSettingsInputs(){
+  document.getElementById("radiusCaba").value = settings.caba;
+  document.getElementById("radiusPba").value = settings.pba;
+}
+document.getElementById("settingsToggleBtn").addEventListener("click", ()=>{
+  document.getElementById("settingsPanel").classList.toggle("open");
+});
+document.getElementById("radiusCaba").addEventListener("change", async (e)=>{
+  settings.caba = parseFloat(e.target.value)||0; await saveSettings(); render();
+});
+document.getElementById("radiusPba").addEventListener("change", async (e)=>{
+  settings.pba = parseFloat(e.target.value)||0; await saveSettings(); render();
+});
+
+/* ---------- Mapa ---------- */
+document.getElementById("mapToggleBtn").addEventListener("click", ()=>{
+  const panel = document.getElementById("mapPanel");
+  panel.classList.toggle("open");
+  if(panel.classList.contains("open")){
+    if(!mapInitialized) initMap();
+    else setTimeout(()=>leafletMap.invalidateSize(), 50);
+  }
+});
+function initMap(){
+  leafletMap = L.map('mapEl').setView([-34.62, -58.65], 10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+  }).addTo(leafletMap);
+  mapInitialized = true;
+  refreshMapMarkers();
+  setTimeout(()=>leafletMap.invalidateSize(), 80);
+}
+let mapMarkers = [];
+function refreshMapMarkers(){
+  if(!leafletMap) return;
+  mapMarkers.forEach(m=>leafletMap.removeLayer(m));
+  mapMarkers = [];
+  guests.filter(g=>g.zoneLat && g.zoneLon && g.zoneKind === "address").forEach(g=>{
+    const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
+    const marker = L.circleMarker([g.zoneLat, g.zoneLon], {radius:8, color:color, fillColor:color, fillOpacity:0.85, weight:1.5});
+    marker.bindPopup(`<b>${escHtml(g.names)}</b><br>${escHtml(g.zone)}`);
+    marker.addTo(leafletMap);
+    mapMarkers.push(marker);
+  });
+  const dest = zoneOptions.find(z=>z.isDestination);
+  if(dest){
+    const m = L.marker([dest.lat, dest.lon]).bindPopup("🎉 Destino: fiesta en La Reja");
+    m.addTo(leafletMap);
+    mapMarkers.push(m);
+  }
+}
+
+/* ---------- Init ---------- */
+(async function init(){
+  await loadData();
+  syncSettingsInputs();
+  render();
+  autoGeocodeMissingGuests();
+})();
+</script>
+</body>
+</html>

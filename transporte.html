@@ -260,10 +260,12 @@
   .zone-suggestions .sugg-tag{font-size:0.68rem;color:var(--muted);white-space:nowrap;}
   .zone-suggestions .sugg-custom{color:var(--gold);font-style:italic;}
 
+  input[type=checkbox]{flex-shrink:0;}
   .sub-panel{margin-top:10px;padding:10px 12px;background:var(--card-bg-alt);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;}
   .sub-panel.driver{background:var(--card-bg-alt);border-color:var(--border);}
   .passenger-list{display:flex;flex-direction:column;gap:5px;margin:6px 0;max-height:170px;overflow-y:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
-  .passenger-list label{display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:400;color:var(--ink);}
+  .passenger-list label{display:flex;align-items:flex-start;gap:6px;font-size:0.82rem;font-weight:400;color:var(--ink);padding:2px 0;}
+  .passenger-list input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;}
   .near-tag{color:var(--green);font-size:0.72rem;}
   .far-tag{color:var(--muted);font-size:0.72rem;}
   .assign-done{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.82rem;}
@@ -342,7 +344,7 @@
     #mapEl{height:280px;}
   }
     .passenger-list label{min-height:36px;padding:3px 0;}
-    .passenger-list input[type=checkbox]{width:18px;height:18px;}
+    .passenger-list input[type=checkbox]{width:18px;height:18px;flex-shrink:0;}
     .person-row{gap:6px;}
     .child-toggle{font-size:0.75rem;}
   }

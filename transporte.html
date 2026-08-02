@@ -100,7 +100,11 @@
 
 
   .search-toolbar{display:flex;gap:8px;align-items:center;margin:18px 0 10px;position:relative;}
-  .search-toolbar input[type=text]{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
+  .search-input-wrap{position:relative;flex:1;display:flex;align-items:center;min-width:0;}
+  .search-input-wrap input[type=text]{width:100%;flex:1;min-width:0;padding:10px 36px 10px 12px;border-radius:8px;border:1px solid var(--border);font-size:0.9rem;background:var(--card-bg-alt);color:var(--ink);}
+  .search-clear-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:var(--muted);width:24px;height:24px;border-radius:50%;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:all 0.15s ease;user-select:none;z-index:2;}
+  .search-clear-btn:hover{background:rgba(255,95,162,0.3);color:#fff;}
+  .search-clear-btn.hidden{display:none;}
   .search-toolbar .primary-btn{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:600;white-space:nowrap;}
   .search-toolbar .primary-btn:hover{background:var(--pink);border-color:var(--pink);color:#fff;}
   .search-toolbar .small-btn{padding:8px 14px;font-size:1.1rem;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;}
@@ -336,6 +340,7 @@
       padding:10px 12px;
       box-sizing:border-box;
     }
+    .search-input-wrap input[type=text]{padding-right:36px !important;}
     .notes-input-wrap textarea{min-height:44px;}
 
     .card{padding:14px 12px;}
@@ -381,7 +386,10 @@
 
 
   <div class="search-toolbar">
-    <input type="text" id="searchBox" placeholder="🔍 Buscar por nombre o zona...">
+    <div class="search-input-wrap">
+      <input type="text" id="searchBox" placeholder="🔍 Buscar por nombre o zona..." autocomplete="off">
+      <button class="search-clear-btn hidden" id="clearSearchBtn" aria-label="Limpiar búsqueda" title="Limpiar búsqueda">✕</button>
+    </div>
     <button class="small-btn primary-btn" id="addGuestBtn" title="Agregar invitado">➕</button>
     <div class="menu-wrap">
       <button class="small-btn" id="menuToggleBtn" title="Menú de opciones">☰</button>
@@ -1679,7 +1687,38 @@ if(menuToggleBtn && menuDropdown){
   });
 }
 
-document.getElementById("searchBox").addEventListener("input", (e)=>{ searchTerm = e.target.value; render(); });
+const searchBox = document.getElementById("searchBox");
+const clearSearchBtn = document.getElementById("clearSearchBtn");
+
+function updateSearchClearBtn(){
+  if(searchBox && clearSearchBtn){
+    if(searchBox.value.trim().length > 0){
+      clearSearchBtn.classList.remove("hidden");
+    } else {
+      clearSearchBtn.classList.add("hidden");
+    }
+  }
+}
+
+if(searchBox){
+  searchBox.addEventListener("input", (e)=>{
+    searchTerm = e.target.value;
+    updateSearchClearBtn();
+    render();
+  });
+}
+
+if(clearSearchBtn){
+  clearSearchBtn.addEventListener("click", ()=>{
+    if(searchBox){
+      searchBox.value = "";
+      searchTerm = "";
+      updateSearchClearBtn();
+      searchBox.focus();
+      render();
+    }
+  });
+}
 
 document.getElementById("addGuestBtn").addEventListener("click", async ()=>{
   const name = prompt("Nombre(s) del/los invitado(s):");

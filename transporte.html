@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transporte — Cumple 50 de Roque</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="css/transporte-skeletons.css">
 <style>
   :root{
     --pink:#ff5fa2;
@@ -337,6 +338,11 @@
   <div class="chevron-up"></div>
 </button>
 
+<!-- Firebase Web SDK Compat & Módulos -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/transporte-skeletons.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ---------- Datos iniciales ---------- */
@@ -477,86 +483,68 @@ async function setStorageKey(key, value){
   }
 }
 
+async function syncToFirebase(){
+  if(typeof guardarDatosFirebase === "function"){
+    await guardarDatosFirebase({ guests, zoneOptions, settings, destination });
+  }
+}
+
 async function loadData(){
-  try{
-    const g = await getStorageKey("guestsData");
-    const z = await getStorageKey("zoneOptions");
-    const s = await getStorageKey("settings");
-    const d = await getStorageKey("destinationData");
+  if(typeof renderSkeletons === "function") renderSkeletons();
 
-    let useLocal = false;
-    if(g){
-      useLocal = confirm("Se encontró información guardada localmente en este navegador.\n\n• Presioná ACEPTAR para usar tus datos guardados en este navegador.\n• Presioná CANCELAR para cargar la versión del archivo transporte.json de Netlify.");
-    }
-
-    if(useLocal){
-      guests = JSON.parse(g);
-      zoneOptions = z ? JSON.parse(z) : ZONE_DEFAULTS.slice();
-      settings = s ? JSON.parse(s) : {caba:3, pba:8};
-      destination = d ? JSON.parse(d) : Object.assign({}, DEFAULT_DESTINATION);
-    } else {
-      // Intentamos cargar transporte.json publicado en Netlify / servidor
-      let loadedFromServer = false;
-      try {
-        const resp = await fetch('./transporte.json?v=' + Date.now());
-        if(resp.ok){
-          const data = await resp.json();
-          if(data.guests && data.guests.length){
-            guests = data.guests;
-            zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
-            settings = data.settings || {caba:3, pba:8};
-            if(data.destination) destination = data.destination;
-            else destination = Object.assign({}, DEFAULT_DESTINATION);
-            loadedFromServer = true;
-          }
-        }
-      } catch(e) {}
-
-      if(!loadedFromServer){
-        if(g){
-          guests = JSON.parse(g);
-          zoneOptions = z ? JSON.parse(z) : ZONE_DEFAULTS.slice();
-          settings = s ? JSON.parse(s) : {caba:3, pba:8};
-          destination = d ? JSON.parse(d) : Object.assign({}, DEFAULT_DESTINATION);
-        } else {
-          guests = DEFAULT_GUESTS.slice();
-          zoneOptions = ZONE_DEFAULTS.slice();
-          settings = {caba:3, pba:8};
-          destination = Object.assign({}, DEFAULT_DESTINATION);
-        }
+  let firebaseActive = false;
+  if(typeof suscribirDatosFirebase === "function"){
+    firebaseActive = suscribirDatosFirebase((data)=>{
+      if(data && data.guests){
+        if(data.guests) guests = data.guests;
+        if(data.zoneOptions) zoneOptions = data.zoneOptions;
+        if(data.settings) settings = data.settings;
+        if(data.destination) destination = data.destination;
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
+      } else {
+        syncToFirebase();
       }
-    }
+    });
+  }
 
-    migrateGuestCoords();
-    await saveGuests();
-    await saveZones();
-    await saveSettings();
-    await saveDestination();
-    document.getElementById("storageWarning").style.display = "none";
-  }catch(e){
-    storageAvailable = false;
-    guests = DEFAULT_GUESTS.slice();
-    zoneOptions = ZONE_DEFAULTS.slice();
-    settings = {caba:3, pba:8};
-    destination = Object.assign({}, DEFAULT_DESTINATION);
-    migrateGuestCoords();
+  if(!firebaseActive){
+    try{
+      const g = await getStorageKey("guestsData");
+      const z = await getStorageKey("zoneOptions");
+      const s = await getStorageKey("settings");
+      const d = await getStorageKey("destinationData");
+      if(g) guests = JSON.parse(g);
+      else guests = DEFAULT_GUESTS.slice();
+      if(z) zoneOptions = JSON.parse(z);
+      else zoneOptions = ZONE_DEFAULTS.slice();
+      if(s) settings = JSON.parse(s);
+      if(d) destination = JSON.parse(d);
+      migrateGuestCoords();
+      render();
+    }catch(e){
+      guests = DEFAULT_GUESTS.slice();
+      zoneOptions = ZONE_DEFAULTS.slice();
+      render();
+    }
   }
 }
 async function saveGuests(){
-  try{ await setStorageKey("guestsData", JSON.stringify(guests)); }
-  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+  try{ await setStorageKey("guestsData", JSON.stringify(guests)); }catch(e){}
+  await syncToFirebase();
 }
 async function saveZones(){
-  try{ await setStorageKey("zoneOptions", JSON.stringify(zoneOptions)); }
-  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+  try{ await setStorageKey("zoneOptions", JSON.stringify(zoneOptions)); }catch(e){}
+  await syncToFirebase();
 }
 async function saveSettings(){
-  try{ await setStorageKey("settings", JSON.stringify(settings)); }
-  catch(e){ storageAvailable = false; document.getElementById("storageWarning").style.display = "block"; }
+  try{ await setStorageKey("settings", JSON.stringify(settings)); }catch(e){}
+  await syncToFirebase();
 }
 async function saveDestination(){
-  try{ await setStorageKey("destinationData", JSON.stringify(destination)); }
-  catch(e){ storageAvailable = false; }
+  try{ await setStorageKey("destinationData", JSON.stringify(destination)); }catch(e){}
+  await syncToFirebase();
 }
 
 function deriveInitialPeople(namesStr, count){

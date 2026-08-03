@@ -226,13 +226,44 @@
     padding:16px 18px;
     box-shadow:0 4px 20px rgba(0,0,0,0.45);
     transition:transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    overflow:hidden;
   }
   .card.resolved{background:var(--green-bg);border-color:rgba(79,191,130,0.45);box-shadow:0 4px 20px rgba(28,52,43,0.35);}
   .card.notcoming{background:var(--gray-bg);border-color:var(--border);opacity:0.65;}
   .card.special{background:rgba(48,40,24,0.7);border-color:var(--gold);box-shadow:0 4px 20px rgba(232,184,75,0.15);}
   .badge-special{background:var(--gold);color:#3a2a05;}
-  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
-  .card-title{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:-16px -18px 14px -18px;
+    padding:12px 18px;
+    background:linear-gradient(135deg, rgba(168,108,224,0.22) 0%, rgba(42,27,61,0.75) 100%);
+    border-bottom:1px solid rgba(168,108,224,0.35);
+  }
+  .card.resolved .card-top{
+    background:linear-gradient(135deg, rgba(79,191,130,0.28) 0%, rgba(20,52,43,0.8) 100%);
+    border-bottom:1px solid rgba(79,191,130,0.4);
+  }
+  .card.notcoming .card-top{
+    background:rgba(255,255,255,0.06);
+    border-bottom:1px solid rgba(255,255,255,0.12);
+  }
+  .card.special .card-top{
+    background:linear-gradient(135deg, rgba(232,184,75,0.28) 0%, rgba(58,42,5,0.8) 100%);
+    border-bottom:1px solid rgba(232,184,75,0.45);
+  }
+  .card-title{
+    font-weight:700;
+    font-size:1.02rem;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+    color:#ffffff;
+  }
   .badge{font-size:0.68rem;padding:2px 8px;border-radius:12px;font-weight:600;white-space:nowrap;}
   .badge-resolved{background:var(--green);color:#0e1a12;}
   .badge-notcoming{background:#5a525f;color:#fff;}
@@ -344,6 +375,7 @@
     .notes-input-wrap textarea{min-height:44px;}
 
     .card{padding:14px 12px;}
+    .card-top{margin:-14px -12px 12px -12px;padding:10px 12px;}
     .card-title{font-size:1.08rem;}
     .field label{font-size:0.78rem;}
     .badge{font-size:0.75rem;padding:3px 9px;}

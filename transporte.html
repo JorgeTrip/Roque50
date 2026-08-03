@@ -847,20 +847,29 @@ async function resolveZoneEntry(newEntry){
 }
 
 /* ---------- Lógica de negocio ---------- */
+function personaCount(g){ return g.people ? g.people.length : (g.personas||0); }
+
+function getAssignedPassengersPeopleCount(driver){
+  if(!Array.isArray(driver.assignedPassengers)) return 0;
+  return driver.assignedPassengers.reduce((sum, passId) => {
+    const p = guests.find(x => x.id === passId);
+    return sum + (p ? personaCount(p) : 0);
+  }, 0);
+}
+
+function isCarFull(row){
+  if(row.transport !== "car-space" || !row.freeSpots || row.freeSpots <= 0) return false;
+  return getAssignedPassengersPeopleCount(row) >= row.freeSpots;
+}
+
 function isResolved(row){
   if(row.confirmed === "no") return false;
   if(row.transport === "ride-assigned") return true;
   if(row.confirmed !== "yes") return false;
   if(["car-no-space","public","host"].includes(row.transport)) return true;
-  if(row.transport === "car-space") return !!row.assignmentDone;
+  if(row.transport === "car-space") return !!row.assignmentDone || isCarFull(row);
   return false;
 }
-function isNotComing(row){ return row.confirmed === "no"; }
-function zoneNeeded(row){
-  return !["host","not-coming"].includes(row.transport) && !row.zone.trim();
-}
-
-function personaCount(g){ return g.people ? g.people.length : (g.personas||0); }
 
 function computeProgress(){
   const relevant = guests.filter(g => !isNotComing(g) && !g.special);
@@ -1060,8 +1069,8 @@ function sanitizeGuestsList(list){
 function buildDriverPanel(g){
   if(!Array.isArray(g.assignedPassengers)) g.assignedPassengers = [];
   
-  const assignedCount = g.assignedPassengers.length;
-  const isFull = g.freeSpots > 0 && assignedCount >= g.freeSpots;
+  const assignedPeopleCount = getAssignedPassengersPeopleCount(g);
+  const isFull = g.freeSpots > 0 && assignedPeopleCount >= g.freeSpots;
   const isDoneOrFull = !!g.assignmentDone || isFull;
 
   const assignedGuests = g.assignedPassengers.map(id => guests.find(x => x.id === id)).filter(Boolean);

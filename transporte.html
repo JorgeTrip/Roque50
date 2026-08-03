@@ -847,6 +847,11 @@ async function resolveZoneEntry(newEntry){
 }
 
 /* ---------- Lógica de negocio ---------- */
+function isNotComing(row){ return row.confirmed === "no"; }
+function zoneNeeded(row){
+  return !["host","not-coming"].includes(row.transport) && !row.zone.trim();
+}
+
 function personaCount(g){ return g.people ? g.people.length : (g.personas||0); }
 
 function getAssignedPassengersPeopleCount(driver){

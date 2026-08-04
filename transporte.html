@@ -255,6 +255,15 @@
     background:linear-gradient(135deg, rgba(232,184,75,0.28) 0%, rgba(58,42,5,0.8) 100%);
     border-bottom:1px solid rgba(232,184,75,0.45);
   }
+  .card.special.resolved{
+    background:linear-gradient(135deg, rgba(28,52,43,0.85) 0%, rgba(48,40,24,0.7) 100%);
+    border-color:rgba(79,191,130,0.6);
+    box-shadow:0 4px 20px rgba(79,191,130,0.25);
+  }
+  .card.special.resolved .card-top{
+    background:linear-gradient(135deg, rgba(79,191,130,0.32) 0%, rgba(232,184,75,0.25) 100%);
+    border-bottom:1px solid rgba(79,191,130,0.5);
+  }
   .card-title{
     font-weight:700;
     font-size:1.02rem;
@@ -892,7 +901,7 @@ function computeProgress(){
   const notComingCount = nonSpecial.filter(g=>g.confirmed==="no").reduce((s,g)=>s+personaCount(g),0);
 
   const transportPendingCount = nonSpecial.filter(g=>g.transport==="pending" && g.confirmed!=="no").reduce((s,g)=>s+personaCount(g),0);
-  const carSpaceCount = guests.filter(g=>g.transport==="car-space" && g.confirmed!=="no").length;
+  const carSpaceCount = guests.filter(g=>g.transport==="car-space" && g.confirmed!=="no" && !isResolved(g)).length;
   const needsRideCount = nonSpecial.filter(g=>g.transport==="needs-ride" && g.confirmed!=="no").reduce((s,g)=>s+personaCount(g),0);
   const zoneMissingCount = nonSpecial.filter(zoneNeeded).length;
 
@@ -908,7 +917,7 @@ function computeProgress(){
     <div class="kpi-card k-pending ${currentFilter==='confirmedPending'?'active':''}" data-kpi="confirmedPending" title="Filtrar por pendientes"><div class="kpi-num">${pendingCount}</div><div class="kpi-label">⏳ Personas pendientes</div></div>
     <div class="kpi-card k-notcoming ${currentFilter==='notcoming'?'active':''}" data-kpi="notcoming" title="Filtrar por los que no vienen"><div class="kpi-num">${notComingCount}</div><div class="kpi-label">🚫 No vienen</div></div>
     <div class="kpi-card k-tpending ${currentFilter==='transportPending'?'active':''}" data-kpi="transportPending" title="Filtrar por sin transporte definido"><div class="kpi-num">${transportPendingCount}</div><div class="kpi-label">❓ Sin transporte definido</div></div>
-    <div class="kpi-card k-carspace ${currentFilter==='carSpace'?'active':''}" data-kpi="carSpace" title="Filtrar por autos con lugar disponible"><div class="kpi-num">${carSpaceCount}</div><div class="kpi-label">🚘 Autos con lugar</div></div>
+    <div class="kpi-card k-carspace ${currentFilter==='carSpace'?'active':''}" data-kpi="carSpace" title="Filtrar por autos con lugar disponible"><div class="kpi-num">${carSpaceCount}</div><div class="kpi-label">🚘 Autos con lugar disponibles</div></div>
     <div class="kpi-card k-needsride ${currentFilter==='needsRide'?'active':''}" data-kpi="needsRide" title="Filtrar por quienes necesitan viaje"><div class="kpi-num">${needsRideCount}</div><div class="kpi-label">🚗 Necesitan que los lleven</div></div>
     <div class="kpi-card k-zone ${currentFilter==='zoneMissing'?'active':''}" data-kpi="zoneMissing" title="Filtrar por grupos sin zona cargada"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
     <div class="kpi-card k-food ${currentFilter==='adults'?'active':''}" data-kpi="adults" title="Filtrar por adultos confirmados"><div class="kpi-num">${adultsCount}</div><div class="kpi-label">🍽️ Adultos confirmados (comida)</div></div>
@@ -985,12 +994,13 @@ function sortedGuests(){
 
   guests.forEach(g => {
     if(g.special){
-      specialList.push(g);
+      if(isResolved(g)) greenList.push(g);
+      else specialList.push(g);
     } else if(isNotComing(g)){
       grayList.push(g);
     } else {
       const driver = passengerToDriver.get(g.id) || guests.find(d => d.names && g.assignedDriverName && (g.assignedDriverName === d.names || d.names.includes(g.assignedDriverName)));
-      if(driver && driver.special){
+      if(driver && driver.special && !isResolved(driver)){
         specialList.push(g);
       } else if(driver && isResolved(driver)){
         greenList.push(g);
@@ -1025,7 +1035,7 @@ function matchesFilters(g){
   if(currentFilter === "confirmed") return g.confirmed === "yes";
   if(currentFilter === "confirmedPending") return ["pending","tentative"].includes(g.confirmed);
   if(currentFilter === "transportPending") return g.transport === "pending" && g.confirmed !== "no";
-  if(currentFilter === "carSpace") return g.transport === "car-space" && g.confirmed !== "no";
+  if(currentFilter === "carSpace") return g.transport === "car-space" && g.confirmed !== "no" && !isResolved(g);
   if(currentFilter === "needsRide") return g.transport === "needs-ride" && g.confirmed !== "no";
   if(currentFilter === "adults") return (g.confirmed === "yes" || g.special) && (g.people||[]).some(p => !p.isChild);
   if(currentFilter === "children") return (g.confirmed === "yes" || g.special) && (g.people||[]).some(p => p.isChild);
@@ -1233,8 +1243,15 @@ function getSpecialBadgeText(g){
 }
 
 function renderSpecialCard(g){
+  const resolved = isResolved(g);
   const missing = !g.zone.trim();
   const badgeText = getSpecialBadgeText(g);
+
+  let cls = "card special";
+  if(resolved) cls += " resolved";
+
+  let badges = `<span class="badge badge-special">${badgeText}</span>`;
+  if(resolved) badges += ` <span class="badge badge-resolved">✅ Resuelto</span>`;
 
   let extra = "";
   if(g.transport === "car-space"){
@@ -1258,9 +1275,9 @@ function renderSpecialCard(g){
   }
 
   return `
-    <div class="card special" data-id="${g.id}">
+    <div class="${cls}" data-id="${g.id}">
       <div class="card-top">
-        <div class="card-title">🌟 ${escHtml(g.names)} <span class="badge badge-special">${badgeText}</span></div>
+        <div class="card-title">🌟 ${escHtml(g.names)} ${badges}</div>
       </div>
       <div class="grid-fields">
         <div class="field zone-field">
@@ -1395,11 +1412,13 @@ function render(){
   const container = document.getElementById("listContainer");
   let html = "";
 
-  if(currentFilter === "all"){
-    const visibleSpecial = groupContiguousTransport(specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase())));
-    if(visibleSpecial.length){
-      html += `<div class="section-divider special">🌟 Nosotros <span class="sec-count">${visibleSpecial.length}</span></div>` + visibleSpecial.map(renderCard).join("");
-    }
+  const visibleSpecial = groupContiguousTransport(
+    currentFilter === "all"
+      ? specialList.filter(g => !searchTerm || g.names.toLowerCase().includes(searchTerm.toLowerCase()))
+      : specialList.filter(matchesFilters)
+  );
+  if(visibleSpecial.length){
+    html += `<div class="section-divider special">🌟 Nosotros <span class="sec-count">${visibleSpecial.length}</span></div>` + visibleSpecial.map(renderCard).join("");
   }
 
   const visiblePending = groupContiguousTransport(pendingList.filter(matchesFilters));

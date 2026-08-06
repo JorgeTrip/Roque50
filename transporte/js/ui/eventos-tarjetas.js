@@ -13,7 +13,6 @@ function initGuestCardsEventListeners() {
     }
   }, true);
 
-  // Selección de sugerencia de autocompletado en mousedown (evita conflicto con focusout)
   document.addEventListener("mousedown", async (e) => {
     if (e.target.closest(".sugg-item")) {
       e.preventDefault();
@@ -21,18 +20,14 @@ function initGuestCardsEventListeners() {
       const item = e.target.closest(".sugg-item");
       const dropdown = item.closest("#zoneSuggDropdown");
       const targetId = (dropdown && dropdown.dataset.targetId) || zoneSearchTargetId;
-
-      const name = item.dataset.name;
-      const lat = item.dataset.lat ? parseFloat(item.dataset.lat) : null;
-      const lon = item.dataset.lon ? parseFloat(item.dataset.lon) : null;
-      const region = item.dataset.region || null;
-      const kind = item.dataset.kind || "zone";
+      const name = item.dataset.name, lat = item.dataset.lat ? parseFloat(item.dataset.lat) : null;
+      const lon = item.dataset.lon ? parseFloat(item.dataset.lon) : null, region = item.dataset.region || null, kind = item.dataset.kind || "zone";
 
       closeZoneSuggestions();
 
       if (targetId === "destination") {
         const destInp = document.getElementById("destInput");
-        if (destInp) destInp.value = name;
+        if (destInp) { destInp.value = name; destInp.blur(); }
         destination = { name, lat, lon };
         await saveDestination(); updateHeaderDynamic();
         if (mapInitialized) refreshMapMarkers();
@@ -43,11 +38,11 @@ function initGuestCardsEventListeners() {
           const finalName = resolved.name || name;
           g.zone = finalName; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
           const activeInp = document.querySelector(`input.zone-input[data-id="${targetId}"]`);
-          if (activeInp) activeInp.value = finalName;
+          if (activeInp) { activeInp.value = finalName; activeInp.blur(); }
           await saveGuests(); render();
         }
       }
-      setTimeout(() => { isSelectingSuggestion = false; }, 600);
+      setTimeout(() => { isSelectingSuggestion = false; }, 1000);
     }
   });
 
@@ -98,6 +93,8 @@ function initGuestCardsEventListeners() {
     else if (action === "personChild") { const idx = parseInt(t.dataset.idx); if (g.people && g.people[idx]) g.people[idx].isChild = t.checked; }
     else if (action === "freeSpots") { g.freeSpots = Math.max(0, parseInt(t.value) || 0); }
     else if (action === "assignmentDone") { g.assignmentDone = t.checked; }
+    else if (action === "toggleMatchNotified") { g.matchNotified = t.checked; }
+    else if (action === "toggleContactsExchanged") { g.contactsExchanged = t.checked; }
     else if (action === "notes") { g.notes = t.value; }
     else if (action === "assignDriverToRow") {
       if (g.assignedDriverName) {
@@ -114,10 +111,47 @@ function initGuestCardsEventListeners() {
     await saveGuests(); render();
   });
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target && e.target.tagName === "INPUT" && (e.target.type === "text" || e.target.type === "number")) {
-      e.preventDefault(); e.target.blur();
+  document.addEventListener("keydown", async (e) => {
+    if (e.key !== "Enter") return;
+    const t = e.target;
+    if (!t || !t.tagName || !["INPUT", "TEXTAREA"].includes(t.tagName)) return;
+    if (t.tagName === "TEXTAREA" && e.shiftKey) return;
+
+    e.preventDefault();
+    closeZoneSuggestions();
+    const val = t.value.trim();
+    const id = t.dataset ? t.dataset.id : null;
+    const action = t.dataset ? t.dataset.action : null;
+
+    if (t.classList && t.classList.contains("zone-input")) {
+      if (id === "destination") {
+        let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+        destination = { name: resolved.name || val, lat: resolved.lat, lon: resolved.lon };
+        await saveDestination(); updateHeaderDynamic();
+        if (mapInitialized) refreshMapMarkers();
+      } else if (id) {
+        const g = guests.find(x => x.id === id);
+        if (g) {
+          let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+          if (!resolved.lat && val) {
+            const geo = await geocodeAddressOnline(val);
+            if (geo && geo.lat != null) resolved = await resolveZoneEntry(geo);
+          }
+          g.zone = resolved.name || val; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+          await saveGuests();
+        }
+      }
+    } else if (action === "personName" && id) {
+      const g = guests.find(x => x.id === id);
+      const idx = parseInt(t.dataset.idx);
+      if (g && g.people && g.people[idx]) { g.people[idx].name = val; refreshGroupName(g); await saveGuests(); }
+    } else if (action === "notes" && id) {
+      const g = guests.find(x => x.id === id);
+      if (g) { g.notes = t.value; await saveGuests(); }
     }
+
+    t.blur();
+    render();
   });
 
   document.addEventListener("input", (e) => {

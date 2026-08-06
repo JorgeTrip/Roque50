@@ -18,10 +18,25 @@ function renderGuestCard(g) {
   const specialClass = g.special ? "special" : "";
   const statusClass = notCom ? "notcoming" : (resolved ? "resolved" : "");
 
-  let badgeHtml = "";
-  if (g.confirmed === "yes") badgeHtml = `<span class="badge b-yes">Sí, confirmado</span>`;
-  else if (g.confirmed === "no") badgeHtml = `<span class="badge b-no">No viene</span>`;
-  else badgeHtml = `<span class="badge b-pending">Pendiente / A confirmar</span>`;
+  let badges = [];
+  if (g.confirmed === "yes") badges.push(`<span class="badge b-yes">Sí, confirmado</span>`);
+  else if (g.confirmed === "no") badges.push(`<span class="badge b-no">No viene</span>`);
+  else badges.push(`<span class="badge b-pending">Pendiente / A confirmar</span>`);
+
+  if (g.transport === "car-space" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0) {
+    const cStat = getDriverCoordinationStatus(g);
+    if (cStat.isComplete) {
+      badges.push(`<span class="badge b-yes" title="Se notificó a todos los pasajeros asignados">✅ Coordinación completa</span>`);
+    } else {
+      const tipText = `Falta notificar a: ${cStat.unnotifiedNames.join(', ')}`;
+      badges.push(`<span class="badge b-pending tooltip-badge" title="${escHtml(tipText)}">⚠️ ${cStat.notifiedCount}/${cStat.total} notificados</span>`);
+    }
+  } else if (g.transport === "ride-assigned") {
+    if (g.matchNotified) badges.push(`<span class="badge b-yes">📢 Match avisado</span>`);
+    if (g.contactsExchanged) badges.push(`<span class="badge b-yes">📱 Contactos listos</span>`);
+  }
+
+  const badgeHtml = badges.join("");
 
   return `
     <div class="card ${specialClass} ${statusClass}" id="card_${g.id}">
@@ -88,6 +103,7 @@ function renderGuestCard(g) {
         <div class="sub-panel">
           <label><b>Asignado a vehículo de:</b></label>
           <div style="margin-top:6px;width:100%;max-width:100%;min-width:0;overflow:hidden;">${renderDriverSelector(g)}</div>
+          ${g.transport === 'ride-assigned' ? renderPassengerCoordinationPanel(g) : ''}
         </div>
       ` : ''}
 

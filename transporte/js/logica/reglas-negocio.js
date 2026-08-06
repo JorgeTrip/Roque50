@@ -47,6 +47,8 @@ function matchesFilters(g) {
   if (currentFilter === "all") return true;
   if (currentFilter === "pending") return !isResolved(g) && !isNotComing(g);
   if (currentFilter === "resolved") return isResolved(g);
+  if (currentFilter === "resolvedNotified") return isResolved(g) && (typeof isGuestCoordinationComplete === "function" ? isGuestCoordinationComplete(g) : false);
+  if (currentFilter === "resolvedUnnotified") return isResolved(g) && !["car-no-space", "public", "host"].includes(g.transport) && (typeof isGuestCoordinationComplete === "function" ? !isGuestCoordinationComplete(g) : true);
   if (currentFilter === "notcoming") return isNotComing(g);
   if (currentFilter === "zoneMissing") return zoneNeeded(g);
   if (currentFilter === "confirmed") return g.confirmed === "yes";
@@ -77,4 +79,33 @@ function distanceTag(a, b) {
   const threshold = (b.zoneRegion === "CABA") ? settings.caba : settings.pba;
   if (d <= threshold) return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
   return `<span class="far-tag">${d.toFixed(1)} km</span>`;
+}
+
+function getDriverCoordinationStatus(driver) {
+  if (!driver || !Array.isArray(driver.assignedPassengers) || driver.assignedPassengers.length === 0) {
+    return { total: 0, notifiedCount: 0, contactsCount: 0, unnotifiedNames: [], isComplete: false };
+  }
+  const assigned = driver.assignedPassengers.map(pId => guests.find(x => x.id === pId)).filter(Boolean);
+  const total = assigned.length;
+  const notifiedPassengers = assigned.filter(p => !!p.matchNotified);
+  const contactsPassengers = assigned.filter(p => !!p.contactsExchanged);
+  const unnotifiedNames = assigned.filter(p => !p.matchNotified).map(p => p.names);
+  const isComplete = total > 0 && notifiedPassengers.length === total;
+
+  return { total, notifiedCount: notifiedPassengers.length, contactsCount: contactsPassengers.length, unnotifiedNames, isComplete };
+}
+
+function isGuestCoordinationComplete(g) {
+  if (!isResolved(g)) return false;
+  if (["car-no-space", "public", "host"].includes(g.transport)) return true;
+  if (g.transport === "car-space") {
+    if (!Array.isArray(g.assignedPassengers) || g.assignedPassengers.length === 0) return true;
+    const cStat = getDriverCoordinationStatus(g);
+    if (!cStat || !cStat.isComplete) return false;
+    const assigned = g.assignedPassengers.map(pId => guests.find(x => x.id === pId)).filter(Boolean);
+    return assigned.every(p => !!p.contactsExchanged);
+  } else if (g.transport === "ride-assigned") {
+    return !!g.matchNotified && !!g.contactsExchanged;
+  }
+  return true;
 }

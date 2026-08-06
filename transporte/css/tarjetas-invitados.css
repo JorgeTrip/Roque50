@@ -30,9 +30,15 @@
   border-bottom: 1px solid rgba(168, 108, 224, 0.35); border-radius: 13px 13px 0 0;
 }
 
+.card.resolved {
+  background: linear-gradient(135deg, #163226 0%, #11261d 100%);
+  border-color: rgba(79, 191, 130, 0.45);
+  box-shadow: 0 4px 16px rgba(18, 40, 32, 0.4);
+}
+
 .card.resolved .card-top {
-  background: linear-gradient(135deg, rgba(79, 191, 130, 0.28) 0%, rgba(20, 52, 43, 0.8) 100%);
-  border-bottom: 1px solid rgba(79, 191, 130, 0.4);
+  background: linear-gradient(135deg, rgba(79, 191, 130, 0.32) 0%, rgba(22, 58, 44, 0.85) 100%);
+  border-bottom: 1px solid rgba(79, 191, 130, 0.45);
 }
 
 .card.notcoming .card-top {
@@ -46,7 +52,7 @@
 
 .card-title-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; align-items: flex-start; }
 .card-title-name { font-weight: 700; font-size: 1.1rem; color: var(--ink); line-height: 1.2; word-break: break-word; }
-.card-badge-wrap { display: flex; align-items: center; margin-top: 2px; }
+.card-badge-wrap { display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 6px 8px !important; margin-top: 6px !important; }
 
 .badge {
   font-size: 0.75rem; padding: 3px 9px; border-radius: 20px; font-weight: 600;
@@ -184,3 +190,7 @@
 .driver-tag { font-size: 0.8rem; color: var(--green); font-weight: 600; margin-top: 4px; }
 .near-tag { color: var(--green); font-size: 0.75rem; font-weight: 600; }
 .far-tag { color: var(--muted); font-size: 0.75rem; }
+.passenger-row-box { display: flex; flex-direction: column; gap: 4px; padding: 6px 8px; background: rgba(0, 0, 0, 0.15); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); }
+.match-coordination-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; padding-left: 22px; font-size: 0.78rem; color: var(--ink); }
+.coord-check-label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.tooltip-badge { cursor: help; }

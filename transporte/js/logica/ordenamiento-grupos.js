@@ -41,6 +41,47 @@ function groupContiguousTransport(list) {
   return result;
 }
 
+function sortGreenList(greenList) {
+  if (!Array.isArray(greenList) || greenList.length <= 1) return greenList;
+  const grouped = groupContiguousTransport(greenList);
+  const pendingCoord = [];
+  const completeCoord = [];
+  const standaloneResolved = [];
+  const handledIds = new Set();
+
+  grouped.forEach(g => {
+    if (handledIds.has(g.id)) return;
+
+    if (g.transport === "car-space" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0) {
+      const isComplete = isGuestCoordinationComplete(g);
+      const groupMembers = [g];
+      handledIds.add(g.id);
+      g.assignedPassengers.forEach(pId => {
+        const p = greenList.find(x => x.id === pId);
+        if (p && !handledIds.has(p.id)) {
+          groupMembers.push(p);
+          handledIds.add(p.id);
+        }
+      });
+      if (isComplete) completeCoord.push(...groupMembers);
+      else pendingCoord.push(...groupMembers);
+    } else if (g.transport === "ride-assigned") {
+      handledIds.add(g.id);
+      if (isGuestCoordinationComplete(g)) completeCoord.push(g);
+      else pendingCoord.push(g);
+    } else if (["car-no-space", "public", "host"].includes(g.transport)) {
+      handledIds.add(g.id);
+      standaloneResolved.push(g);
+    } else {
+      handledIds.add(g.id);
+      if (isGuestCoordinationComplete(g)) completeCoord.push(g);
+      else pendingCoord.push(g);
+    }
+  });
+
+  return [...pendingCoord, ...completeCoord, ...standaloneResolved];
+}
+
 function sortedGuests() {
   const specialList = [], pendingList = [], greenList = [], grayList = [];
   const passengerToDriver = new Map();
@@ -74,7 +115,7 @@ function sortedGuests() {
   return {
     specialList: groupContiguousTransport(specialList),
     pendingList: groupContiguousTransport(pendingList),
-    greenList: groupContiguousTransport(greenList),
+    greenList: sortGreenList(greenList),
     grayList: groupContiguousTransport(grayList)
   };
 }

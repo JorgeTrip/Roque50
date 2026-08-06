@@ -57,16 +57,13 @@ function renderDriverSelector(g) {
 function renderPassengerChecklist(driver) {
   let candidates;
   if (isResolved(driver)) {
-    // Si la tarjeta ya está resuelta, mostrar únicamente los pasajeros efectivamente asignados (tildados)
     candidates = guests.filter(p => (driver.assignedPassengers || []).includes(p.id));
   } else {
     candidates = passengerCandidates(driver.id);
   }
 
   if (candidates.length === 0) {
-    if (isResolved(driver)) {
-      return `<div style="font-size:0.8rem;color:var(--muted);">Sin pasajeros adicionales asignados.</div>`;
-    }
+    if (isResolved(driver)) return `<div style="font-size:0.8rem;color:var(--muted);">Sin pasajeros adicionales asignados.</div>`;
     return `<div style="font-size:0.8rem;color:var(--muted);">No hay pasajeros pendientes disponibles para asignar en este momento.</div>`;
   }
 
@@ -74,10 +71,40 @@ function renderPassengerChecklist(driver) {
     const isAssigned = (driver.assignedPassengers || []).includes(p.id);
     const distInfo = distanceTag(driver, p);
     return `
-      <label class="passenger-item">
-        <input type="checkbox" ${isAssigned ? 'checked' : ''} data-action="togglePassenger" data-driver="${driver.id}" data-passenger="${p.id}">
-        <span><b>${escHtml(p.names)}</b> (${p.zone || 'sin zona'}) ${distInfo}</span>
-      </label>
+      <div class="passenger-row-box">
+        <label class="passenger-item">
+          <input type="checkbox" ${isAssigned ? 'checked' : ''} data-action="togglePassenger" data-driver="${driver.id}" data-passenger="${p.id}">
+          <span><b>${escHtml(p.names)}</b> (${p.zone || 'sin zona'}) ${distInfo}</span>
+        </label>
+        ${isAssigned ? `
+          <div class="match-coordination-controls">
+            <label class="coord-check-label" title="Marcar si ya avisaste a este pasajero sobre el viaje">
+              <input type="checkbox" ${p.matchNotified ? 'checked' : ''} data-action="toggleMatchNotified" data-id="${p.id}">
+              <span>📢 Match avisado</span>
+            </label>
+            <label class="coord-check-label" title="Marcar si ya compartiste los contactos de teléfono">
+              <input type="checkbox" ${p.contactsExchanged ? 'checked' : ''} data-action="toggleContactsExchanged" data-id="${p.id}">
+              <span>📱 Contactos compartidos</span>
+            </label>
+          </div>
+        ` : ''}
+      </div>
     `;
   }).join("");
+}
+
+function renderPassengerCoordinationPanel(g) {
+  if (g.transport !== "ride-assigned") return "";
+  return `
+    <div class="match-coordination-controls" style="margin-top:8px;padding-top:6px;border-top:1px dashed rgba(255,255,255,0.1);">
+      <label class="coord-check-label" title="Marcar si ya avisaste a este pasajero sobre el viaje">
+        <input type="checkbox" ${g.matchNotified ? 'checked' : ''} data-action="toggleMatchNotified" data-id="${g.id}">
+        <span>📢 Match avisado a este pasajero</span>
+      </label>
+      <label class="coord-check-label" title="Marcar si ya compartiste los contactos de teléfono">
+        <input type="checkbox" ${g.contactsExchanged ? 'checked' : ''} data-action="toggleContactsExchanged" data-id="${g.id}">
+        <span>📱 Contactos compartidos</span>
+      </label>
+    </div>
+  `;
 }

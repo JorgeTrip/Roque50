@@ -72,22 +72,43 @@ async function geocodeAddressOnline(query) {
 
 async function searchOnlineAutocomplete(query) {
   if (!query || query.trim().length < 3) return [];
-  const cleanQ = query.trim();
+  const cleanQ = query.trim(), results = [], seen = new Set();
   try {
-    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=4&lang=es`;
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=5&lang=es`;
     const res = await fetch(photonUrl);
     const data = await res.json();
     if (data && data.features && data.features.length > 0) {
-      return data.features.map(f => {
-        const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
-        const p = f.properties || {};
-        const parts = [p.name || p.street, p.city || p.district || p.state].filter(Boolean);
-        const name = parts.length ? parts.join(", ") : cleanQ;
-        return { name, lat, lon, region: guessRegion(lat, lon), kind: p.housenumber ? "address" : "zone" };
+      data.features.forEach(f => {
+        const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1], p = f.properties || {};
+        let streetPart = p.street || p.name || "";
+        if (p.housenumber && !streetPart.includes(p.housenumber)) streetPart = `${streetPart} ${p.housenumber}`;
+        const cityPart = p.city || p.district || p.locality || p.county || p.state || "";
+        const name = [streetPart, cityPart].filter(Boolean).join(", ") || cleanQ;
+        const key = name.toLowerCase();
+        if (!seen.has(key)) { seen.add(key); results.push({ name, lat, lon, region: guessRegion(lat, lon), kind: p.housenumber ? "address" : "zone" }); }
       });
     }
   } catch (e) {}
-  return [];
+
+  if (results.length < 3 && /\d/.test(cleanQ)) {
+    try {
+      const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(cleanQ)}&countrycodes=ar&addressdetails=1&limit=4&accept-language=es`;
+      const res2 = await fetch(nomUrl, { headers: { "Accept": "application/json" } });
+      const data2 = await res2.json();
+      if (Array.isArray(data2)) {
+        data2.forEach(r => {
+          const lat = parseFloat(r.lat), lon = parseFloat(r.lon), addr = r.address || {};
+          let streetPart = addr.road || addr.pedestrian || r.display_name.split(",")[0];
+          if (addr.house_number && !streetPart.includes(addr.house_number)) streetPart = `${streetPart} ${addr.house_number}`;
+          const cityPart = addr.suburb || addr.neighbourhood || addr.city || addr.town || "";
+          const name = [streetPart, cityPart].filter(Boolean).join(", ") || r.display_name.split(",").slice(0, 2).join(",");
+          const key = name.toLowerCase();
+          if (!seen.has(key)) { seen.add(key); results.push({ name, lat, lon, region: guessRegion(lat, lon), kind: addr.house_number ? "address" : "zone" }); }
+        });
+      }
+    } catch (e) {}
+  }
+  return results;
 }
 
 async function resolveZoneEntry(newEntry) {

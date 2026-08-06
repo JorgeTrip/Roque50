@@ -55,8 +55,20 @@ function renderDriverSelector(g) {
 }
 
 function renderPassengerChecklist(driver) {
-  const candidates = passengerCandidates(driver.id);
-  if (candidates.length === 0) return `<div style="font-size:0.8rem;color:var(--muted);">No hay pasajeros pendientes disponibles para asignar en este momento.</div>`;
+  let candidates;
+  if (isResolved(driver)) {
+    // Si la tarjeta ya está resuelta, mostrar únicamente los pasajeros efectivamente asignados (tildados)
+    candidates = guests.filter(p => (driver.assignedPassengers || []).includes(p.id));
+  } else {
+    candidates = passengerCandidates(driver.id);
+  }
+
+  if (candidates.length === 0) {
+    if (isResolved(driver)) {
+      return `<div style="font-size:0.8rem;color:var(--muted);">Sin pasajeros adicionales asignados.</div>`;
+    }
+    return `<div style="font-size:0.8rem;color:var(--muted);">No hay pasajeros pendientes disponibles para asignar en este momento.</div>`;
+  }
 
   return candidates.map(p => {
     const isAssigned = (driver.assignedPassengers || []).includes(p.id);

@@ -3,9 +3,8 @@
  * Gestiona el modal de login/registro, avatar en header y menú desplegable.
  */
 
-let authMode = "login"; // "login" o "register"
+let authMode = "login";
 
-// Traductor de errores de Firebase Auth a mensajes amigables en español
 function traducirErrorAuth(error) {
   if (!error || !error.code) return error?.message || "Ocurrió un error inesperado.";
   switch (error.code) {
@@ -22,7 +21,7 @@ function traducirErrorAuth(error) {
     case "auth/popup-closed-by-user":
       return "Se cerró la ventana de inicio de sesión de Google.";
     case "auth/operation-not-supported-in-this-environment":
-      return "⚠️ Firebase requiere un servidor local. Ejecutá 'Iniciar.bat' y abrí http://localhost:8080/transporte.html (no funciona directamente con file://).";
+      return "⚠️ Firebase requiere un servidor local. Ejecutá 'Iniciar.bat' y abrí http://localhost:8080/transporte/index.html (no funciona directamente con file://).";
     case "auth/configuration-not-found":
       return "⚠️ El proveedor de Google no está activado en Firebase Console. Activalo en Authentication > Sign-in method.";
     default:
@@ -69,9 +68,6 @@ function obtenerPrimerNombre(user) {
   return "Usuario";
 }
 
-/**
- * Renderizar Avatar de Usuario en la esquina superior derecha del contenedor alineado (.header-inner)
- */
 function actualizarHeaderUsuario(user) {
   let userWrap = document.getElementById("userAvatarMenuWrap");
   const headerInner = document.querySelector(".header-inner") || document.querySelector("header");
@@ -128,9 +124,6 @@ function actualizarHeaderUsuario(user) {
   }
 }
 
-/**
- * Alternar visibilidad entre el overlay de login y el contenido principal
- */
 function toggleVistaAutenticada(user) {
   const overlay = document.getElementById("authOverlay");
   const mainWrap = document.getElementById("mainAppWrap");
@@ -146,18 +139,14 @@ function toggleVistaAutenticada(user) {
   }
 }
 
-/**
- * Inicializar eventos del modal de autenticación y listener para cerrar al hacer clic afuera
- */
 function initAuthUI() {
   document.getElementById("tabLogin")?.addEventListener("click", () => cambiarPestanaAuth("login"));
   document.getElementById("tabRegister")?.addEventListener("click", () => cambiarPestanaAuth("register"));
 
   if (window.location.protocol === "file:") {
-    mostrarErrorAuth("⚠️ Abrí http://localhost:8080/transporte.html ejecutando 'Iniciar.bat' para usar la autenticación.");
+    mostrarErrorAuth("⚠️ Abrí http://localhost:8080/transporte/index.html ejecutando 'Iniciar.bat' para usar la autenticación.");
   }
 
-  // Cerrar menú desplegable al hacer clic en cualquier otra parte de la pantalla
   document.addEventListener("click", (e) => {
     const userWrap = document.getElementById("userAvatarMenuWrap");
     const dropdown = document.getElementById("menuDropdown");

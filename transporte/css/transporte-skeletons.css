@@ -1,0 +1,39 @@
+/* ==========================================================================
+   Estilos de Skeleton Screens (Esqueletos de Carga) - Módulo Transporte
+   ========================================================================== */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s infinite ease-in-out;
+  border-radius: 8px;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.kpi-card.skeleton-kpi {
+  pointer-events: none; border-left-color: var(--border); min-height: 78px;
+  display: flex; flex-direction: column; justify-content: center; gap: 8px;
+}
+
+.skeleton-line { height: 14px; width: 70%; border-radius: 6px; }
+.skeleton-num { height: 24px; width: 40%; border-radius: 6px; }
+
+.card.skeleton-card {
+  pointer-events: none; margin-bottom: 12px; padding: 16px; border: 1px solid var(--border);
+  border-radius: 12px; background: var(--card-bg); display: flex; flex-direction: column; gap: 14px;
+}
+
+.skeleton-header { display: flex; justify-content: space-between; align-items: center; }
+.skeleton-title { height: 20px; width: 55%; border-radius: 6px; }
+.skeleton-btn { height: 28px; width: 32px; border-radius: 8px; }
+.skeleton-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.skeleton-field { height: 38px; border-radius: 8px; }

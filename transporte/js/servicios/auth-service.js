@@ -3,7 +3,6 @@
  * Maneja inicio de sesión con Google, Correo/Contraseña y observador de estado.
  */
 
-// Normalizar usuario o email
 function normalizarEmail(input) {
   const limpio = (input || "").trim();
   if (!limpio) return "";
@@ -11,9 +10,6 @@ function normalizarEmail(input) {
   return `${limpio}@roque50.app`;
 }
 
-/**
- * Iniciar sesión con cuenta de Google
- */
 async function iniciarSesionConGoogle() {
   if (typeof firebase === 'undefined' || !firebase.auth) {
     throw new Error("Firebase Auth no está disponible.");
@@ -28,9 +24,6 @@ async function iniciarSesionConGoogle() {
   }
 }
 
-/**
- * Iniciar sesión con email o usuario y contraseña
- */
 async function iniciarSesionConEmail(userInput, password) {
   if (typeof firebase === 'undefined' || !firebase.auth) {
     throw new Error("Firebase Auth no está disponible.");
@@ -45,9 +38,6 @@ async function iniciarSesionConEmail(userInput, password) {
   }
 }
 
-/**
- * Registrar nuevo usuario con email o usuario y contraseña
- */
 async function registrarUsuarioConEmail(userInput, password) {
   if (typeof firebase === 'undefined' || !firebase.auth) {
     throw new Error("Firebase Auth no está disponible.");
@@ -62,9 +52,6 @@ async function registrarUsuarioConEmail(userInput, password) {
   }
 }
 
-/**
- * Cerrar la sesión actual
- */
 async function cerrarSesionUsuario() {
   if (typeof firebase === 'undefined' || !firebase.auth) return;
   try {
@@ -74,10 +61,6 @@ async function cerrarSesionUsuario() {
   }
 }
 
-/**
- * Escuchar cambios en el estado de autenticación de Firebase
- * @param {Function} callback Callback que recibe (user)
- */
 function observarEstadoSesion(callback) {
   if (typeof firebase === 'undefined' || !firebase.auth) return () => {};
   return firebase.auth().onAuthStateChanged((user) => {
@@ -87,9 +70,6 @@ function observarEstadoSesion(callback) {
   });
 }
 
-/**
- * Obtener el usuario autenticado actualmente
- */
 function obtenerUsuarioActual() {
   if (typeof firebase === 'undefined' || !firebase.auth) return null;
   return firebase.auth().currentUser;

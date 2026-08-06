@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Base y Temas (Dark Mode Estilo Apple) - Módulo Transporte
+   ========================================================================== */
+
+:root {
+  --pink: #ff5fa2;
+  --purple: #a86ce0;
+  --purple-deep: #2a1b3d;
+  --gold: #e8b84b;
+  --champagne: #E7C98A;
+  --bg: #140f1c;
+  --ink: #f4f5f8;
+  --muted: #a0a7ba;
+  --green: #4fbf82;
+  --green-bg: rgba(28, 52, 43, 0.65);
+  --gray-bg: rgba(255, 255, 255, 0.03);
+  --gray-ink: #8f8397;
+  --warn: #ff9466;
+  --card-bg: #1a1d26;
+  --card-bg-alt: #232733;
+  --border: #32374a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding-bottom: 60px;
+}
+
+header {
+  background: linear-gradient(120deg, var(--purple-deep), #5c2a63 60%, #8a3a63);
+  color: #fff;
+  padding: 24px 0 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+header h1 { margin: 0 0 4px; font-size: 1.5rem; letter-spacing: 0.3px; }
+header p { margin: 0; opacity: 0.85; font-size: 0.9rem; }
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 18px 16px 0;
+}
+
+/* Tarjeta de Progreso Principal */
+.progress-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-top: -28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 2;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.progress-top strong { font-size: 1.05rem; }
+.progress-pct { font-size: 1.4rem; font-weight: 700; color: var(--pink); }
+
+.bar-outer {
+  height: 14px;
+  background: #2a2035;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--pink));
+  border-radius: 8px;
+  transition: width .3s ease;
+}
+
+.progress-detail {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 6px;
+}

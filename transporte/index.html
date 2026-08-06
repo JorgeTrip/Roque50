@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transporte — Cumple 50 de Roque</title>
+  
+  <!-- Hojas de Estilos Modulares (< 200 líneas cada una) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/base-temas.css">
+  <link rel="stylesheet" href="css/tarjetas-invitados.css">
+  <link rel="stylesheet" href="css/paneles-y-controles.css">
+  <link rel="stylesheet" href="css/auth-modal.css">
+  <link rel="stylesheet" href="css/transporte-skeletons.css">
+</head>
+<body>
+
+  <!-- Modal Bloqueante de Autenticación -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card">
+      <h2 class="auth-title">Transporte</h2>
+      <p class="auth-subtitle">Iniciá sesión o registrate para acceder a la gestión de transporte.</p>
+
+      <button type="button" id="btnGoogleAuth" class="btn-google">
+        <svg viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.0 10.04.0 12s.47 3.8 1.29 5.42l3.99-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        Continuar con Google
+      </button>
+
+      <div class="auth-divider"><span>O con tu cuenta</span></div>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tabLogin">Iniciar Sesión</button>
+        <button type="button" class="auth-tab" id="tabRegister">Registrarse</button>
+      </div>
+
+      <form id="authForm">
+        <div class="auth-form-group">
+          <label class="auth-label" for="authUserInput">Usuario o Correo Electrónico</label>
+          <input type="text" id="authUserInput" class="auth-input" placeholder="ej. jorge o usuario@gmail.com" required autocomplete="username">
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label" for="authPassInput">Contraseña</label>
+          <input type="password" id="authPassInput" class="auth-input" placeholder="Mínimo 6 caracteres" required autocomplete="current-password">
+        </div>
+        <button type="submit" id="btnAuthSubmit" class="btn-auth-submit">Iniciar Sesión</button>
+        <div id="authErrorMsg" class="auth-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="header-titles">
+        <h1 id="headerTitle">🚗 Transporte — Cumple 50 de Roque</h1>
+        <p id="headerSubtitle">La Reja · organizá invitaciones, confirmaciones y viajes compartidos</p>
+      </div>
+    </div>
+  </header>
+
+  <div id="mainAppWrap" style="display:none;">
+    <div class="wrap">
+      <div class="progress-card">
+        <div class="progress-top">
+          <strong>Transporte resuelto</strong>
+          <span class="progress-pct" id="pctText">0%</span>
+        </div>
+        <div class="bar-outer"><div class="bar-inner" id="barInner" style="width:0%"></div></div>
+        <div class="progress-detail" id="progressDetail"></div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+      </div>
+
+      <div class="search-toolbar">
+        <div class="search-input-wrap">
+          <input type="text" id="searchBox" placeholder="🔍 Buscar por nombre o zona..." autocomplete="off">
+          <button class="search-clear-btn hidden" id="clearSearchBtn" aria-label="Limpiar búsqueda" title="Limpiar búsqueda">✕</button>
+        </div>
+        <button class="small-btn primary-btn" id="addGuestBtn" title="Agregar invitado">➕</button>
+        <div class="menu-wrap">
+          <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item" id="mapToggleBtn">🗺️ Ver mapa de direcciones</button>
+            <button class="menu-item" id="settingsToggleBtn">⚙️ Configuración del evento</button>
+            <button class="menu-item" id="exportBtn">⬇️ Exportar datos</button>
+            <button class="menu-item" id="importBtn">⬆️ Importar datos</button>
+            <button class="menu-item" id="reloadServerBtn" title="Restaurar datos desde Netlify">🔄 Cargar de Netlify</button>
+          </div>
+        </div>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+      </div>
+
+      <div class="settings-panel" id="settingsPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;">🎉 Configuración del Evento</h3>
+          <button class="small-btn" id="closeSettingsBtn" title="Cerrar configuración" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+        </div>
+        <div class="settings-grid" style="margin-bottom:18px;">
+          <div class="field"><label>Nombre del evento</label><input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque"></div>
+          <div class="field"><label>Nombres de los anfitriones</label><input type="text" id="hostNamesInput" placeholder="Ej: Roque y Jorge"></div>
+          <div class="field" style="grid-column: 1 / -1;"><label>Dirección del evento</label><input type="text" class="zone-input" id="destInput" placeholder="Buscar dirección del destino..."></div>
+        </div>
+        <h3>⚙️ Radios de cerca para viajes compartidos</h3>
+        <div class="settings-grid">
+          <div class="field"><label>Distancia máx. CABA (km)</label><input type="number" min="0" step="0.5" id="radiusCaba"></div>
+          <div class="field"><label>Distancia máx. PBA (km)</label><input type="number" min="0" step="0.5" id="radiusPba"></div>
+        </div>
+      </div>
+
+      <div class="map-panel" id="mapPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;">🗺️ Mapa de Direcciones</h3>
+          <button class="small-btn" id="closeMapBtn" title="Cerrar mapa" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+        </div>
+        <div id="mapEl"></div>
+      </div>
+
+      <div class="list" id="listContainer"></div>
+      <footer>Los cambios se guardan automáticamente en tu cuenta.</footer>
+    </div>
+  </div>
+
+  <button class="fab-scroll-top hidden" id="fabScrollTop" title="Volver al inicio"><div class="chevron-up"></div></button>
+
+  <!-- SDKs Externos -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <!-- JavaScript Modular (< 200 líneas cada archivo) -->
+  <script src="js/datos/constantes-defaults.js"></script>
+  <script src="js/datos/estado-transporte.js"></script>
+  <script src="js/servicios/firebase-config.js"></script>
+  <script src="js/servicios/auth-service.js"></script>
+  <script src="js/servicios/auth-ui.js"></script>
+  <script src="js/servicios/geocoding-service.js"></script>
+  <script src="js/servicios/exportar-importar.js"></script>
+  <script src="js/logica/reglas-negocio.js"></script>
+  <script src="js/logica/ordenamiento-grupos.js"></script>
+  <script src="js/ui/render-kpis-y-progreso.js"></script>
+  <script src="js/ui/render-subpaneles-tarjeta.js"></script>
+  <script src="js/ui/render-tarjeta-invitado.js"></script>
+  <script src="js/ui/render-lista.js"></script>
+  <script src="js/ui/mapa-interactivo.js"></script>
+  <script src="js/ui/panel-configuracion.js"></script>
+  <script src="js/ui/app-main.js"></script>
+</body>
+</html>

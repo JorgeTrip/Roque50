@@ -1,0 +1,181 @@
+/* ==========================================================================
+   Tarjetas de Invitados y Componentes - Módulo Transporte
+   ========================================================================== */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -16px -18px 14px -18px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(168, 108, 224, 0.22) 0%, rgba(42, 27, 61, 0.75) 100%);
+  border-bottom: 1px solid rgba(168, 108, 224, 0.35);
+  border-radius: 13px 13px 0 0;
+}
+
+.card.resolved .card-top {
+  background: linear-gradient(135deg, rgba(79, 191, 130, 0.28) 0%, rgba(20, 52, 43, 0.8) 100%);
+  border-bottom: 1px solid rgba(79, 191, 130, 0.4);
+}
+
+.card.notcoming .card-top {
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card.special .card-top {
+  background: linear-gradient(135deg, rgba(232, 184, 75, 0.28) 0%, rgba(58, 42, 5, 0.8) 100%);
+  border-bottom: 1px solid rgba(232, 184, 75, 0.45);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge.b-yes { background: rgba(79, 191, 130, 0.2); color: var(--green); border: 1px solid rgba(79, 191, 130, 0.4); }
+.badge.b-no { background: rgba(143, 131, 151, 0.2); color: var(--gray-ink); border: 1px solid rgba(143, 131, 151, 0.4); }
+.badge.b-pending { background: rgba(232, 184, 75, 0.2); color: var(--gold); border: 1px solid rgba(232, 184, 75, 0.4); }
+
+.grid-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.field input[type="text"],
+.field select,
+.field input[type="number"] {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(15, 12, 22, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.field input[type="text"]:focus,
+.field select:focus,
+.field input[type="number"]:focus {
+  border-color: var(--pink);
+}
+
+.people-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.person-name-inp {
+  background: transparent !important;
+  border: none !important;
+  color: var(--ink) !important;
+  font-size: 0.85rem !important;
+  padding: 0 !important;
+  width: auto !important;
+  flex: 1;
+}
+
+.child-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.sub-panel {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.passenger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 6px;
+}
+
+.passenger-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.notes-input-wrap textarea {
+  width: 100%;
+  background: rgba(15, 12, 22, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 0.85rem;
+  padding: 8px 10px;
+  resize: vertical;
+  min-height: 42px;
+}
+
+.driver-tag { font-size: 0.8rem; color: var(--green); font-weight: 600; margin-top: 4px; }
+.near-tag { color: var(--green); font-size: 0.75rem; font-weight: 600; }
+.far-tag { color: var(--muted); font-size: 0.75rem; }

@@ -1,0 +1,109 @@
+/* ==========================================================================
+   Paneles, KPI Grid, Toolbar y Mapa - Módulo Transporte
+   ========================================================================== */
+
+/* Barra de Herramientas y Búsqueda */
+.search-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  flex: 1;
+  position: relative;
+  min-width: 200px;
+}
+
+.search-input-wrap input[type="text"] {
+  width: 100%;
+  padding: 10px 38px 10px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.search-clear-btn {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: transparent; border: none; color: var(--muted); font-size: 0.9rem; cursor: pointer;
+}
+.search-clear-btn.hidden { display: none; }
+
+.small-btn {
+  padding: 8px 14px; background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--ink); font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s ease; min-height: 40px; display: inline-flex; align-items: center; justify-content: center;
+}
+.small-btn:hover { background: var(--card-bg-alt); border-color: var(--pink); }
+.small-btn.primary-btn { background: linear-gradient(135deg, #a86ce0, #ff5fa2); color: #fff; border: none; }
+
+/* Grid de KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.kpi-card {
+  background: var(--card-bg-alt); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 12px; text-align: left; border-left: 4px solid var(--purple); cursor: pointer;
+  user-select: none; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35); }
+.kpi-card.active { background: rgba(168, 108, 224, 0.22); border-color: var(--pink); box-shadow: 0 0 14px rgba(255, 95, 162, 0.35); }
+
+.kpi-card.k-all { border-left-color: var(--purple); }
+.kpi-card.k-confirmed { border-left-color: var(--green); }
+.kpi-card.k-pending { border-left-color: var(--gold); }
+.kpi-card.k-notcoming { border-left-color: var(--gray-ink); }
+.kpi-card.k-tpending { border-left-color: #e67e22; }
+.kpi-card.k-carspace { border-left-color: #2ecc71; }
+.kpi-card.k-needsride { border-left-color: #e74c3c; }
+.kpi-card.k-zone { border-left-color: var(--warn); }
+.kpi-card.k-food { border-left-color: #3498db; }
+
+.kpi-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.kpi-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+/* Panel de Configuración y Mapa Desplegable */
+.settings-panel, .map-panel {
+  display: none; background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-top: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.settings-panel.open, .map-panel.open { display: block; }
+
+#mapEl { height: 360px; width: 100%; border-radius: 10px; margin-top: 10px; }
+
+/* Autocompletado de Zonas */
+.zone-suggestions {
+  position: absolute; z-index: 1000; background: #1f232e; border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 220px; overflow-y: auto; width: 100%;
+}
+.sugg-item { padding: 8px 12px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sugg-item:hover { background: rgba(255, 95, 162, 0.2); }
+
+/* Menú desplegable */
+.menu-dropdown {
+  display: none; position: absolute; background: #1f232e; border: 1px solid var(--border);
+  border-radius: 12px; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 999;
+}
+.menu-dropdown.open { display: flex; flex-direction: column; gap: 4px; }
+.menu-item {
+  background: transparent; border: none; color: var(--ink); padding: 10px 14px;
+  font-size: 0.88rem; text-align: left; border-radius: 8px; cursor: pointer; transition: background 0.15s ease;
+}
+.menu-item:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* Botón flotante para volver arriba */
+.fab-scroll-top {
+  position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, #a86ce0, #ff5fa2); border: none; color: #fff; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
+}
+.fab-scroll-top.hidden { display: none; }

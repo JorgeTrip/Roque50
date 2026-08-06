@@ -1,0 +1,171 @@
+/**
+ * Orquestador Principal de Inicialización y Eventos - Módulo Transporte
+ */
+
+async function syncToFirebase() {
+  const user = typeof obtenerUsuarioActual === "function" ? obtenerUsuarioActual() : null;
+  if (!user) return;
+  try {
+    localStorage.setItem(`transporte_local_backup_${user.uid}`, JSON.stringify({ guests, zoneOptions, settings, destination }));
+  } catch (e) {}
+  if (typeof guardarDatosFirebase === "function") {
+    await guardarDatosFirebase(user.uid, { guests, zoneOptions, settings, destination });
+  }
+}
+
+async function saveGuests() { await syncToFirebase(); }
+async function saveZones() { await syncToFirebase(); }
+async function saveSettings() { await syncToFirebase(); }
+async function saveDestination() { await syncToFirebase(); }
+
+async function loadDataForUser(user) {
+  if (!user) return;
+  if (typeof renderSkeletons === "function") renderSkeletons();
+
+  try {
+    const b = localStorage.getItem(`transporte_local_backup_${user.uid}`);
+    if (b) {
+      const parsed = JSON.parse(b);
+      if (parsed.guests && Array.isArray(parsed.guests)) {
+        guests = sanitizeGuestsList(parsed.guests);
+        if (parsed.zoneOptions) zoneOptions = parsed.zoneOptions;
+        if (parsed.settings) settings = parsed.settings;
+        if (parsed.destination) destination = parsed.destination;
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
+      }
+    }
+  } catch (e) {}
+
+  if (typeof inicializarUsuarioFirebase === "function") {
+    inicializarUsuarioFirebase(user, (data) => {
+      if (data && data.guests && Array.isArray(data.guests)) {
+        guests = sanitizeGuestsList(data.guests);
+        zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
+        settings = data.settings || { caba: 3, pba: 8 };
+        destination = data.destination || Object.assign({}, DEFAULT_DESTINATION);
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
+        try { localStorage.setItem(`transporte_local_backup_${user.uid}`, JSON.stringify({ guests, zoneOptions, settings, destination })); } catch (e) {}
+      } else {
+        const isJorge = user.email && user.email.toLowerCase() === "jorgeotripodi@gmail.com";
+        guests = isJorge ? sanitizeGuestsList(DEFAULT_GUESTS.slice()) : [];
+        zoneOptions = ZONE_DEFAULTS.slice();
+        settings = { caba: 3, pba: 8 };
+        destination = Object.assign({}, DEFAULT_DESTINATION);
+        migrateGuestCoords();
+        syncSettingsInputs();
+        render();
+        syncToFirebase();
+      }
+    });
+  }
+}
+
+function openZoneSuggestions(inputEl, id) {
+  zoneSearchTargetId = id;
+  updateZoneSuggestions(inputEl, id, inputEl.value || "");
+}
+
+function closeZoneSuggestions() {
+  zoneSearchTargetId = null;
+  const existing = document.getElementById("zoneSuggDropdown");
+  if (existing) existing.remove();
+}
+
+function updateZoneSuggestions(inputEl, id, filterText) {
+  closeZoneSuggestions();
+  zoneSearchTargetId = id;
+  const cleanF = filterText ? filterText.trim().toLowerCase() : "";
+  const list = (zoneOptions && zoneOptions.length) ? zoneOptions : ZONE_DEFAULTS;
+
+  let matches = list.filter(z => !cleanF || z.name.toLowerCase().includes(cleanF));
+  if (cleanF && !matches.some(z => z.name.toLowerCase() === cleanF)) {
+    matches.unshift({ name: filterText.trim(), kind: "custom" });
+  }
+
+  if (matches.length === 0) return;
+
+  const rect = inputEl.getBoundingClientRect();
+  const dropdown = document.createElement("div");
+  dropdown.id = "zoneSuggDropdown";
+  dropdown.className = "zone-suggestions";
+  dropdown.style.left = inputEl.offsetLeft + "px";
+  dropdown.style.top = (inputEl.offsetTop + inputEl.offsetHeight + 4) + "px";
+  dropdown.style.width = inputEl.offsetWidth + "px";
+
+  dropdown.innerHTML = matches.map(m => `
+    <div class="sugg-item" data-name="${escHtml(m.name)}" data-kind="${m.kind || 'zone'}" data-lat="${m.lat || ''}" data-lon="${m.lon || ''}" data-region="${m.region || ''}">
+      ${m.kind === 'custom' ? '➕ Usar esta dirección:' : (m.kind === 'address' ? '📍' : '🏙️')} <b>${escHtml(m.name)}</b>
+    </div>
+  `).join("");
+
+  inputEl.parentNode.appendChild(dropdown);
+}
+
+function initMainAppEvents() {
+  document.getElementById("kpiGrid")?.addEventListener("click", (e) => {
+    const card = e.target.closest(".kpi-card");
+    if (!card || !card.dataset.kpi) return;
+    currentFilter = (currentFilter === card.dataset.kpi) ? "all" : card.dataset.kpi;
+    render();
+  });
+
+  document.getElementById("searchBox")?.addEventListener("input", (e) => {
+    searchTerm = e.target.value; updateSearchClearBtn(); render();
+  });
+
+  document.getElementById("clearSearchBtn")?.addEventListener("click", () => {
+    const sb = document.getElementById("searchBox");
+    if (sb) { sb.value = ""; searchTerm = ""; updateSearchClearBtn(); sb.focus(); render(); }
+  });
+
+  document.getElementById("addGuestBtn")?.addEventListener("click", async () => {
+    const name = prompt("Nombre(s) del/los invitado(s):");
+    if (!name || !name.trim()) return;
+    guests.push({
+      id: "g" + Date.now(), names: name.trim(), people: [{ name: name.trim(), isChild: false }], confirmed: "pending",
+      zone: "", zoneLat: null, zoneLon: null, zoneRegion: null, transport: "pending", freeSpots: 0, assignedPassengers: [], assignmentDone: false, assignedDriverName: "", notes: ""
+    });
+    await saveGuests(); render();
+  });
+
+  document.getElementById("mapToggleBtn")?.addEventListener("click", () => {
+    const panel = document.getElementById("mapPanel");
+    panel?.classList.toggle("open");
+    if (panel?.classList.contains("open")) {
+      if (!mapInitialized) initMap();
+      else setTimeout(() => leafletMap.invalidateSize(), 50);
+    }
+  });
+
+  document.getElementById("closeMapBtn")?.addEventListener("click", () => document.getElementById("mapPanel")?.classList.remove("open"));
+  document.getElementById("settingsToggleBtn")?.addEventListener("click", () => document.getElementById("settingsPanel")?.classList.toggle("open"));
+  document.getElementById("closeSettingsBtn")?.addEventListener("click", () => document.getElementById("settingsPanel")?.classList.remove("open"));
+
+  document.getElementById("exportBtn")?.addEventListener("click", exportDataJSON);
+  document.getElementById("importBtn")?.addEventListener("click", () => document.getElementById("importFile")?.click());
+  document.getElementById("importFile")?.addEventListener("change", (e) => importDataJSON(e.target.files[0]));
+  document.getElementById("reloadServerBtn")?.addEventListener("click", reloadFromNetlify);
+
+  const fab = document.getElementById("fabScrollTop");
+  if (fab) {
+    fab.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 150) fab.classList.remove("hidden");
+      else fab.classList.add("hidden");
+    }, { passive: true });
+  }
+
+  if (typeof observarEstadoSesion === "function") {
+    observarEstadoSesion((user) => {
+      if (typeof toggleVistaAutenticada === "function") toggleVistaAutenticada(user);
+      if (user) loadDataForUser(user);
+      else { guests = []; render(); }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initMainAppEvents);

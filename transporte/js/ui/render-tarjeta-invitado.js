@@ -84,7 +84,7 @@ function renderGuestCard(g) {
         </div>
       </div>
 
-      ${g.transport === 'ride-assigned' ? `
+      ${['needs-ride', 'ride-assigned'].includes(g.transport) ? `
         <div class="sub-panel">
           <label><b>Asignado a vehículo de:</b></label>
           <div style="margin-top:6px;">${renderDriverSelector(g)}</div>

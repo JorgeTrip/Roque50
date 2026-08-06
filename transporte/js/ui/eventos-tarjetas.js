@@ -100,6 +100,13 @@ function initGuestCardsEventListeners() {
     } else if (action === "notes") {
       g.notes = t.value;
     } else if (action === "assignDriverToRow") {
+      const oldDriverName = g.assignedDriverName;
+      if (oldDriverName) {
+        const oldDriver = guests.find(x => x.names === oldDriverName || (x.assignedPassengers || []).includes(g.id));
+        if (oldDriver && Array.isArray(oldDriver.assignedPassengers)) {
+          oldDriver.assignedPassengers = oldDriver.assignedPassengers.filter(x => x !== g.id);
+        }
+      }
       const driver = guests.find(x => x.id === t.value);
       if (driver) {
         g.transport = "ride-assigned";
@@ -107,6 +114,7 @@ function initGuestCardsEventListeners() {
         if (!Array.isArray(driver.assignedPassengers)) driver.assignedPassengers = [];
         if (!driver.assignedPassengers.includes(g.id)) driver.assignedPassengers.push(g.id);
       } else {
+        g.transport = "needs-ride";
         g.assignedDriverName = "";
       }
     }

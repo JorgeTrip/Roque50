@@ -93,6 +93,7 @@
 
 .kpi-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }
 .kpi-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.kpi-subdetail { font-size: 0.72rem; color: var(--muted); margin-top: 4px; opacity: 0.9; font-weight: 500; }
 
 /* Panel de Configuración y Mapa Desplegable */
 .settings-panel, .map-panel {

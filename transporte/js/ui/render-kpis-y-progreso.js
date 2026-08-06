@@ -44,7 +44,7 @@ function computeProgress() {
         <div class="kpi-group-title">Confirmados (Asistencia)</div>
         <div class="kpi-subgrid">
           <div class="kpi-card k-all ${currentFilter==='all'?'active':''}" data-kpi="all" title="Ver todos los invitados"><div class="kpi-num">${totalGuestsPeople}</div><div class="kpi-label">👥 Invitados totales</div></div>
-          <div class="kpi-card k-confirmed ${currentFilter==='confirmed'?'active':''}" data-kpi="confirmed" title="Filtrar por confirmados"><div class="kpi-num">${confirmedYes}</div><div class="kpi-label">✅ Personas confirmadas</div></div>
+          <div class="kpi-card k-confirmed ${currentFilter==='confirmed'?'active':''}" data-kpi="confirmed" title="Filtrar por confirmados"><div class="kpi-num">${confirmedYes}</div><div class="kpi-label">✅ Personas confirmadas</div><div class="kpi-subdetail">${adultsCount} adultos · ${childrenCount} niñ@s</div></div>
           <div class="kpi-card k-pending ${currentFilter==='confirmedPending'?'active':''}" data-kpi="confirmedPending" title="Filtrar por pendientes"><div class="kpi-num">${pendingCount}</div><div class="kpi-label">⏳ Personas pendientes</div></div>
           <div class="kpi-card k-notcoming ${currentFilter==='notcoming'?'active':''}" data-kpi="notcoming" title="Filtrar por los que no vienen"><div class="kpi-num">${notComingCount}</div><div class="kpi-label">🚫 No vienen</div></div>
         </div>
@@ -60,14 +60,6 @@ function computeProgress() {
           <div class="kpi-card k-carspace ${currentFilter==='carSpace'?'active':''}" data-kpi="carSpace" title="Filtrar por autos con lugar disponible"><div class="kpi-num">${carSpaceCount}</div><div class="kpi-label">🚘 Autos con lugar disponibles</div></div>
           <div class="kpi-card k-needsride ${currentFilter==='needsRide'?'active':''}" data-kpi="needsRide" title="Filtrar por quienes necesitan viaje"><div class="kpi-num">${needsRideCount}</div><div class="kpi-label">🚗 Necesitan que los lleven</div></div>
           <div class="kpi-card k-zone ${currentFilter==='zoneMissing'?'active':''}" data-kpi="zoneMissing" title="Filtrar por grupos sin zona cargada"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
-        </div>
-      </div>
-
-      <div class="kpi-group-box">
-        <div class="kpi-group-title">Comida</div>
-        <div class="kpi-subgrid">
-          <div class="kpi-card k-food ${currentFilter==='adults'?'active':''}" data-kpi="adults" title="Filtrar por adultos confirmados"><div class="kpi-num">${adultsCount}</div><div class="kpi-label">🍽️ Adultos confirmados</div></div>
-          <div class="kpi-card k-food ${currentFilter==='children'?'active':''}" data-kpi="children" title="Filtrar por niños confirmados"><div class="kpi-num">${childrenCount}</div><div class="kpi-label">🍽️ Niñ@s confirmados</div></div>
         </div>
       </div>
     `;

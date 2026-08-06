@@ -5,10 +5,10 @@
 :root {
   --pink: #ff5fa2;
   --purple: #a86ce0;
-  --purple-deep: #2a1b3d;
+  --purple-deep: #25173a;
   --gold: #e8b84b;
   --champagne: #E7C98A;
-  --bg: #140f1c;
+  --bg: #130d1d;
   --ink: #f4f5f8;
   --muted: #a0a7ba;
   --green: #4fbf82;
@@ -16,9 +16,9 @@
   --gray-bg: rgba(255, 255, 255, 0.03);
   --gray-ink: #8f8397;
   --warn: #ff9466;
-  --card-bg: #1a1d26;
-  --card-bg-alt: #232733;
-  --border: #32374a;
+  --card-bg: #1d142b;
+  --card-bg-alt: #261a38;
+  --border: #3c2954;
 }
 
 * { box-sizing: border-box; }

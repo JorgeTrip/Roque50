@@ -102,7 +102,7 @@
 
 /* Botón flotante para volver arriba */
 .fab-scroll-top {
-  position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%;
+  position: fixed; bottom: clamp(16px, 4vh, 24px); right: clamp(12px, 4vw, 20px); width: 46px; height: 46px; border-radius: 50%;
   background: linear-gradient(135deg, #a86ce0, #ff5fa2); border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff; cursor: pointer; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45); z-index: 9999;
   display: flex; align-items: center; justify-content: center;

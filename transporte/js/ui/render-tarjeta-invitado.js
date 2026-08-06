@@ -30,7 +30,7 @@ function renderGuestCard(g) {
           <span>${g.special ? '⭐' : '👤'} ${escHtml(g.names)}</span>
           ${badgeHtml}
         </div>
-        <div style="display:flex;gap:6px;">
+        <div class="card-top-actions">
           <button class="small-btn" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje personalizado para WhatsApp">💬 <span class="wa-btn-text">WhatsApp</span></button>
           ${!g.special ? `<button class="small-btn" data-action="delete" data-id="${g.id}" title="Eliminar invitado">🗑️</button>` : ''}
         </div>

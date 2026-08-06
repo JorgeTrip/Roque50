@@ -16,9 +16,9 @@
   --gray-bg: rgba(255, 255, 255, 0.03);
   --gray-ink: #8f8397;
   --warn: #ff9466;
-  --card-bg: #1d142b;
-  --card-bg-alt: #261a38;
-  --border: #3c2954;
+  --card-bg: #261b38;
+  --card-bg-alt: #302246;
+  --border: #463264;
 }
 
 * { box-sizing: border-box; }

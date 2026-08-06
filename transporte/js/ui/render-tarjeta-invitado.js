@@ -26,12 +26,12 @@ function renderGuestCard(g) {
   return `
     <div class="card ${specialClass} ${statusClass}" id="card_${g.id}">
       <div class="card-top">
-        <div class="card-title">
-          <span>${g.special ? '⭐' : '👤'} ${escHtml(g.names)}</span>
-          ${badgeHtml}
+        <div class="card-title-group">
+          <div class="card-title-name">${g.special ? '⭐' : '👤'} ${escHtml(g.names)}</div>
+          <div class="card-badge-wrap">${badgeHtml}</div>
         </div>
         <div class="card-top-actions">
-          <button class="small-btn" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje personalizado para WhatsApp">💬 <span class="wa-btn-text">WhatsApp</span></button>
+          <button class="small-btn" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje para WhatsApp">💬</button>
           ${!g.special ? `<button class="small-btn" data-action="delete" data-id="${g.id}" title="Eliminar invitado">🗑️</button>` : ''}
         </div>
       </div>
@@ -87,7 +87,7 @@ function renderGuestCard(g) {
       ${['needs-ride', 'ride-assigned'].includes(g.transport) ? `
         <div class="sub-panel">
           <label><b>Asignado a vehículo de:</b></label>
-          <div style="margin-top:6px;">${renderDriverSelector(g)}</div>
+          <div style="margin-top:6px;width:100%;max-width:100%;min-width:0;overflow:hidden;">${renderDriverSelector(g)}</div>
         </div>
       ` : ''}
 

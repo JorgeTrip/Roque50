@@ -47,7 +47,7 @@ function renderDriverSelector(g) {
   const drivers = driverCandidates(g.id);
   const options = drivers.map(d => `<option value="${d.id}" ${g.assignedDriverName === d.names ? 'selected' : ''}>${escHtml(d.names)} (${d.zone || 'sin zona'})</option>`).join("");
   return `
-    <select data-action="assignDriverToRow" data-id="${g.id}">
+    <select class="driver-select" data-action="assignDriverToRow" data-id="${g.id}">
       <option value="">-- Seleccionar chofer --</option>
       ${options}
     </select>

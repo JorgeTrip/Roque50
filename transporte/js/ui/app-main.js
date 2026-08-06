@@ -175,10 +175,14 @@ function initMainAppEvents() {
   const fab = document.getElementById("fabScrollTop");
   if (fab) {
     fab.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 150) fab.classList.remove("hidden");
+    const updateFabVisibility = () => {
+      const s = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (s > 60) fab.classList.remove("hidden");
       else fab.classList.add("hidden");
-    }, { passive: true });
+    };
+    window.addEventListener("scroll", updateFabVisibility, { passive: true });
+    document.addEventListener("scroll", updateFabVisibility, { passive: true });
+    updateFabVisibility();
   }
 
   if (typeof observarEstadoSesion === "function") {

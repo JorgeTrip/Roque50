@@ -24,16 +24,10 @@
 }
 
 .card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: -16px -18px 14px -18px;
-  padding: 12px 18px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 8px; margin: -16px -18px 14px -18px; padding: 12px 16px;
   background: linear-gradient(135deg, rgba(168, 108, 224, 0.22) 0%, rgba(42, 27, 61, 0.75) 100%);
-  border-bottom: 1px solid rgba(168, 108, 224, 0.35);
-  border-radius: 13px 13px 0 0;
+  border-bottom: 1px solid rgba(168, 108, 224, 0.35); border-radius: 13px 13px 0 0;
 }
 
 .card.resolved .card-top {
@@ -42,8 +36,7 @@
 }
 
 .card.notcoming .card-top {
-  background: rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06); border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .card.special .card-top {
@@ -51,32 +44,32 @@
   border-bottom: 1px solid rgba(232, 184, 75, 0.45);
 }
 
-.card-title {
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--ink);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.card-title-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; align-items: flex-start; }
+.card-title-name { font-weight: 700; font-size: 1.1rem; color: var(--ink); line-height: 1.2; word-break: break-word; }
+.card-badge-wrap { display: flex; align-items: center; margin-top: 2px; }
 
 .badge {
-  font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; font-weight: 600;
-  display: inline-flex; align-items: center; justify-content: center; text-align: center;
-  width: fit-content; max-width: 100%; white-space: nowrap;
+  font-size: 0.75rem; padding: 3px 9px; border-radius: 20px; font-weight: 600;
+  display: inline-block !important; text-align: center !important; width: fit-content !important;
+  max-width: 100% !important; white-space: nowrap !important;
 }
 
-.card-top-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.card-top-actions { margin-left: auto !important; display: flex !important; align-items: center !important; gap: 6px !important; flex-shrink: 0 !important; }
+.card-top-actions .small-btn { min-width: 36px; min-height: 34px; padding: 4px 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; }
 
-.sub-panel select, select[data-action="assignDriverToRow"] {
-  max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;
-  text-overflow: ellipsis; overflow: hidden;
+.sub-panel {
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+  box-sizing: border-box !important; overflow: hidden !important;
+  background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px; padding: 12px; margin-top: 10px;
 }
 
-@media (max-width: 600px) {
-  .wa-btn-text { display: none; }
-  .card-top { gap: 6px; padding: 10px 12px; }
-  .card-top-actions .small-btn { padding: 6px 10px; min-height: 34px; }
+.sub-panel select, .driver-select, select[data-action="assignDriverToRow"] {
+  display: block !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+  box-sizing: border-box !important; background: #181224 !important;
+  border: 1px solid var(--border) !important; border-radius: 8px !important;
+  color: var(--ink) !important; font-size: 0.88rem !important; padding: 8px 10px !important;
+  outline: none !important; text-overflow: ellipsis !important; overflow: hidden !important; white-space: nowrap !important;
 }
 
 .badge.b-yes { background: rgba(79, 191, 130, 0.2); color: var(--green); border: 1px solid rgba(79, 191, 130, 0.4); }

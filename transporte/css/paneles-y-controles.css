@@ -102,14 +102,14 @@
 
 /* Botón flotante para volver arriba */
 .fab-scroll-top {
-  position: fixed; bottom: clamp(16px, 4vh, 24px); right: clamp(12px, 4vw, 20px); width: 46px; height: 46px; border-radius: 50%;
-  background: linear-gradient(135deg, #a86ce0, #ff5fa2); border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff; cursor: pointer; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45); z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.3s ease, transform 0.2s ease;
+  position: fixed !important; bottom: 20px !important; right: 18px !important; width: 46px !important; height: 46px !important; border-radius: 50% !important;
+  background: linear-gradient(135deg, #a86ce0, #ff5fa2) !important; border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #fff !important; cursor: pointer !important; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.55) !important; z-index: 99999 !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: opacity 0.3s ease, transform 0.2s ease !important;
 }
-.fab-scroll-top:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 30px rgba(255, 95, 162, 0.4); }
-.fab-scroll-top.hidden { opacity: 0; pointer-events: none; transform: translateY(15px); }
+.fab-scroll-top:hover { transform: translateY(-3px) scale(1.05) !important; }
+.fab-scroll-top.hidden { display: none !important; opacity: 0 !important; pointer-events: none !important; }
 
 .chevron-up {
   width: 10px; height: 10px; border-left: 2.5px solid #ffffff; border-top: 2.5px solid #ffffff;

@@ -5,11 +5,20 @@
 async function syncToFirebase() {
   const user = typeof obtenerUsuarioActual === "function" ? obtenerUsuarioActual() : null;
   if (!user) return;
+  
+  const payload = JSON.parse(JSON.stringify({
+    guests: guests || [],
+    zoneOptions: zoneOptions || [],
+    settings: settings || {},
+    destination: destination || {}
+  }));
+
   try {
-    localStorage.setItem(`transporte_local_backup_${user.uid}`, JSON.stringify({ guests, zoneOptions, settings, destination }));
+    localStorage.setItem(`transporte_local_backup_${user.uid}`, JSON.stringify(payload));
   } catch (e) {}
+
   if (typeof guardarDatosFirebase === "function") {
-    await guardarDatosFirebase(user.uid, { guests, zoneOptions, settings, destination });
+    await guardarDatosFirebase(user.uid, payload);
   }
 }
 
@@ -75,34 +84,47 @@ function closeZoneSuggestions() {
   if (existing) existing.remove();
 }
 
-function updateZoneSuggestions(inputEl, id, filterText) {
+async function updateZoneSuggestions(inputEl, id, filterText) {
   closeZoneSuggestions();
   zoneSearchTargetId = id;
   const cleanF = filterText ? filterText.trim().toLowerCase() : "";
   const list = (zoneOptions && zoneOptions.length) ? zoneOptions : ZONE_DEFAULTS;
 
-  let matches = list.filter(z => !cleanF || z.name.toLowerCase().includes(cleanF));
+  let matches = list.filter(z => !cleanF || z.name.toLowerCase().includes(cleanF)).slice(0, 5);
   if (cleanF && !matches.some(z => z.name.toLowerCase() === cleanF)) {
     matches.unshift({ name: filterText.trim(), kind: "custom" });
   }
 
-  if (matches.length === 0) return;
-
-  const rect = inputEl.getBoundingClientRect();
   const dropdown = document.createElement("div");
   dropdown.id = "zoneSuggDropdown";
   dropdown.className = "zone-suggestions";
+  dropdown.dataset.targetId = id;
   dropdown.style.left = inputEl.offsetLeft + "px";
   dropdown.style.top = (inputEl.offsetTop + inputEl.offsetHeight + 4) + "px";
   dropdown.style.width = inputEl.offsetWidth + "px";
 
-  dropdown.innerHTML = matches.map(m => `
-    <div class="sugg-item" data-name="${escHtml(m.name)}" data-kind="${m.kind || 'zone'}" data-lat="${m.lat || ''}" data-lon="${m.lon || ''}" data-region="${m.region || ''}">
-      ${m.kind === 'custom' ? '➕ Usar esta dirección:' : (m.kind === 'address' ? '📍' : '🏙️')} <b>${escHtml(m.name)}</b>
-    </div>
-  `).join("");
+  const renderDropdownItems = (items) => {
+    dropdown.innerHTML = items.map(m => `
+      <div class="sugg-item" data-name="${escHtml(m.name)}" data-kind="${m.kind || 'zone'}" data-lat="${m.lat || ''}" data-lon="${m.lon || ''}" data-region="${m.region || ''}">
+        ${m.kind === 'custom' ? '➕ Usar esta dirección:' : (m.kind === 'address' ? '📍' : '🏙️')} <b>${escHtml(m.name)}</b>
+      </div>
+    `).join("");
+  };
 
+  renderDropdownItems(matches);
   inputEl.parentNode.appendChild(dropdown);
+
+  if (cleanF.length >= 3 && typeof searchOnlineAutocomplete === "function") {
+    const onlineResults = await searchOnlineAutocomplete(cleanF);
+    if (onlineResults.length > 0 && zoneSearchTargetId === id) {
+      onlineResults.forEach(om => {
+        if (!matches.some(m => m.name.toLowerCase() === om.name.toLowerCase())) {
+          matches.push(om);
+        }
+      });
+      renderDropdownItems(matches);
+    }
+  }
 }
 
 function initMainAppEvents() {

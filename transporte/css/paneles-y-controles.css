@@ -102,8 +102,22 @@
 
 /* Botón flotante para volver arriba */
 .fab-scroll-top {
-  position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #a86ce0, #ff5fa2); border: none; color: #fff; cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
+  position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%;
+  background: linear-gradient(135deg, #a86ce0, #ff5fa2); border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff; cursor: pointer; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.3s ease, transform 0.2s ease;
 }
-.fab-scroll-top.hidden { display: none; }
+.fab-scroll-top:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 30px rgba(255, 95, 162, 0.4); }
+.fab-scroll-top.hidden { opacity: 0; pointer-events: none; transform: translateY(15px); }
+
+.chevron-up {
+  width: 10px; height: 10px; border-left: 2.5px solid #ffffff; border-top: 2.5px solid #ffffff;
+  transform: rotate(45deg); margin-top: 3px; animation: bounceChevronUp 1.8s infinite ease-in-out;
+}
+
+@keyframes bounceChevronUp {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+  40% { transform: translateY(-4px) rotate(45deg); }
+  60% { transform: translateY(-2px) rotate(45deg); }
+}

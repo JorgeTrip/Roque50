@@ -70,6 +70,26 @@ async function geocodeAddressOnline(query) {
   return null;
 }
 
+async function searchOnlineAutocomplete(query) {
+  if (!query || query.trim().length < 3) return [];
+  const cleanQ = query.trim();
+  try {
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=4&lang=es`;
+    const res = await fetch(photonUrl);
+    const data = await res.json();
+    if (data && data.features && data.features.length > 0) {
+      return data.features.map(f => {
+        const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+        const p = f.properties || {};
+        const parts = [p.name || p.street, p.city || p.district || p.state].filter(Boolean);
+        const name = parts.length ? parts.join(", ") : cleanQ;
+        return { name, lat, lon, region: guessRegion(lat, lon), kind: p.housenumber ? "address" : "zone" };
+      });
+    }
+  } catch (e) {}
+  return [];
+}
+
 async function resolveZoneEntry(newEntry) {
   const idx = zoneOptions.findIndex(z => baseName(z.name) === baseName(newEntry.name));
   if (idx === -1) {

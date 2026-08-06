@@ -9,7 +9,7 @@ echo    ROQUE 50 AÑOS - Servidor Web para Pruebas en Red
 echo =======================================================
 echo.
 
-set PUERTO=8181
+set PUERTO=8080
 set /p USER_PUERTO="Ingresa el puerto deseado [Presiona Enter para puerto %PUERTO%]: "
 if not "%USER_PUERTO%"=="" set PUERTO=%USER_PUERTO%
 

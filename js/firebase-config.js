@@ -1,6 +1,7 @@
 /**
  * Configuración e inicialización de Firebase SDK para el módulo de Transporte
  * Proyecto: transporte-47fe6
+ * Soporta almacenamiento aislado por UID de usuario.
  */
 
 const firebaseConfig = {
@@ -14,7 +15,6 @@ const firebaseConfig = {
   measurementId: "G-XVP0NBS8J2"
 };
 
-// Inicializar Firebase
 let app = null;
 let db = null;
 let isFirebaseReady = false;
@@ -24,23 +24,24 @@ try {
     app = firebase.initializeApp(firebaseConfig);
     db = firebase.database();
     isFirebaseReady = true;
-    console.log("🔥 Firebase inicializado correctamente en el módulo de transporte.");
+    console.log("🔥 Firebase inicializado correctamente.");
   }
 } catch (err) {
-  console.warn("⚠️ No se pudo conectar a Firebase, utilizando modo local fallback:", err);
+  console.warn("⚠️ No se pudo conectar a Firebase:", err);
 }
 
 /**
- * Suscribirse a los datos en tiempo real de la base de datos
- * @param {Function} callback Callback que recibe { guests, zoneOptions, settings, destination }
+ * Suscribirse a los datos del usuario actual en tiempo real
+ * @param {string} uid ID único del usuario
+ * @param {Function} callback Callback que recibe los datos
  */
-function suscribirDatosFirebase(callback) {
-  if (!isFirebaseReady || !db) return false;
+function suscribirDatosFirebase(uid, callback) {
+  if (!isFirebaseReady || !db || !uid) return false;
   
-  const ref = db.ref("transporteData");
+  const ref = db.ref(`usersData/${uid}/transporteData`);
   ref.on("value", (snapshot) => {
     const data = snapshot.val();
-    if (data && typeof callback === "function") {
+    if (typeof callback === "function") {
       callback(data);
     }
   }, (error) => {
@@ -51,16 +52,48 @@ function suscribirDatosFirebase(callback) {
 }
 
 /**
- * Guardar estado completo en Firebase Realtime Database
+ * Guardar estado del usuario en Firebase Realtime Database
+ * @param {string} uid ID único del usuario
  * @param {Object} dataObjeto { guests, zoneOptions, settings, destination }
  */
-async function guardarDatosFirebase(dataObjeto) {
-  if (!isFirebaseReady || !db) return false;
+async function guardarDatosFirebase(uid, dataObjeto) {
+  if (!isFirebaseReady || !db || !uid) return false;
   try {
-    await db.ref("transporteData").set(dataObjeto);
+    await db.ref(`usersData/${uid}/transporteData`).set(dataObjeto);
     return true;
   } catch (err) {
     console.error("Error al guardar en Firebase:", err);
     return false;
   }
+}
+
+/**
+ * Inicializa y asocia los datos para el usuario autenticado.
+ * Si es la cuenta de Jorge (jorgeotripodi@gmail.com) y no tiene datos migrados, 
+ * traslada los datos existentes de la raíz a su UID.
+ * Para otros usuarios nuevos, crea su base de datos personal vacía.
+ */
+async function inicializarUsuarioFirebase(user, callback) {
+  if (!isFirebaseReady || !db || !user || !user.uid) return;
+
+  const userRef = db.ref(`usersData/${user.uid}/transporteData`);
+  const snapshot = await userRef.once("value");
+  const userData = snapshot.val();
+
+  // Si aún no tiene datos inicializados en su UID
+  if (!userData) {
+    const isJorge = user.email && user.email.toLowerCase() === "jorgeotripodi@gmail.com";
+    if (isJorge) {
+      // Migrar datos de la raíz actual (transporteData) a su UID
+      const legacySnap = await db.ref("transporteData").once("value");
+      const legacyData = legacySnap.val();
+      if (legacyData) {
+        await userRef.set(legacyData);
+        console.log("📦 Datos actuales de Roque 50 migrados exitosamente a la cuenta de Jorge.");
+      }
+    }
+  }
+
+  // Suscribir al canal de datos en tiempo real del usuario
+  suscribirDatosFirebase(user.uid, callback);
 }

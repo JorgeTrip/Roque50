@@ -70,21 +70,25 @@ function obtenerPrimerNombre(user) {
 
 function actualizarHeaderUsuario(user) {
   let userWrap = document.getElementById("userAvatarMenuWrap");
-  const headerInner = document.querySelector(".header-inner") || document.querySelector("header");
 
   if (!user) {
-    if (userWrap) userWrap.remove();
+    if (userWrap) userWrap.style.display = "none";
     return;
   }
 
   const primerNombre = obtenerPrimerNombre(user);
 
-  if (!userWrap && headerInner) {
-    userWrap = document.createElement("div");
-    userWrap.id = "userAvatarMenuWrap";
-    userWrap.className = "user-avatar-wrap";
-    headerInner.appendChild(userWrap);
+  if (!userWrap) {
+    const topRow = document.querySelector(".header-top-row") || document.querySelector(".header-inner");
+    if (topRow) {
+      userWrap = document.createElement("div");
+      userWrap.id = "userAvatarMenuWrap";
+      userWrap.className = "user-avatar-wrap";
+      topRow.appendChild(userWrap);
+    }
   }
+  if (!userWrap) return;
+  userWrap.style.display = "flex";
 
   const fotoHtml = user.photoURL 
     ? `<img src="${user.photoURL}" alt="Avatar" class="user-avatar-img">`
@@ -101,6 +105,13 @@ function actualizarHeaderUsuario(user) {
   const dropdown = document.getElementById("menuDropdown");
   if (dropdown) {
     userWrap.appendChild(dropdown);
+    let uHead = dropdown.querySelector(".menu-user-header");
+    if (!uHead) {
+      uHead = document.createElement("div");
+      uHead.className = "menu-user-header";
+      dropdown.insertBefore(uHead, dropdown.firstChild);
+    }
+    uHead.textContent = `¡Hola, ${primerNombre}!`;
 
     if (!document.getElementById("logoutMenuItem")) {
       const logoutBtn = document.createElement("button");

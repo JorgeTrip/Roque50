@@ -70,44 +70,38 @@
 }
 .auth-error.show { display: block; }
 
-/* Contenedor del Header Alineado con max-width: 960px */
-.header-inner {
-  max-width: 960px; margin: 0 auto; padding: 0 16px;
-  position: relative; display: flex; align-items: center; justify-content: center;
-}
-
-.header-titles { text-align: center; }
-
-/* Avatar y Menú Desplegable Alineados al Margen Derecho */
+/* Avatar y Menú Desplegable de Usuario */
 .user-avatar-wrap {
-  position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 500;
+  position: relative; margin: 0; padding: 0; border: none; width: auto; box-sizing: border-box;
 }
 
 .user-avatar-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 95, 162, 0.35);
-  backdrop-filter: blur(10px); padding: 5px 14px 5px 6px; border-radius: 30px;
-  color: #ffffff; cursor: pointer; transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  display: inline-flex; align-items: center; gap: 8px; width: auto; box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 5px 14px 5px 6px; border-radius: 30px; color: #ffffff; cursor: pointer; transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-.user-avatar-btn:hover {
-  background: rgba(255, 255, 255, 0.22); border-color: #ff5fa2; transform: translateY(-1px);
-}
+.user-avatar-btn:hover { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 95, 162, 0.5); transform: translateY(-1px); }
 
-.user-avatar-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ff5fa2; }
+.user-avatar-img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ff5fa2; }
 .user-avatar-initial {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
   background: linear-gradient(135deg, #a86ce0, #ff5fa2); color: #fff;
-  font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.82rem; display: flex; align-items: center; justify-content: center;
 }
 
-.user-greeting { font-size: 0.88rem; font-weight: 600; color: #e7c98a; white-space: nowrap; }
+.user-greeting { font-size: 0.85rem; font-weight: 600; color: #e7c98a; white-space: nowrap; }
 .user-chevron { font-size: 0.75rem; opacity: 0.8; color: #f4f5f8; }
 
-/* Dropdown alineado al borde del Avatar */
+.menu-user-header {
+  padding: 10px 14px 8px; font-size: 0.88rem; font-weight: 700; color: #e7c98a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12); margin-bottom: 6px;
+  pointer-events: none; letter-spacing: 0.3px; text-align: right;
+}
+
 .user-avatar-wrap .menu-dropdown {
-  position: absolute; top: calc(100% + 10px); right: 0; left: auto;
-  min-width: 230px; z-index: 1000;
+  position: absolute; top: calc(100% + 6px); right: 0; min-width: 220px; z-index: 1000;
 }
 
 .menu-logout {
@@ -117,11 +111,6 @@
 .menu-logout:hover { background: rgba(255, 95, 162, 0.2) !important; color: #ffffff !important; }
 
 @media (max-width: 600px) {
-  .header-inner { flex-direction: column; align-items: stretch; gap: 6px; }
-  .user-avatar-wrap {
-    position: relative; right: auto; top: auto; transform: none;
-    align-self: flex-end; margin-top: 6px; margin-bottom: 0;
-  }
-  .header-titles { text-align: center; width: 100%; }
-  .user-greeting { display: inline-block; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+  .user-greeting, .user-chevron { display: none !important; }
+  .user-avatar-btn { padding: 3px !important; border-radius: 50% !important; gap: 0 !important; }
 }

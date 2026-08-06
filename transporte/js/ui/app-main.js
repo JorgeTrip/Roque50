@@ -170,7 +170,7 @@ function initMainAppEvents() {
   document.getElementById("exportBtn")?.addEventListener("click", exportDataJSON);
   document.getElementById("importBtn")?.addEventListener("click", () => document.getElementById("importFile")?.click());
   document.getElementById("importFile")?.addEventListener("change", (e) => importDataJSON(e.target.files[0]));
-  document.getElementById("reloadServerBtn")?.addEventListener("click", reloadFromNetlify);
+  document.getElementById("headerLogoutBtn")?.addEventListener("click", cerrarSesionUsuario);
 
   const fab = document.getElementById("fabScrollTop");
   if (fab) {

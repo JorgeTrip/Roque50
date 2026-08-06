@@ -5,11 +5,17 @@
 function updateHeaderDynamic() {
   const hTitle = document.getElementById("headerTitle");
   const hSub = document.getElementById("headerSubtitle");
+  const hDest = document.getElementById("headerDestText");
+  const hHosts = document.getElementById("headerHostsText");
+
   const eventName = (settings && settings.eventName) ? settings.eventName.trim() : "Cumple 50 de Roque";
-  const destName = (destination && destination.name) ? baseName(destination.name) : "La Reja";
-  
-  if (hTitle) hTitle.textContent = `🚗 Transporte — ${eventName}`;
-  if (hSub) hSub.textContent = `${destName} · organizá invitaciones, confirmaciones y viajes compartidos`;
+  const destName = (destination && destination.name) ? destination.name : "La Reja, Moreno";
+  const hostNames = (settings && settings.hostNames) ? settings.hostNames.trim() : "Roque y Jorge";
+
+  if (hTitle) hTitle.textContent = eventName;
+  if (hSub) hSub.textContent = "Plataforma central para organizar invitaciones, confirmaciones de asistencia y viajes compartidos.";
+  if (hDest) hDest.textContent = destName;
+  if (hHosts) hHosts.textContent = hostNames;
 }
 
 function syncSettingsInputs() {

@@ -44,8 +44,11 @@ function renderPeopleList(g) {
 }
 
 function renderDriverSelector(g) {
-  const drivers = driverCandidates(g.id);
-  const options = drivers.map(d => `<option value="${d.id}" ${g.assignedDriverName === d.names ? 'selected' : ''}>${escHtml(d.names)} (${d.zone || 'sin zona'})</option>`).join("");
+  const drivers = driverCandidates(g);
+  const options = drivers.map(d => {
+    const isSel = typeof isPassengerAssignedToDriver === "function" ? isPassengerAssignedToDriver(g, d) : (g.assignedDriverName === d.names);
+    return `<option value="${d.id}" ${isSel ? 'selected' : ''}>${escHtml(d.names)} (${d.zone || 'sin zona'})</option>`;
+  }).join("");
   return `
     <select class="driver-select" data-action="assignDriverToRow" data-id="${g.id}">
       <option value="">-- Seleccionar chofer --</option>
@@ -57,9 +60,10 @@ function renderDriverSelector(g) {
 function renderPassengerChecklist(driver) {
   let candidates;
   if (isResolved(driver)) {
-    candidates = guests.filter(p => (driver.assignedPassengers || []).includes(p.id));
+    const rawAssigned = guests.filter(p => (driver.assignedPassengers || []).includes(p.id));
+    candidates = typeof sortByProximity === "function" ? sortByProximity(rawAssigned, driver) : rawAssigned;
   } else {
-    candidates = passengerCandidates(driver.id);
+    candidates = passengerCandidates(driver);
   }
 
   if (candidates.length === 0) {

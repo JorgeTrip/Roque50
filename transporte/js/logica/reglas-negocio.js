@@ -23,8 +23,10 @@ function getAssignedPassengersPeopleCount(driver) {
 }
 
 function isCarFull(row) {
-  if (row.transport !== "car-space" || !row.freeSpots || row.freeSpots <= 0) return false;
-  return getAssignedPassengersPeopleCount(row) >= row.freeSpots;
+  if (row.transport !== "car-space") return false;
+  const spots = parseInt(row.freeSpots) || 0;
+  if (spots <= 0) return true;
+  return getAssignedPassengersPeopleCount(row) >= spots;
 }
 
 function isResolved(row) {
@@ -61,23 +63,114 @@ function matchesFilters(g) {
   return true;
 }
 
-function driverCandidates(excludeId) {
-  return guests.filter(g => g.transport === "car-space" && g.id !== excludeId);
+/**
+ * Ordena una lista de invitados según la distancia respecto a un objeto de referencia.
+ * @param {Array} list - Lista de invitados a ordenar.
+ * @param {Object} refObj - Objeto de referencia con coordenadas zoneLat y zoneLon.
+ * @returns {Array} Lista ordenada por cercanía.
+ */
+function sortByProximity(list, refObj) {
+  if (!Array.isArray(list)) return [];
+  const result = list.slice();
+  const hasRefCoords = refObj && refObj.zoneLat != null && refObj.zoneLon != null;
+
+  return result.sort((a, b) => {
+    const aHasCoords = a && a.zoneLat != null && a.zoneLon != null;
+    const bHasCoords = b && b.zoneLat != null && b.zoneLon != null;
+
+    if (hasRefCoords && aHasCoords && bHasCoords) {
+      const distA = haversine(refObj.zoneLat, refObj.zoneLon, a.zoneLat, a.zoneLon);
+      const distB = haversine(refObj.zoneLat, refObj.zoneLon, b.zoneLat, b.zoneLon);
+      if (Math.abs(distA - distB) > 0.01) {
+        return distA - distB;
+      }
+      return (a.names || "").localeCompare(b.names || "", "es");
+    }
+    if (aHasCoords && !bHasCoords) return -1;
+    if (!aHasCoords && bHasCoords) return 1;
+    return (a.names || "").localeCompare(b.names || "", "es");
+  });
 }
 
-function passengerCandidates(driverId) {
-  return guests.filter(g =>
+/**
+ * Evalúa si un pasajero está efectivamente asignado a un conductor específico.
+ * @param {Object} passenger - Objeto del pasajero.
+ * @param {Object} driver - Objeto del conductor.
+ * @returns {boolean} True si el pasajero tiene asignado al conductor.
+ */
+function isPassengerAssignedToDriver(passenger, driver) {
+  if (!passenger || !driver) return false;
+  if (passenger.transport !== "ride-assigned") return false;
+
+  if (passenger.assignedDriverId && passenger.assignedDriverId === driver.id) return true;
+
+  if (passenger.assignedDriverName && driver.names) {
+    const pName = passenger.assignedDriverName.trim().toLowerCase();
+    const dName = driver.names.trim().toLowerCase();
+    if (pName === dName || dName.includes(pName) || pName.includes(dName)) return true;
+  }
+
+  if (Array.isArray(driver.assignedPassengers) && driver.assignedPassengers.includes(passenger.id)) {
+    return true;
+  }
+
+  return false;
+}
+
+function driverCandidates(passengerOrId) {
+  const passenger = typeof passengerOrId === "object" ? passengerOrId : guests.find(g => g.id === passengerOrId);
+  const passId = passenger ? passenger.id : passengerOrId;
+  const neededSpots = passenger ? personaCount(passenger) : 1;
+
+  const drivers = guests.filter(d => {
+    if (!d || d.id === passId) return false;
+    if (d.transport !== "car-space") return false;
+    if (d.confirmed === "no") return false;
+
+    const isCurrent = isPassengerAssignedToDriver(passenger, d);
+    if (isCurrent) return true;
+
+    if (d.assignmentDone || isResolved(d)) return false;
+
+    const totalSpots = parseInt(d.freeSpots) || 0;
+    if (totalSpots <= 0) return false;
+
+    const occupiedSpots = getAssignedPassengersPeopleCount(d);
+    const availableSpots = totalSpots - occupiedSpots;
+
+    return availableSpots >= neededSpots;
+  });
+
+  return sortByProximity(drivers, passenger);
+}
+
+function passengerCandidates(driverOrId) {
+  const driver = typeof driverOrId === "object" ? driverOrId : guests.find(g => g.id === driverOrId);
+  const driverId = driver ? driver.id : driverOrId;
+  const assigned = (driver && Array.isArray(driver.assignedPassengers)) ? driver.assignedPassengers : [];
+
+  const candidates = guests.filter(g =>
     g.id !== driverId &&
-    ["pending", "needs-ride"].includes(g.transport) &&
-    g.confirmed !== "no"
+    g.confirmed !== "no" &&
+    (assigned.includes(g.id) || ["pending", "needs-ride"].includes(g.transport))
   );
+
+  return sortByProximity(candidates, driver);
 }
 
 function distanceTag(a, b) {
-  if (!a.zoneLat || !b.zoneLat) return `<span class="far-tag">sin coordenadas</span>`;
+  if (!a || !b || a.zoneLat == null || a.zoneLon == null || b.zoneLat == null || b.zoneLon == null) {
+    return `<span class="far-tag">sin coordenadas</span>`;
+  }
   const d = haversine(a.zoneLat, a.zoneLon, b.zoneLat, b.zoneLon);
-  const threshold = (b.zoneRegion === "CABA") ? settings.caba : settings.pba;
-  if (d <= threshold) return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
+  const region = b.zoneRegion || (typeof guessRegion === "function" ? guessRegion(b.zoneLat, b.zoneLon) : "PBA");
+  const cabaRadius = (settings && settings.caba != null && !isNaN(parseFloat(settings.caba))) ? parseFloat(settings.caba) : 3;
+  const pbaRadius = (settings && settings.pba != null && !isNaN(parseFloat(settings.pba))) ? parseFloat(settings.pba) : 8;
+  const threshold = (region === "CABA") ? cabaRadius : pbaRadius;
+
+  if (d <= threshold) {
+    return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
+  }
   return `<span class="far-tag">${d.toFixed(1)} km</span>`;
 }
 

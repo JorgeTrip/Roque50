@@ -97,16 +97,13 @@ function initGuestCardsEventListeners() {
     else if (action === "toggleContactsExchanged") { g.contactsExchanged = t.checked; }
     else if (action === "notes") { g.notes = t.value; }
     else if (action === "assignDriverToRow") {
-      if (g.assignedDriverName) {
-        const oldD = guests.find(x => x.names === g.assignedDriverName || (x.assignedPassengers || []).includes(g.id));
-        if (oldD && Array.isArray(oldD.assignedPassengers)) oldD.assignedPassengers = oldD.assignedPassengers.filter(x => x !== g.id);
-      }
+      guests.forEach(x => { if (Array.isArray(x.assignedPassengers)) x.assignedPassengers = x.assignedPassengers.filter(pId => pId !== g.id); });
       const driver = guests.find(x => x.id === t.value);
       if (driver) {
-        g.transport = "ride-assigned"; g.assignedDriverName = driver.names;
+        g.transport = "ride-assigned"; g.assignedDriverName = driver.names; g.assignedDriverId = driver.id;
         if (!Array.isArray(driver.assignedPassengers)) driver.assignedPassengers = [];
         if (!driver.assignedPassengers.includes(g.id)) driver.assignedPassengers.push(g.id);
-      } else { g.transport = "needs-ride"; g.assignedDriverName = ""; }
+      } else { g.transport = "needs-ride"; g.assignedDriverName = ""; g.assignedDriverId = ""; }
     }
     await saveGuests(); render();
   });
@@ -173,29 +170,24 @@ function initGuestCardsEventListeners() {
       if (g && g.people && g.people[idx]) g.people[idx].name = t.value;
     }
   });
-
   document.addEventListener("focusout", async (e) => {
-    if (isSelectingSuggestion) return;
+    if (isSelectingSuggestion || !e.target) return;
     const t = e.target;
-    if (!t) return;
     if (t.classList && t.classList.contains("zone-input")) {
       setTimeout(async () => {
-        if (isSelectingSuggestion) return;
-        const id = t.dataset.id;
-        if (id && id !== "destination") {
-          const g = guests.find(x => x.id === id);
-          if (g) {
-            const val = t.value.trim();
-            if (!val || val === g.zone) return;
-            closeZoneSuggestions();
-            let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
-            if (!resolved.lat && val) {
-              const geo = await geocodeAddressOnline(val);
-              if (geo && geo.lat != null) resolved = await resolveZoneEntry(geo);
-            }
-            g.zone = resolved.name || val; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
-            await saveGuests(); render();
+        if (isSelectingSuggestion || !t.dataset.id || t.dataset.id === "destination") return;
+        const g = guests.find(x => x.id === t.dataset.id);
+        if (g) {
+          const val = t.value.trim();
+          if (!val || val === g.zone) return;
+          closeZoneSuggestions();
+          let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+          if (!resolved.lat && val) {
+            const geo = await geocodeAddressOnline(val);
+            if (geo && geo.lat != null) resolved = await resolveZoneEntry(geo);
           }
+          g.zone = resolved.name || val; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+          await saveGuests(); render();
         }
       }, 200);
     } else if (t.dataset && t.dataset.action === "personName") {
@@ -204,5 +196,4 @@ function initGuestCardsEventListeners() {
     }
   });
 }
-
 document.addEventListener("DOMContentLoaded", initGuestCardsEventListeners);

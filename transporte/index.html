@@ -122,7 +122,7 @@
       </div>
 
       <div class="list" id="listContainer"></div>
-      <footer>Los cambios se guardan automáticamente en tu cuenta.</footer>
+
     </div>
   </div>
 
@@ -135,22 +135,29 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
   <!-- JavaScript Modular (< 200 líneas cada archivo) -->
-  <script src="js/datos/constantes-defaults.js"></script>
-  <script src="js/datos/estado-transporte.js"></script>
-  <script src="js/servicios/firebase-config.js"></script>
-  <script src="js/servicios/auth-service.js"></script>
-  <script src="js/servicios/auth-ui.js"></script>
-  <script src="js/servicios/geocoding-service.js"></script>
-  <script src="js/servicios/exportar-importar.js"></script>
-  <script src="js/logica/reglas-negocio.js"></script>
-  <script src="js/logica/ordenamiento-grupos.js"></script>
-  <script src="js/ui/render-kpis-y-progreso.js"></script>
-  <script src="js/ui/render-subpaneles-tarjeta.js"></script>
-  <script src="js/ui/render-tarjeta-invitado.js"></script>
-  <script src="js/ui/render-lista.js"></script>
-  <script src="js/ui/mapa-interactivo.js"></script>
-  <script src="js/ui/panel-configuracion.js"></script>
-  <script src="js/ui/eventos-tarjetas.js"></script>
-  <script src="js/ui/app-main.js"></script>
+  <script>
+    /* Cache-busting: se reemplaza automáticamente en cada carga */
+    const _v = Date.now();
+    const _scripts = [
+      "js/datos/constantes-defaults.js",
+      "js/datos/estado-transporte.js",
+      "js/servicios/firebase-config.js",
+      "js/servicios/auth-service.js",
+      "js/servicios/auth-ui.js",
+      "js/servicios/geocoding-service.js",
+      "js/servicios/exportar-importar.js",
+      "js/logica/reglas-negocio.js",
+      "js/logica/ordenamiento-grupos.js",
+      "js/ui/render-kpis-y-progreso.js",
+      "js/ui/render-subpaneles-tarjeta.js",
+      "js/ui/render-tarjeta-invitado.js",
+      "js/ui/render-lista.js",
+      "js/ui/mapa-interactivo.js",
+      "js/ui/panel-configuracion.js",
+      "js/ui/eventos-tarjetas.js",
+      "js/ui/app-main.js"
+    ];
+    document.write(_scripts.map(s => `<script src="${s}?v=${_v}"><\/script>`).join(""));
+  </script>
 </body>
 </html>

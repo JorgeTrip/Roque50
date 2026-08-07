@@ -31,9 +31,9 @@ function computeProgress() {
   const needsRideCount = nonSpecial.filter(g => g.transport === "needs-ride" && g.confirmed !== "no").reduce((s, g) => s + personaCount(g), 0);
   const zoneMissingCount = nonSpecial.filter(zoneNeeded).length;
 
-  const confirmedForFood = guests.filter(g => g.confirmed === "yes" || g.special);
+  const confirmedGuests = nonSpecial.filter(g => g.confirmed === "yes");
   let adultsCount = 0, childrenCount = 0;
-  confirmedForFood.forEach(g => {
+  confirmedGuests.forEach(g => {
     (g.people || []).forEach(p => { if (p.isChild) childrenCount++; else adultsCount++; });
   });
 

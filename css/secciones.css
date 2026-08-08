@@ -121,13 +121,9 @@
 }
 
 @media (min-width: 641px) {
-  .actions {
-    flex-direction: row;
-  }
-  .btn {
-    flex: 1 1 200px;
-    width: auto;
-  }
+  .actions { flex-direction: row; }
+  .btn { flex: 1 1 200px; width: auto; }
+  .platform-wrap { max-width: 540px; margin: 30px auto 0; }
 }
 
 .holiday-note {

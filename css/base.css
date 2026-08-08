@@ -98,6 +98,7 @@ body.invitacion-abierta .tela-layer img {
 .tri-wrap {
   position: relative; width: min(540px, 92vw); margin: -85% auto 0; z-index: 1;
 }
+@media (min-width: 641px) { .tri-wrap { margin: -544px auto 0; } }
 @media (max-width: 600px) { .tri-wrap { margin: -87% auto 0; } }
 
 .tri-shape { height: 230px; }

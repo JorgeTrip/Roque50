@@ -39,25 +39,3 @@ function importDataJSON(file) {
   };
   reader.readAsText(file);
 }
-
-async function reloadFromNetlify() {
-  if (!confirm("¿Cargar datos desde Netlify? Esto reemplazará el estado actual.")) return;
-  try {
-    const res = await fetch("../transporte.json");
-    if (!res.ok) throw new Error("No se pudo obtener transporte.json");
-    const data = await res.json();
-    if (data && data.guests) {
-      guests = sanitizeGuestsList(data.guests);
-      zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
-      settings = data.settings || { caba: 3, pba: 8 };
-      destination = data.destination || Object.assign({}, DEFAULT_DESTINATION);
-      migrateGuestCoords();
-      syncSettingsInputs();
-      render();
-      await syncToFirebase();
-      alert("✅ Datos cargados correctamente desde transporte.json.");
-    }
-  } catch (err) {
-    alert("⚠️ Error al recargar desde Netlify: " + err.message);
-  }
-}

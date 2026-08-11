@@ -154,18 +154,10 @@ function initMainAppEvents() {
     await saveGuests(); render();
   });
 
-  document.getElementById("mapToggleBtn")?.addEventListener("click", () => {
-    const panel = document.getElementById("mapPanel");
-    panel?.classList.toggle("open");
-    if (panel?.classList.contains("open")) {
-      if (!mapInitialized) initMap();
-      else setTimeout(() => leafletMap.invalidateSize(), 50);
-    }
-  });
-
-  document.getElementById("closeMapBtn")?.addEventListener("click", () => document.getElementById("mapPanel")?.classList.remove("open"));
-  document.getElementById("settingsToggleBtn")?.addEventListener("click", () => document.getElementById("settingsPanel")?.classList.toggle("open"));
-  document.getElementById("closeSettingsBtn")?.addEventListener("click", () => document.getElementById("settingsPanel")?.classList.remove("open"));
+  document.getElementById("mapToggleBtn")?.addEventListener("click", () => { if (typeof abrirMapaModal === "function") abrirMapaModal(); });
+  document.getElementById("closeMapBtn")?.addEventListener("click", () => { if (typeof cerrarMapaModal === "function") cerrarMapaModal(); });
+  document.getElementById("settingsToggleBtn")?.addEventListener("click", () => { if (typeof abrirSettingsModal === "function") abrirSettingsModal(); });
+  document.getElementById("closeSettingsBtn")?.addEventListener("click", () => { if (typeof cerrarSettingsModal === "function") cerrarSettingsModal(); });
 
   document.getElementById("exportBtn")?.addEventListener("click", exportDataJSON);
   document.getElementById("importBtn")?.addEventListener("click", () => document.getElementById("importFile")?.click());

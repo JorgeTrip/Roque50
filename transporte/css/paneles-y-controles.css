@@ -95,14 +95,6 @@
 .kpi-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
 .kpi-subdetail { font-size: 0.72rem; color: var(--muted); margin-top: 4px; opacity: 0.9; font-weight: 500; }
 
-/* Panel de Configuración y Mapa Desplegable */
-.settings-panel, .map-panel {
-  display: none; background: var(--card-bg); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; margin-top: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-.settings-panel.open, .map-panel.open { display: block; }
-
-#mapEl { height: 360px; width: 100%; border-radius: 10px; margin-top: 10px; }
 
 /* Autocompletado de Zonas */
 .zone-suggestions {

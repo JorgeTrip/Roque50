@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="css/base-temas.css">
   <link rel="stylesheet" href="css/tarjetas-invitados.css">
   <link rel="stylesheet" href="css/paneles-y-controles.css">
+  <link rel="stylesheet" href="css/mapa-modal.css">
+  <link rel="stylesheet" href="css/configuracion-modal.css">
   <link rel="stylesheet" href="css/auth-modal.css">
   <link rel="stylesheet" href="css/transporte-skeletons.css">
 </head>
@@ -22,12 +24,7 @@
       <p class="auth-subtitle">Iniciá sesión o registrate para acceder a la gestión de transporte.</p>
 
       <button type="button" id="btnGoogleAuth" class="btn-google">
-        <svg viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
-          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.0 10.04.0 12s.47 3.8 1.29 5.42l3.99-3.15z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.0 10.04.0 12s.47 3.8 1.29 5.42l3.99-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
         Continuar con Google
       </button>
 
@@ -91,36 +88,63 @@
             <button class="menu-item" id="settingsToggleBtn">⚙️ Configuración del evento</button>
             <button class="menu-item" id="exportBtn">⬇️ Exportar datos</button>
             <button class="menu-item" id="importBtn">⬆️ Importar datos</button>
-            <button class="menu-item" id="reloadServerBtn" title="Restaurar datos desde Netlify">🔄 Cargar de Netlify</button>
           </div>
         </div>
         <input type="file" id="importFile" accept="application/json" style="display:none">
       </div>
 
-      <div class="settings-panel" id="settingsPanel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <h3 style="margin:0;">🎉 Configuración del Evento</h3>
-          <button class="small-btn" id="closeSettingsBtn" title="Cerrar configuración" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+  <!-- Modal Flotante de Configuración del Evento -->
+  <div id="settingsModalOverlay" class="settings-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="settingsModalTitle">
+    <div class="settings-modal-card">
+      <div class="settings-modal-header">
+        <div class="settings-modal-title-wrap">
+          <span class="settings-modal-icon">⚙️</span>
+          <div>
+            <h3 id="settingsModalTitle" class="settings-modal-title">Configuración del Evento</h3>
+            <p class="settings-modal-subtitle">Personalizá la información general y radios de cercanía</p>
+          </div>
         </div>
-        <div class="settings-grid" style="margin-bottom:18px;">
-          <div class="field"><label>Nombre del evento</label><input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque"></div>
-          <div class="field"><label>Nombres de los anfitriones</label><input type="text" id="hostNamesInput" placeholder="Ej: Roque y Jorge"></div>
-          <div class="field" style="grid-column: 1 / -1;"><label>Dirección del evento</label><input type="text" class="zone-input" id="destInput" placeholder="Buscar dirección del destino..."></div>
+        <button type="button" class="settings-modal-close-btn" id="closeSettingsBtn" title="Cerrar configuración (Esc)" aria-label="Cerrar configuración">✕</button>
+      </div>
+      <div class="settings-modal-body">
+        <div class="settings-section">
+          <h4 class="settings-section-title">📌 Información General</h4>
+          <div class="settings-grid">
+            <div class="field"><label for="eventNameInput">Nombre del evento</label><input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque"></div>
+            <div class="field"><label for="hostNamesInput">Nombres de los anfitriones</label><input type="text" id="hostNamesInput" placeholder="Ej: Roque y Jorge"></div>
+            <div class="field field-full"><label for="destInput">Dirección del evento</label><input type="text" class="zone-input" id="destInput" placeholder="Buscar dirección del destino..."></div>
+          </div>
         </div>
-        <h3>⚙️ Radios de cerca para viajes compartidos</h3>
-        <div class="settings-grid">
-          <div class="field"><label>Distancia máx. CABA (km)</label><input type="number" min="0" step="0.5" id="radiusCaba"></div>
-          <div class="field"><label>Distancia máx. PBA (km)</label><input type="number" min="0" step="0.5" id="radiusPba"></div>
+
+        <div class="settings-section">
+          <h4 class="settings-section-title">🚗 Radios de cercanía para viajes compartidos</h4>
+          <div class="settings-grid">
+            <div class="field"><label for="radiusCaba">Distancia máx. CABA (km)</label><input type="number" min="0" step="0.5" id="radiusCaba"></div>
+            <div class="field"><label for="radiusPba">Distancia máx. PBA (km)</label><input type="number" min="0" step="0.5" id="radiusPba"></div>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="map-panel" id="mapPanel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <h3 style="margin:0;">🗺️ Mapa de Direcciones</h3>
-          <button class="small-btn" id="closeMapBtn" title="Cerrar mapa" style="padding:4px 10px;min-height:32px;">✕ Cerrar</button>
+  <!-- Modal Flotante de Mapa de Direcciones -->
+  <div id="mapModalOverlay" class="map-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="mapModalTitle">
+    <div class="map-modal-card">
+      <div class="map-modal-header">
+        <div class="map-modal-title-wrap">
+          <span class="map-modal-icon">🗺️</span>
+          <div>
+            <h3 id="mapModalTitle" class="map-modal-title">Mapa de Direcciones</h3>
+            <p class="map-modal-subtitle">Ubicación de invitados y destino del evento</p>
+          </div>
         </div>
+        <button type="button" class="map-modal-close-btn" id="closeMapBtn" title="Cerrar mapa (Esc)" aria-label="Cerrar mapa">✕</button>
+      </div>
+      <div class="map-modal-body">
         <div id="mapEl"></div>
       </div>
+    </div>
+  </div>
 
       <div class="list" id="listContainer"></div>
 

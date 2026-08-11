@@ -96,4 +96,52 @@ function initSettingsListeners() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", initSettingsListeners);
+/**
+ * Control del Modal Flotante de Configuración
+ */
+function abrirSettingsModal() {
+  const overlay = document.getElementById('settingsModalOverlay');
+  if (!overlay) return;
+
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('settings-modal-open');
+}
+
+function cerrarSettingsModal() {
+  const overlay = document.getElementById('settingsModalOverlay');
+  if (!overlay) return;
+
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('settings-modal-open');
+}
+
+function toggleSettingsModal() {
+  const overlay = document.getElementById('settingsModalOverlay');
+  if (overlay && overlay.classList.contains('open')) {
+    cerrarSettingsModal();
+  } else {
+    abrirSettingsModal();
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarSettingsModal();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSettingsListeners();
+
+  const overlay = document.getElementById('settingsModalOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        cerrarSettingsModal();
+      }
+    });
+  }
+});
+

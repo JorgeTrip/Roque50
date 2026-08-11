@@ -39,3 +39,61 @@ function refreshMapMarkers() {
     mapMarkers.push(m);
   }
 }
+
+/**
+ * Control del Modal Flotante del Mapa
+ */
+function abrirMapaModal() {
+  const overlay = document.getElementById('mapModalOverlay');
+  if (!overlay) return;
+
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('map-modal-open');
+
+  if (!mapInitialized) {
+    initMap();
+  } else {
+    refreshMapMarkers();
+  }
+
+  setTimeout(() => {
+    if (leafletMap) leafletMap.invalidateSize();
+  }, 180);
+}
+
+function cerrarMapaModal() {
+  const overlay = document.getElementById('mapModalOverlay');
+  if (!overlay) return;
+
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('map-modal-open');
+}
+
+function toggleMapaModal() {
+  const overlay = document.getElementById('mapModalOverlay');
+  if (overlay && overlay.classList.contains('open')) {
+    cerrarMapaModal();
+  } else {
+    abrirMapaModal();
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarMapaModal();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('mapModalOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        cerrarMapaModal();
+      }
+    });
+  }
+});
+

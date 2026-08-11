@@ -13,6 +13,20 @@ let mapInitialized = false;
 let zoneSearchTargetId = null;
 let zoneSearchTimer = null;
 
+/**
+ * Normaliza un texto removiendo diacríticos (acentos/tildes) y convirtiéndolo a minúsculas.
+ * Permite comparaciones y búsquedas insensibles a caracteres con acento.
+ * @param {string} texto - Texto a normalizar.
+ * @returns {string} Texto sin acentos y en minúsculas.
+ */
+function normalizarTexto(texto) {
+  if (!texto) return "";
+  return String(texto)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 // Funciones para sanitizar la lista de invitados
 function sanitizeGuestsList(list) {
   if (!Array.isArray(list)) return [];

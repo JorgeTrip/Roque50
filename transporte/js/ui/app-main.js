@@ -87,11 +87,11 @@ function closeZoneSuggestions() {
 async function updateZoneSuggestions(inputEl, id, filterText) {
   closeZoneSuggestions();
   zoneSearchTargetId = id;
-  const cleanF = filterText ? filterText.trim().toLowerCase() : "";
+  const cleanF = filterText ? (typeof normalizarTexto === "function" ? normalizarTexto(filterText.trim()) : filterText.trim().toLowerCase()) : "";
   const list = (zoneOptions && zoneOptions.length) ? zoneOptions : ZONE_DEFAULTS;
 
-  let matches = list.filter(z => !cleanF || z.name.toLowerCase().includes(cleanF)).slice(0, 5);
-  if (cleanF && !matches.some(z => z.name.toLowerCase() === cleanF)) {
+  let matches = list.filter(z => !cleanF || (typeof normalizarTexto === "function" ? normalizarTexto(z.name).includes(cleanF) : z.name.toLowerCase().includes(cleanF))).slice(0, 5);
+  if (cleanF && !matches.some(z => (typeof normalizarTexto === "function" ? normalizarTexto(z.name) === cleanF : z.name.toLowerCase() === cleanF))) {
     matches.unshift({ name: filterText.trim(), kind: "custom" });
   }
 
@@ -118,7 +118,8 @@ async function updateZoneSuggestions(inputEl, id, filterText) {
     const onlineResults = await searchOnlineAutocomplete(cleanF);
     if (onlineResults.length > 0 && zoneSearchTargetId === id) {
       onlineResults.forEach(om => {
-        if (!matches.some(m => m.name.toLowerCase() === om.name.toLowerCase())) {
+        const normOm = typeof normalizarTexto === "function" ? normalizarTexto(om.name) : om.name.toLowerCase();
+        if (!matches.some(m => (typeof normalizarTexto === "function" ? normalizarTexto(m.name) === normOm : m.name.toLowerCase() === normOm))) {
           matches.push(om);
         }
       });

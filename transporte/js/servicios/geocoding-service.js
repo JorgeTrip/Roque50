@@ -16,12 +16,13 @@ function guessRegion(lat, lon) {
 }
 
 function baseName(name) {
-  return (name || "").split(",")[0].trim().toLowerCase();
+  const firstPart = (name || "").split(",")[0].trim();
+  return typeof normalizarTexto === "function" ? normalizarTexto(firstPart) : firstPart.toLowerCase();
 }
 
 function findFallbackZone(query) {
   if (!query || typeof query !== "string") return null;
-  const q = query.toLowerCase();
+  const q = typeof normalizarTexto === "function" ? normalizarTexto(query) : query.toLowerCase();
   const list = (zoneOptions && zoneOptions.length) ? zoneOptions : ZONE_DEFAULTS;
   const match = list.find(z => {
     if (!z.name || z.lat == null) return false;

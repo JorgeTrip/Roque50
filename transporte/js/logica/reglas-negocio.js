@@ -40,11 +40,13 @@ function isResolved(row) {
 
 function matchesFilters(g) {
   if (searchTerm) {
-    const q = searchTerm.toLowerCase();
-    const matchName = g.names.toLowerCase().includes(q);
-    const matchZone = (g.zone || "").toLowerCase().includes(q);
-    const matchPeople = (g.people || []).some(p => p.name.toLowerCase().includes(q));
-    if (!matchName && !matchZone && !matchPeople) return false;
+    const q = typeof normalizarTexto === "function" ? normalizarTexto(searchTerm) : searchTerm.toLowerCase();
+    const matchName = typeof normalizarTexto === "function" ? normalizarTexto(g.names).includes(q) : g.names.toLowerCase().includes(q);
+    const matchZone = typeof normalizarTexto === "function" ? normalizarTexto(g.zone || "").includes(q) : (g.zone || "").toLowerCase().includes(q);
+    const matchPeople = Array.isArray(g.people) && g.people.some(p => typeof normalizarTexto === "function" ? normalizarTexto(p.name).includes(q) : p.name.toLowerCase().includes(q));
+    const matchNotes = typeof normalizarTexto === "function" ? normalizarTexto(g.notes || "").includes(q) : (g.notes || "").toLowerCase().includes(q);
+    const matchDriver = typeof normalizarTexto === "function" ? normalizarTexto(g.assignedDriverName || "").includes(q) : (g.assignedDriverName || "").toLowerCase().includes(q);
+    if (!matchName && !matchZone && !matchPeople && !matchNotes && !matchDriver) return false;
   }
   if (currentFilter === "all") return true;
   if (currentFilter === "pending") return !isResolved(g) && !isNotComing(g);
@@ -81,9 +83,7 @@ function sortByProximity(list, refObj) {
     if (hasRefCoords && aHasCoords && bHasCoords) {
       const distA = haversine(refObj.zoneLat, refObj.zoneLon, a.zoneLat, a.zoneLon);
       const distB = haversine(refObj.zoneLat, refObj.zoneLon, b.zoneLat, b.zoneLon);
-      if (Math.abs(distA - distB) > 0.01) {
-        return distA - distB;
-      }
+      if (Math.abs(distA - distB) > 0.01) return distA - distB;
       return (a.names || "").localeCompare(b.names || "", "es");
     }
     if (aHasCoords && !bHasCoords) return -1;
@@ -101,19 +101,15 @@ function sortByProximity(list, refObj) {
 function isPassengerAssignedToDriver(passenger, driver) {
   if (!passenger || !driver) return false;
   if (passenger.transport !== "ride-assigned") return false;
-
   if (passenger.assignedDriverId && passenger.assignedDriverId === driver.id) return true;
 
   if (passenger.assignedDriverName && driver.names) {
-    const pName = passenger.assignedDriverName.trim().toLowerCase();
-    const dName = driver.names.trim().toLowerCase();
+    const pName = typeof normalizarTexto === "function" ? normalizarTexto(passenger.assignedDriverName) : passenger.assignedDriverName.trim().toLowerCase();
+    const dName = typeof normalizarTexto === "function" ? normalizarTexto(driver.names) : driver.names.trim().toLowerCase();
     if (pName === dName || dName.includes(pName) || pName.includes(dName)) return true;
   }
 
-  if (Array.isArray(driver.assignedPassengers) && driver.assignedPassengers.includes(passenger.id)) {
-    return true;
-  }
-
+  if (Array.isArray(driver.assignedPassengers) && driver.assignedPassengers.includes(passenger.id)) return true;
   return false;
 }
 
@@ -126,19 +122,12 @@ function driverCandidates(passengerOrId) {
     if (!d || d.id === passId) return false;
     if (d.transport !== "car-space") return false;
     if (d.confirmed === "no") return false;
-
-    const isCurrent = isPassengerAssignedToDriver(passenger, d);
-    if (isCurrent) return true;
-
+    if (isPassengerAssignedToDriver(passenger, d)) return true;
     if (d.assignmentDone || isResolved(d)) return false;
-
     const totalSpots = parseInt(d.freeSpots) || 0;
     if (totalSpots <= 0) return false;
-
     const occupiedSpots = getAssignedPassengersPeopleCount(d);
-    const availableSpots = totalSpots - occupiedSpots;
-
-    return availableSpots >= neededSpots;
+    return (totalSpots - occupiedSpots) >= neededSpots;
   });
 
   return sortByProximity(drivers, passenger);
@@ -150,9 +139,7 @@ function passengerCandidates(driverOrId) {
   const assigned = (driver && Array.isArray(driver.assignedPassengers)) ? driver.assignedPassengers : [];
 
   const candidates = guests.filter(g =>
-    g.id !== driverId &&
-    g.confirmed !== "no" &&
-    (assigned.includes(g.id) || ["pending", "needs-ride"].includes(g.transport))
+    g.id !== driverId && g.confirmed !== "no" && (assigned.includes(g.id) || ["pending", "needs-ride"].includes(g.transport))
   );
 
   return sortByProximity(candidates, driver);
@@ -168,9 +155,7 @@ function distanceTag(a, b) {
   const pbaRadius = (settings && settings.pba != null && !isNaN(parseFloat(settings.pba))) ? parseFloat(settings.pba) : 8;
   const threshold = (region === "CABA") ? cabaRadius : pbaRadius;
 
-  if (d <= threshold) {
-    return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
-  }
+  if (d <= threshold) return `<span class="near-tag">📍 cerca · ${d.toFixed(1)} km</span>`;
   return `<span class="far-tag">${d.toFixed(1)} km</span>`;
 }
 
@@ -183,9 +168,7 @@ function getDriverCoordinationStatus(driver) {
   const notifiedPassengers = assigned.filter(p => !!p.matchNotified);
   const contactsPassengers = assigned.filter(p => !!p.contactsExchanged);
   const unnotifiedNames = assigned.filter(p => !p.matchNotified).map(p => p.names);
-  const isComplete = total > 0 && notifiedPassengers.length === total;
-
-  return { total, notifiedCount: notifiedPassengers.length, contactsCount: contactsPassengers.length, unnotifiedNames, isComplete };
+  return { total, notifiedCount: notifiedPassengers.length, contactsCount: contactsPassengers.length, unnotifiedNames, isComplete: total > 0 && notifiedPassengers.length === total };
 }
 
 function isGuestCoordinationComplete(g) {

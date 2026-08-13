@@ -170,7 +170,56 @@ body.map-modal-open {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 1.6rem;
+  font-size: 2.2rem;
   line-height: 1;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.8));
+  cursor: pointer;
+}
+
+/* Estilos de los Popups de Leaflet */
+.leaflet-popup-content-wrapper {
+  background: #1c1926 !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+}
+.leaflet-popup-tip {
+  background: #1c1926 !important;
+  border: 1px solid var(--border) !important;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  color: #bbb !important;
+  padding: 6px 8px 0 0 !important;
+}
+.map-popup-card {
+  text-align: center;
+  padding: 4px 2px 2px 2px;
+}
+.map-popup-title {
+  font-size: 0.95rem;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 2px;
+}
+.map-popup-zone {
+  font-size: 0.8rem;
+  color: #a099b0;
+  margin-bottom: 8px;
+}
+.map-popup-btn {
+  background: linear-gradient(135deg, #a86ce0, #ff5fa2);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.map-popup-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }

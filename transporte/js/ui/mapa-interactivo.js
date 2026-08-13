@@ -23,30 +23,59 @@ function refreshMapMarkers() {
   mapMarkers.forEach(m => leafletMap.removeLayer(m));
   mapMarkers = [];
 
-  guests.filter(g => g.zoneLat != null && g.zoneLon != null).forEach(g => {
-    const hasCar = ["car-space", "car-no-space"].includes(g.transport);
-    let marker;
+  const coordGroups = {};
+  const validGuests = guests.filter(g => g.zoneLat != null && g.zoneLon != null);
 
-    if (hasCar) {
-      const carIcon = L.divIcon({
-        html: `<span title="${escHtml(g.names)}">🚗</span>`,
-        className: 'custom-car-marker-icon',
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-        popupAnchor: [0, -14]
-      });
-      marker = L.marker([g.zoneLat, g.zoneLon], { icon: carIcon });
-    } else {
-      const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
-      marker = L.circleMarker([g.zoneLat, g.zoneLon], {
-        radius: 8, color: color, fillColor: color, fillOpacity: 0.85, weight: 1.5
-      });
-    }
+  validGuests.forEach(g => {
+    const key = `${g.zoneLat.toFixed(5)},${g.zoneLon.toFixed(5)}`;
+    if (!coordGroups[key]) coordGroups[key] = [];
+    coordGroups[key].push(g);
+  });
 
-    marker.guestId = g.id;
-    marker.bindPopup(`<b>${escHtml(g.names)}</b><br>${escHtml(g.zone)}`);
-    marker.addTo(leafletMap);
-    mapMarkers.push(marker);
+  Object.values(coordGroups).forEach(group => {
+    const totalInGroup = group.length;
+    group.forEach((g, idx) => {
+      let lat = g.zoneLat;
+      let lon = g.zoneLon;
+
+      if (totalInGroup > 1) {
+        const shiftFactor = idx - (totalInGroup - 1) / 2;
+        lon += shiftFactor * 0.00009;
+      }
+
+      const hasCar = ["car-space", "car-no-space"].includes(g.transport);
+      let marker;
+
+      if (hasCar) {
+        const carIcon = L.divIcon({
+          html: `<span title="${escHtml(g.names)}">🚗</span>`,
+          className: 'custom-car-marker-icon',
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+          popupAnchor: [0, -18]
+        });
+        marker = L.marker([lat, lon], { icon: carIcon });
+      } else {
+        const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
+        marker = L.circleMarker([lat, lon], {
+          radius: 8, color: color, fillColor: color, fillOpacity: 0.85, weight: 1.5
+        });
+      }
+
+      marker.guestId = g.id;
+      const popupHtml = `
+        <div class="map-popup-card">
+          <b class="map-popup-title">${escHtml(g.names)}</b>
+          <div class="map-popup-zone">${escHtml(g.zone)}</div>
+          <button type="button" class="map-popup-btn" data-action="goToGuestCard" data-id="${g.id}">
+            📋 Ver tarjeta de invitado
+          </button>
+        </div>
+      `;
+      marker.bindPopup(popupHtml);
+      marker.addTo(leafletMap);
+      mapMarkers.push(marker);
+    });
   });
 
   if (destination && destination.lat != null && destination.lon != null) {
@@ -54,6 +83,25 @@ function refreshMapMarkers() {
     m.addTo(leafletMap);
     mapMarkers.push(m);
   }
+}
+
+function scrollToGuestCard(guestId) {
+  cerrarMapaModal();
+  setTimeout(() => {
+    if (typeof currentFilter !== "undefined" && currentFilter !== "all") {
+      const g = guests.find(x => x.id === guestId);
+      if (g && typeof matchesFilters === "function" && !matchesFilters(g)) {
+        currentFilter = "all";
+        if (typeof render === "function") render();
+      }
+    }
+    const card = document.getElementById(`card_${guestId}`);
+    if (card) {
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.add("card-highlight");
+      setTimeout(() => card.classList.remove("card-highlight"), 2000);
+    }
+  }, 150);
 }
 
 /**
@@ -121,5 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-action="goToGuestCard"]');
+    if (btn && btn.dataset.id) scrollToGuestCard(btn.dataset.id);
+  });
 });
 

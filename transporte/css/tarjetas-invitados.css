@@ -196,3 +196,11 @@
 .tooltip-badge { cursor: help; }
 .map-zone-btn { min-width: 36px; height: 38px; padding: 4px 8px; font-size: 1.05rem; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
 
+@keyframes pulseCardHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(255, 95, 162, 0.9); }
+  50% { box-shadow: 0 0 24px 8px rgba(255, 95, 162, 0.7); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 95, 162, 0); }
+}
+.card-highlight { animation: pulseCardHighlight 1.5s ease-out; border-color: var(--pink) !important; }
+
+

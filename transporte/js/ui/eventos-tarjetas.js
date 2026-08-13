@@ -55,9 +55,9 @@ function initGuestCardsEventListeners() {
     const id = t.dataset.id;
     const g = guests.find(x => x.id === id);
 
-    if (action === "copyWhatsapp") {
-      copyWhatsappMessage(id || (t.closest("button")?.dataset.id), t.closest("button") || t);
-    } else if (action === "delete") {
+    if (action === "copyWhatsapp") { copyWhatsappMessage(id || (t.closest("button")?.dataset.id), t.closest("button") || t); }
+    else if (action === "openGuestMap") { if (typeof abrirMapaModal === "function") abrirMapaModal(id); }
+    else if (action === "delete") {
       if (confirm("¿Eliminar a este invitado de la lista?")) { guests = guests.filter(x => x.id !== id); await saveGuests(); render(); }
     } else if (action === "addPerson" && g) {
       if (!g.people) g.people = []; g.people.push({ name: "", isChild: false }); refreshGroupName(g); await saveGuests(); render();
@@ -89,7 +89,7 @@ function initGuestCardsEventListeners() {
     if (!g) return;
 
     if (action === "transport") { g.transport = t.value; if (t.value !== "car-space") g.assignmentDone = false; }
-    else if (action === "confirmed") { g.confirmed = t.value; if (t.value === "no") g.transport = "not-coming"; else if (g.transport === "not-coming") g.transport = "pending"; }
+    else if (action === "confirmed") { g.confirmed = t.value; if (g.transport === "not-coming") g.transport = "pending"; }
     else if (action === "personChild") { const idx = parseInt(t.dataset.idx); if (g.people && g.people[idx]) g.people[idx].isChild = t.checked; }
     else if (action === "freeSpots") { g.freeSpots = Math.max(0, parseInt(t.value) || 0); }
     else if (action === "assignmentDone") { g.assignmentDone = t.checked; }

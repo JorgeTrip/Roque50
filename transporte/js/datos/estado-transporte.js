@@ -32,6 +32,7 @@ function sanitizeGuestsList(list) {
   if (!Array.isArray(list)) return [];
   return list.map(g => {
     let copy = Object.assign({}, g);
+    if (copy.transport === "not-coming" || copy.transport === "host") copy.transport = "pending";
     if (copy.special) {
       const hostNames = (settings && settings.hostNames) ? settings.hostNames.trim() : "";
       copy.names = hostNames || "Roque y Jorge (nosotros)";

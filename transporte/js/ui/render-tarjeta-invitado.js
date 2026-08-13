@@ -64,8 +64,9 @@ function renderGuestCard(g) {
 
         <div class="field">
           <label>Zona / Barrio de Origen</label>
-          <div style="position:relative;">
-            <input type="text" class="zone-input" value="${escHtml(g.zone)}" data-id="${g.id}" placeholder="Buscar barrio o dirección..." autocomplete="off">
+          <div style="position:relative;display:flex;gap:6px;align-items:center;">
+            <input type="text" class="zone-input" value="${escHtml(g.zone)}" data-id="${g.id}" placeholder="Buscar barrio o dirección..." autocomplete="off" style="flex:1;min-width:0;">
+            <button type="button" class="small-btn map-zone-btn" data-action="openGuestMap" data-id="${g.id}" title="Ver ubicación en el mapa">🗺️</button>
           </div>
         </div>
 
@@ -78,8 +79,6 @@ function renderGuestCard(g) {
             <option value="needs-ride" ${g.transport==='needs-ride'?'selected':''}>Necesita que lo lleven</option>
             <option value="ride-assigned" ${g.transport==='ride-assigned'?'selected':''}>Transporte asignado</option>
             <option value="public" ${g.transport==='public'?'selected':''}>Transporte público</option>
-            <option value="host" ${g.transport==='host'?'selected':''}>Anfitriones</option>
-            <option value="not-coming" ${g.transport==='not-coming'?'selected':''}>No viene</option>
           </select>
         </div>
 

@@ -194,3 +194,5 @@
 .match-coordination-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; padding-left: 22px; font-size: 0.78rem; color: var(--ink); }
 .coord-check-label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
 .tooltip-badge { cursor: help; }
+.map-zone-btn { min-width: 36px; height: 38px; padding: 4px 8px; font-size: 1.05rem; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+

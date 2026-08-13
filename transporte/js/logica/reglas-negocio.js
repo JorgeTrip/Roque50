@@ -7,7 +7,7 @@ function isNotComing(row) {
 }
 
 function zoneNeeded(row) {
-  return !["host", "not-coming"].includes(row.transport) && !row.zone.trim();
+  return !isNotComing(row) && !row.zone.trim();
 }
 
 function personaCount(g) {
@@ -33,7 +33,7 @@ function isResolved(row) {
   if (row.confirmed === "no") return false;
   if (row.transport === "ride-assigned") return true;
   if (row.confirmed !== "yes") return false;
-  if (["car-no-space", "public", "host"].includes(row.transport)) return true;
+  if (["car-no-space", "public"].includes(row.transport)) return true;
   if (row.transport === "car-space") return !!row.assignmentDone || isCarFull(row);
   return false;
 }
@@ -52,7 +52,7 @@ function matchesFilters(g) {
   if (currentFilter === "pending") return !isResolved(g) && !isNotComing(g);
   if (currentFilter === "resolved") return isResolved(g);
   if (currentFilter === "resolvedNotified") return isResolved(g) && (typeof isGuestCoordinationComplete === "function" ? isGuestCoordinationComplete(g) : false);
-  if (currentFilter === "resolvedUnnotified") return isResolved(g) && !["car-no-space", "public", "host"].includes(g.transport) && (typeof isGuestCoordinationComplete === "function" ? !isGuestCoordinationComplete(g) : true);
+  if (currentFilter === "resolvedUnnotified") return isResolved(g) && !["car-no-space", "public"].includes(g.transport) && (typeof isGuestCoordinationComplete === "function" ? !isGuestCoordinationComplete(g) : true);
   if (currentFilter === "notcoming") return isNotComing(g);
   if (currentFilter === "zoneMissing") return zoneNeeded(g);
   if (currentFilter === "confirmed") return g.confirmed === "yes";
@@ -173,7 +173,7 @@ function getDriverCoordinationStatus(driver) {
 
 function isGuestCoordinationComplete(g) {
   if (!isResolved(g)) return false;
-  if (["car-no-space", "public", "host"].includes(g.transport)) return true;
+  if (["car-no-space", "public"].includes(g.transport)) return true;
   if (g.transport === "car-space") {
     if (!Array.isArray(g.assignedPassengers) || g.assignedPassengers.length === 0) return true;
     const cStat = getDriverCoordinationStatus(g);

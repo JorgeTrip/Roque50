@@ -85,9 +85,9 @@ const DEFAULT_GUESTS = [
   {id:"g23",names:"Romina, Constanza, Mariana y Camila",people:[{name:"Romina",isChild:false},{name:"Constanza",isChild:false},{name:"Mariana",isChild:false},{name:"Camila",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
   {id:"g24",names:"Fanny, Patricio y Susana",people:[{name:"Fanny",isChild:false},{name:"Patricio",isChild:false},{name:"Susana",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
   {id:"g25",names:"Andrés, Emilia y Benjamín",people:[{name:"Andrés",isChild:false},{name:"Emilia",isChild:false},{name:"Benjamín",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Quedó en confirmar."},
-  {id:"g26",names:"Cinthia",people:[{name:"Cinthia",isChild:false}],confirmed:"no",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"not-coming",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"No viene."},
+  {id:"g26",names:"Cinthia",people:[{name:"Cinthia",isChild:false}],confirmed:"no",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"No viene."},
   {id:"g27",names:"Carolina, Diego y Martín",people:[{name:"Carolina",isChild:false},{name:"Diego",isChild:false},{name:"Martín",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"No trabajan ese día; quedó en confirmar."},
-  {id:"g28",names:"Adriana, Hugo y los mellis",people:[{name:"Adriana",isChild:false},{name:"Hugo",isChild:false},{name:"Mellizo/a 1",isChild:true},{name:"Mellizo/a 2",isChild:true}],confirmed:"yes",zone:"La Reja, Moreno, Provincia de Buenos Aires",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"host",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Dueños de la casa donde es el festejo. No necesitan transporte."},
+  {id:"g28",names:"Adriana, Hugo y los mellis",people:[{name:"Adriana",isChild:false},{name:"Hugo",isChild:false},{name:"Mellizo/a 1",isChild:true},{name:"Mellizo/a 2",isChild:true}],confirmed:"yes",zone:"La Reja, Moreno, Provincia de Buenos Aires",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Dueños de la casa donde es el festejo. No necesitan transporte."},
   {id:"g29",names:"Sergio y Antonella",people:[{name:"Sergio",isChild:false},{name:"Antonella",isChild:false}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:""},
   {id:"g30",names:"Viviana y Silvio",people:[{name:"Viviana",isChild:false},{name:"Silvio",isChild:false}],confirmed:"yes",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"car-space",freeSpots:2,assignedPassengers:["g10"],assignmentDone:true,assignedDriverName:"",notes:"Tienen auto y finalmente pueden llevar a Pablo y Fernando."},
   {id:"g31",names:"Dante y Nahara (hijos de Viviana y Silvio)",people:[{name:"Dante",isChild:true},{name:"Nahara",isChild:true}],confirmed:"pending",zone:"",zoneLat:null,zoneLon:null,zoneRegion:null,transport:"pending",freeSpots:0,assignedPassengers:[],assignmentDone:false,assignedDriverName:"",notes:"Asistencia incierta. Si vienen, el auto de sus padres no tendría lugar para más pasajeros."}
@@ -99,9 +99,7 @@ const TRANSPORT_LABELS = {
   "car-space":"Auto propio — con lugar",
   "public":"Transporte público",
   "needs-ride":"Necesita que lo lleven",
-  "ride-assigned":"Transporte asignado (con otro invitado)",
-  "host":"Anfitriones — no necesitan transporte",
-  "not-coming":"No viene"
+  "ride-assigned":"Transporte asignado (con otro invitado)"
 };
 
 const CONFIRMED_LABELS = {yes:"Sí, confirmado",no:"No viene",pending:"Pendiente",tentative:"Tal vez / a confirmar"};

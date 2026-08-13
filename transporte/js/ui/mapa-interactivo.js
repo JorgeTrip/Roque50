@@ -28,6 +28,7 @@ function refreshMapMarkers() {
     const marker = L.circleMarker([g.zoneLat, g.zoneLon], {
       radius: 8, color: color, fillColor: color, fillOpacity: 0.85, weight: 1.5
     });
+    marker.guestId = g.id;
     marker.bindPopup(`<b>${escHtml(g.names)}</b><br>${escHtml(g.zone)}`);
     marker.addTo(leafletMap);
     mapMarkers.push(marker);
@@ -43,7 +44,7 @@ function refreshMapMarkers() {
 /**
  * Control del Modal Flotante del Mapa
  */
-function abrirMapaModal() {
+function abrirMapaModal(targetGuestId) {
   const overlay = document.getElementById('mapModalOverlay');
   if (!overlay) return;
 
@@ -58,7 +59,17 @@ function abrirMapaModal() {
   }
 
   setTimeout(() => {
-    if (leafletMap) leafletMap.invalidateSize();
+    if (leafletMap) {
+      leafletMap.invalidateSize();
+      if (targetGuestId) {
+        const g = guests.find(x => x.id === targetGuestId);
+        if (g && g.zoneLat != null && g.zoneLon != null) {
+          leafletMap.setView([g.zoneLat, g.zoneLon], 14);
+          const marker = mapMarkers.find(m => m.guestId === targetGuestId);
+          if (marker && typeof marker.openPopup === "function") marker.openPopup();
+        }
+      }
+    }
   }, 180);
 }
 

@@ -733,7 +733,7 @@
       "zoneLat": null,
       "zoneLon": null,
       "zoneRegion": null,
-      "transport": "not-coming",
+      "transport": "pending",
       "freeSpots": 0,
       "assignedPassengers": [],
       "assignmentDone": false,

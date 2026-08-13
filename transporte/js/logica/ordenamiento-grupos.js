@@ -69,7 +69,7 @@ function sortGreenList(greenList) {
       handledIds.add(g.id);
       if (isGuestCoordinationComplete(g)) completeCoord.push(g);
       else pendingCoord.push(g);
-    } else if (["car-no-space", "public", "host"].includes(g.transport)) {
+    } else if (["car-no-space", "public"].includes(g.transport)) {
       handledIds.add(g.id);
       standaloneResolved.push(g);
     } else {

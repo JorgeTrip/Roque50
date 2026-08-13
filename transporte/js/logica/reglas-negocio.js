@@ -59,6 +59,7 @@ function matchesFilters(g) {
   if (currentFilter === "confirmedPending") return ["pending", "tentative"].includes(g.confirmed);
   if (currentFilter === "transportPending") return g.transport === "pending" && g.confirmed !== "no";
   if (currentFilter === "carSpace") return g.transport === "car-space" && g.confirmed !== "no" && !isResolved(g);
+  if (currentFilter === "carAssigned") return g.transport === "car-space" && g.confirmed !== "no" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0;
   if (currentFilter === "needsRide") return g.transport === "needs-ride" && g.confirmed !== "no";
   if (currentFilter === "adults") return (g.confirmed === "yes" || g.special) && (g.people || []).some(p => !p.isChild);
   if (currentFilter === "children") return (g.confirmed === "yes" || g.special) && (g.people || []).some(p => p.isChild);

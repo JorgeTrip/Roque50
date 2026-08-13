@@ -87,6 +87,7 @@
 .kpi-card.k-notcoming { border-left-color: var(--gray-ink); }
 .kpi-card.k-tpending { border-left-color: #e67e22; }
 .kpi-card.k-carspace { border-left-color: #2ecc71; }
+.kpi-card.k-carassigned { border-left-color: #1abc9c; }
 .kpi-card.k-needsride { border-left-color: #e74c3c; }
 .kpi-card.k-zone { border-left-color: var(--warn); }
 .kpi-card.k-food { border-left-color: #3498db; }

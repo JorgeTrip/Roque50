@@ -57,8 +57,7 @@ function initGuestCardsEventListeners() {
 
     if (action === "copyWhatsapp") { copyWhatsappMessage(id || (t.closest("button")?.dataset.id), t.closest("button") || t); }
     else if (action === "openGuestMap") { if (typeof abrirMapaModal === "function") abrirMapaModal(id); }
-    else if (action === "delete") {
-      if (confirm("¿Eliminar a este invitado de la lista?")) { guests = guests.filter(x => x.id !== id); await saveGuests(); render(); }
+    else if (action === "delete") { if (confirm("¿Eliminar a este invitado de la lista?")) { guests = guests.filter(x => x.id !== id); await saveGuests(); render(); } }
     } else if (action === "addPerson" && g) {
       if (!g.people) g.people = []; g.people.push({ name: "", isChild: false }); refreshGroupName(g); await saveGuests(); render();
     } else if (action === "removePerson" && g) {
@@ -76,6 +75,7 @@ function initGuestCardsEventListeners() {
           driver.assignedPassengers = driver.assignedPassengers.filter(x => x !== passenger.id);
           if (passenger.assignedDriverName === driver.names) { passenger.transport = "needs-ride"; passenger.assignedDriverName = ""; }
         }
+        if (typeof isCarFull === "function" && isCarFull(driver)) driver.assignmentDone = true;
         await saveGuests(); render();
       }
     }

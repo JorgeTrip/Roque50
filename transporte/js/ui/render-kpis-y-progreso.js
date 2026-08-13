@@ -27,7 +27,7 @@ function computeProgress() {
   const resolvedUnnotifiedCount = nonSpecial.filter(g => isResolved(g) && (typeof isGuestCoordinationComplete === "function" ? !isGuestCoordinationComplete(g) : true)).reduce((s, g) => s + personaCount(g), 0);
 
   const transportPendingCount = nonSpecial.filter(g => g.transport === "pending" && g.confirmed !== "no").length;
-  const carSpaceCount = guests.filter(g => g.transport === "car-space" && g.confirmed !== "no" && !isResolved(g)).length;
+  const carSpaceCount = guests.filter(g => typeof hasCarAvailableSpots === "function" ? hasCarAvailableSpots(g) : (g.transport === "car-space" && g.confirmed !== "no")).length;
   const carAssignedDrivers = guests.filter(g => g.transport === "car-space" && g.confirmed !== "no" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0);
   const carAssignedCount = carAssignedDrivers.length;
   const carAssignedPassengersCount = carAssignedDrivers.reduce((s, g) => s + (typeof getAssignedPassengersPeopleCount === "function" ? getAssignedPassengersPeopleCount(g) : g.assignedPassengers.length), 0);

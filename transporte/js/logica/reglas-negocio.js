@@ -22,11 +22,25 @@ function getAssignedPassengersPeopleCount(driver) {
   }, 0);
 }
 
+function getCarCapacity(row) {
+  if (!row) return 5;
+  return Math.max(5, personaCount(row) + (parseInt(row.freeSpots) || 0));
+}
+
+function getTotalCarOccupants(row) {
+  if (!row) return 0;
+  return personaCount(row) + getAssignedPassengersPeopleCount(row);
+}
+
 function isCarFull(row) {
-  if (row.transport !== "car-space") return false;
-  const spots = parseInt(row.freeSpots) || 0;
-  if (spots <= 0) return true;
-  return getAssignedPassengersPeopleCount(row) >= spots;
+  if (!row || row.transport !== "car-space") return false;
+  if (row.assignmentDone) return true;
+  return getTotalCarOccupants(row) >= getCarCapacity(row);
+}
+
+function hasCarAvailableSpots(row) {
+  if (!row || row.transport !== "car-space" || row.confirmed === "no") return false;
+  return getTotalCarOccupants(row) < getCarCapacity(row);
 }
 
 function isResolved(row) {
@@ -58,7 +72,7 @@ function matchesFilters(g) {
   if (currentFilter === "confirmed") return g.confirmed === "yes";
   if (currentFilter === "confirmedPending") return ["pending", "tentative"].includes(g.confirmed);
   if (currentFilter === "transportPending") return g.transport === "pending" && g.confirmed !== "no";
-  if (currentFilter === "carSpace") return g.transport === "car-space" && g.confirmed !== "no" && !isResolved(g);
+  if (currentFilter === "carSpace") return hasCarAvailableSpots(g);
   if (currentFilter === "carAssigned") return g.transport === "car-space" && g.confirmed !== "no" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0;
   if (currentFilter === "needsRide") return g.transport === "needs-ride" && g.confirmed !== "no";
   if (currentFilter === "adults") return (g.confirmed === "yes" || g.special) && (g.people || []).some(p => !p.isChild);
@@ -161,15 +175,12 @@ function distanceTag(a, b) {
 }
 
 function getDriverCoordinationStatus(driver) {
-  if (!driver || !Array.isArray(driver.assignedPassengers) || driver.assignedPassengers.length === 0) {
-    return { total: 0, notifiedCount: 0, contactsCount: 0, unnotifiedNames: [], isComplete: false };
-  }
+  if (!driver || !Array.isArray(driver.assignedPassengers) || driver.assignedPassengers.length === 0) return { total: 0, notifiedCount: 0, contactsCount: 0, unnotifiedNames: [], isComplete: false };
   const assigned = driver.assignedPassengers.map(pId => guests.find(x => x.id === pId)).filter(Boolean);
   const total = assigned.length;
   const notifiedPassengers = assigned.filter(p => !!p.matchNotified);
-  const contactsPassengers = assigned.filter(p => !!p.contactsExchanged);
   const unnotifiedNames = assigned.filter(p => !p.matchNotified).map(p => p.names);
-  return { total, notifiedCount: notifiedPassengers.length, contactsCount: contactsPassengers.length, unnotifiedNames, isComplete: total > 0 && notifiedPassengers.length === total };
+  return { total, notifiedCount: notifiedPassengers.length, contactsCount: assigned.filter(p => !!p.contactsExchanged).length, unnotifiedNames, isComplete: total > 0 && notifiedPassengers.length === total };
 }
 
 function isGuestCoordinationComplete(g) {

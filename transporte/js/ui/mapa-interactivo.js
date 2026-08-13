@@ -24,10 +24,25 @@ function refreshMapMarkers() {
   mapMarkers = [];
 
   guests.filter(g => g.zoneLat != null && g.zoneLon != null).forEach(g => {
-    const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
-    const marker = L.circleMarker([g.zoneLat, g.zoneLon], {
-      radius: 8, color: color, fillColor: color, fillOpacity: 0.85, weight: 1.5
-    });
+    const hasCar = ["car-space", "car-no-space"].includes(g.transport);
+    let marker;
+
+    if (hasCar) {
+      const carIcon = L.divIcon({
+        html: `<span title="${escHtml(g.names)}">🚗</span>`,
+        className: 'custom-car-marker-icon',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14]
+      });
+      marker = L.marker([g.zoneLat, g.zoneLon], { icon: carIcon });
+    } else {
+      const color = isNotComing(g) ? "#8f8397" : (isResolved(g) ? "#4fbf82" : "#ff5fa2");
+      marker = L.circleMarker([g.zoneLat, g.zoneLon], {
+        radius: 8, color: color, fillColor: color, fillOpacity: 0.85, weight: 1.5
+      });
+    }
+
     marker.guestId = g.id;
     marker.bindPopup(`<b>${escHtml(g.names)}</b><br>${escHtml(g.zone)}`);
     marker.addTo(leafletMap);

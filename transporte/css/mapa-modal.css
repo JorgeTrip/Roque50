@@ -163,3 +163,14 @@ body.map-modal-open {
     font-size: 1.2rem;
   }
 }
+
+.custom-car-marker-icon {
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+}

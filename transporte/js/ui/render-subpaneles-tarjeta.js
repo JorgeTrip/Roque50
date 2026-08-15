@@ -23,8 +23,8 @@ function copyWhatsappMessage(guestId, btnEl) {
   navigator.clipboard.writeText(text).then(() => {
     if (btnEl) {
       const orig = btnEl.innerHTML;
-      btnEl.innerHTML = "✅ ¡Copiado!";
-      setTimeout(() => btnEl.innerHTML = orig, 2000);
+      btnEl.innerHTML = "✅";
+      setTimeout(() => btnEl.innerHTML = orig, 1800);
     }
   }).catch(() => alert(text));
 }

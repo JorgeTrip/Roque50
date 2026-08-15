@@ -46,7 +46,7 @@ function renderGuestCard(g) {
           <div class="card-badge-wrap">${badgeHtml}</div>
         </div>
         <div class="card-top-actions">
-          <button class="small-btn" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje para WhatsApp">💬</button>
+          <button class="small-btn btn-whatsapp" data-action="copyWhatsapp" data-id="${g.id}" title="Copiar mensaje para WhatsApp"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" style="display:inline-block;vertical-align:middle;"><path d="M17.472 14.382c-.301-.15-1.78-.877-2.056-.977-.276-.101-.477-.15-.678.15-.2.3-.778.978-.953 1.178-.176.2-.351.226-.652.075s-1.272-.469-2.423-1.496c-.896-.799-1.501-1.786-1.677-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.2-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.678-1.635-.929-2.239-.244-.589-.493-.51-.678-.52l-.578-.01c-.2 0-.527.075-.803.376s-1.054 1.029-1.054 2.509 1.079 2.909 1.23 3.11c.15.2 2.122 3.24 5.141 4.544.718.31 1.279.496 1.716.635.722.23 1.38.197 1.9-.119.58-.352 1.78-1.455 2.032-2.133.251-.677.251-1.254.176-1.379-.076-.125-.276-.2-.577-.35z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5.003L2 22l5.137-1.312A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.196a8.17 8.17 0 0 1-4.17-1.139l-.3-.178-3.048.78.813-2.973-.196-.312A8.174 8.174 0 0 1 3.804 12C3.804 7.48 7.48 3.804 12 3.804 16.52 3.804 20.196 7.48 20.196 12c0 4.52-3.676 8.196-8.196 8.196z"/></svg></button>
           ${!g.special ? `<button class="small-btn" data-action="delete" data-id="${g.id}" title="Eliminar invitado">🗑️</button>` : ''}
         </div>
       </div>

@@ -89,6 +89,7 @@
 .kpi-card.k-carspace { border-left-color: #2ecc71; }
 .kpi-card.k-carassigned { border-left-color: #1abc9c; }
 .kpi-card.k-needsride { border-left-color: #e74c3c; }
+.kpi-card.k-public { border-left-color: #00b4d8; }
 .kpi-card.k-zone { border-left-color: var(--warn); }
 .kpi-card.k-food { border-left-color: #3498db; }
 

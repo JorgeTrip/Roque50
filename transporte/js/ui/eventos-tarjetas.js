@@ -8,42 +8,39 @@ function initGuestCardsEventListeners() {
   let zoneSearchTimer = null;
 
   document.addEventListener("focus", (e) => {
-    if (e.target && e.target.classList && e.target.classList.contains("zone-input")) {
-      openZoneSuggestions(e.target, e.target.dataset.id || "destination");
-    }
+    if (e.target?.classList?.contains("zone-input")) openZoneSuggestions(e.target, e.target.dataset.id || "destination");
   }, true);
 
   document.addEventListener("mousedown", async (e) => {
-    if (e.target.closest(".sugg-item")) {
-      e.preventDefault();
-      isSelectingSuggestion = true;
-      const item = e.target.closest(".sugg-item");
-      const dropdown = item.closest("#zoneSuggDropdown");
-      const targetId = (dropdown && dropdown.dataset.targetId) || zoneSearchTargetId;
-      const name = item.dataset.name, lat = item.dataset.lat ? parseFloat(item.dataset.lat) : null;
-      const lon = item.dataset.lon ? parseFloat(item.dataset.lon) : null, region = item.dataset.region || null, kind = item.dataset.kind || "zone";
+    const item = e.target.closest(".sugg-item");
+    if (!item) return;
+    e.preventDefault();
+    isSelectingSuggestion = true;
+    const dropdown = item.closest("#zoneSuggDropdown");
+    const targetId = (dropdown && dropdown.dataset.targetId) || zoneSearchTargetId;
+    const name = item.dataset.name, lat = item.dataset.lat ? parseFloat(item.dataset.lat) : null;
+    const lon = item.dataset.lon ? parseFloat(item.dataset.lon) : null, region = item.dataset.region || null, kind = item.dataset.kind || "zone";
 
-      closeZoneSuggestions();
+    closeZoneSuggestions();
 
-      if (targetId === "destination") {
-        const destInp = document.getElementById("destInput");
-        if (destInp) { destInp.value = name; destInp.blur(); }
-        destination = { name, lat, lon };
-        await saveDestination(); updateHeaderDynamic();
-        if (mapInitialized) refreshMapMarkers();
-      } else if (targetId) {
-        const g = guests.find(x => x.id === targetId);
-        if (g) {
-          let resolved = await resolveZoneEntry({ name, lat, lon, region, kind });
-          const finalName = resolved.name || name;
-          g.zone = finalName; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
-          const activeInp = document.querySelector(`input.zone-input[data-id="${targetId}"]`);
-          if (activeInp) { activeInp.value = finalName; activeInp.blur(); }
-          await saveGuests(); render();
-        }
+    if (targetId === "destination") {
+      const destInp = document.getElementById("destInput");
+      if (destInp) { destInp.value = name; destInp.blur(); }
+      destination = { name, lat, lon };
+      await saveDestination(); updateHeaderDynamic();
+      if (mapInitialized) refreshMapMarkers();
+    } else if (targetId) {
+      const g = guests.find(x => x.id === targetId);
+      if (g) {
+        let resolved = await resolveZoneEntry({ name, lat, lon, region, kind });
+        const finalName = resolved.name || name;
+        g.zone = finalName; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+        const activeInp = document.querySelector(`input.zone-input[data-id="${targetId}"]`);
+        if (activeInp) { activeInp.value = finalName; activeInp.blur(); }
+        await saveGuests(); render();
       }
-      setTimeout(() => { isSelectingSuggestion = false; }, 1000);
     }
+    setTimeout(() => { isSelectingSuggestion = false; }, 1000);
   });
 
   // Clicks en la tarjeta (eliminar, integrante, whatsapp, pasajes)
@@ -58,7 +55,7 @@ function initGuestCardsEventListeners() {
     if (action === "copyWhatsapp") { copyWhatsappMessage(id || (t.closest("button")?.dataset.id), t.closest("button") || t); }
     else if (action === "openGuestMap") { if (typeof abrirMapaModal === "function") abrirMapaModal(id); }
     else if (action === "delete") { if (confirm("¿Eliminar a este invitado de la lista?")) { guests = guests.filter(x => x.id !== id); await saveGuests(); render(); } }
-    } else if (action === "addPerson" && g) {
+    else if (action === "addPerson" && g) {
       if (!g.people) g.people = []; g.people.push({ name: "", isChild: false }); refreshGroupName(g); await saveGuests(); render();
     } else if (action === "removePerson" && g) {
       const idx = parseInt(t.dataset.idx);
@@ -88,8 +85,14 @@ function initGuestCardsEventListeners() {
     const g = guests.find(x => x.id === t.dataset.id);
     if (!g) return;
 
-    if (action === "transport") { g.transport = t.value; if (t.value !== "car-space") g.assignmentDone = false; }
-    else if (action === "confirmed") { g.confirmed = t.value; if (g.transport === "not-coming") g.transport = "pending"; }
+    if (action === "transport") {
+      g.transport = t.value;
+      if (t.value !== "car-space") g.assignmentDone = false;
+      if (t.value !== "ride-assigned") {
+        g.assignedDriverName = ""; g.assignedDriverId = "";
+        guests.forEach(x => { if (Array.isArray(x.assignedPassengers)) x.assignedPassengers = x.assignedPassengers.filter(pId => pId !== g.id); });
+      }
+    } else if (action === "confirmed") { g.confirmed = t.value; if (g.transport === "not-coming") g.transport = "pending"; }
     else if (action === "personChild") { const idx = parseInt(t.dataset.idx); if (g.people && g.people[idx]) g.people[idx].isChild = t.checked; }
     else if (action === "freeSpots") { g.freeSpots = Math.max(0, parseInt(t.value) || 0); }
     else if (action === "assignmentDone") { g.assignmentDone = t.checked; }
@@ -139,41 +142,38 @@ function initGuestCardsEventListeners() {
         }
       }
     } else if (action === "personName" && id) {
-      const g = guests.find(x => x.id === id);
-      const idx = parseInt(t.dataset.idx);
+      const g = guests.find(x => x.id === id), idx = parseInt(t.dataset.idx);
       if (g && g.people && g.people[idx]) { g.people[idx].name = val; refreshGroupName(g); await saveGuests(); }
     } else if (action === "notes" && id) {
       const g = guests.find(x => x.id === id);
       if (g) { g.notes = t.value; await saveGuests(); }
     }
 
-    t.blur();
-    render();
+    t.blur(); render();
   });
 
   document.addEventListener("input", (e) => {
     const t = e.target;
-    if (t && t.classList && t.classList.contains("zone-input")) {
+    if (t?.classList?.contains("zone-input")) {
       clearTimeout(zoneSearchTimer);
-      const id = t.dataset.id || "destination";
-      zoneSearchTimer = setTimeout(() => openZoneSuggestions(t, id), 250);
+      zoneSearchTimer = setTimeout(() => openZoneSuggestions(t, t.dataset.id || "destination"), 250);
       return;
     }
-    if (!t.dataset) return;
+    if (!t?.dataset) return;
     if (t.dataset.action === "notes") {
       const g = guests.find(x => x.id === t.dataset.id); if (g) g.notes = t.value;
       t.style.height = "auto"; t.style.height = Math.max(42, t.scrollHeight) + "px";
     }
     if (t.dataset.action === "personName") {
-      const g = guests.find(x => x.id === t.dataset.id);
-      const idx = parseInt(t.dataset.idx);
-      if (g && g.people && g.people[idx]) g.people[idx].name = t.value;
+      const g = guests.find(x => x.id === t.dataset.id), idx = parseInt(t.dataset.idx);
+      if (g?.people?.[idx]) g.people[idx].name = t.value;
     }
   });
+
   document.addEventListener("focusout", async (e) => {
     if (isSelectingSuggestion || !e.target) return;
     const t = e.target;
-    if (t.classList && t.classList.contains("zone-input")) {
+    if (t.classList?.contains("zone-input")) {
       setTimeout(async () => {
         if (isSelectingSuggestion || !t.dataset.id || t.dataset.id === "destination") return;
         const g = guests.find(x => x.id === t.dataset.id);
@@ -190,7 +190,7 @@ function initGuestCardsEventListeners() {
           await saveGuests(); render();
         }
       }, 200);
-    } else if (t.dataset && t.dataset.action === "personName") {
+    } else if (t.dataset?.action === "personName") {
       const g = guests.find(x => x.id === t.dataset.id);
       if (g) { refreshGroupName(g); await saveGuests(); render(); }
     }

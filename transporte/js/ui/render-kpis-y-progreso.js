@@ -32,6 +32,7 @@ function computeProgress() {
   const carAssignedCount = carAssignedDrivers.length;
   const carAssignedPassengersCount = carAssignedDrivers.reduce((s, g) => s + (typeof getAssignedPassengersPeopleCount === "function" ? getAssignedPassengersPeopleCount(g) : g.assignedPassengers.length), 0);
   const needsRideCount = nonSpecial.filter(g => g.transport === "needs-ride" && g.confirmed !== "no").reduce((s, g) => s + personaCount(g), 0);
+  const publicTransportCount = nonSpecial.filter(g => g.transport === "public" && g.confirmed !== "no").reduce((s, g) => s + personaCount(g), 0);
   const zoneMissingCount = nonSpecial.filter(zoneNeeded).length;
 
   const confirmedGuests = nonSpecial.filter(g => g.confirmed === "yes");
@@ -63,6 +64,7 @@ function computeProgress() {
           <div class="kpi-card k-carspace ${currentFilter==='carSpace'?'active':''}" data-kpi="carSpace" title="Filtrar por autos con lugar disponible"><div class="kpi-num">${carSpaceCount}</div><div class="kpi-label">🚘 Autos con lugar disponibles</div></div>
           <div class="kpi-card k-carassigned ${currentFilter==='carAssigned'?'active':''}" data-kpi="carAssigned" title="Filtrar por autos con pasajeros asignados"><div class="kpi-num">${carAssignedCount}</div><div class="kpi-label">🚗 Autos con pasajeros asignados</div><div class="kpi-subdetail">${carAssignedPassengersCount} personas asignadas</div></div>
           <div class="kpi-card k-needsride ${currentFilter==='needsRide'?'active':''}" data-kpi="needsRide" title="Filtrar por quienes necesitan viaje"><div class="kpi-num">${needsRideCount}</div><div class="kpi-label">🚗 Necesitan que los lleven</div></div>
+          <div class="kpi-card k-public ${currentFilter==='publicTransport'?'active':''}" data-kpi="publicTransport" title="Filtrar por transporte público"><div class="kpi-num">${publicTransportCount}</div><div class="kpi-label">🚆 Transporte público</div></div>
           <div class="kpi-card k-zone ${currentFilter==='zoneMissing'?'active':''}" data-kpi="zoneMissing" title="Filtrar por grupos sin zona cargada"><div class="kpi-num">${zoneMissingCount}</div><div class="kpi-label">📍 Grupos sin zona cargada</div></div>
         </div>
       </div>

@@ -8,24 +8,18 @@ let authMode = "login";
 function traducirErrorAuth(error) {
   if (!error || !error.code) return error?.message || "Ocurrió un error inesperado.";
   switch (error.code) {
-    case "auth/invalid-email":
-      return "El correo electrónico no es válido.";
+    case "auth/invalid-email": return "El correo electrónico no es válido.";
     case "auth/user-not-found":
     case "auth/wrong-password":
-    case "auth/invalid-credential":
-      return "Usuario o contraseña incorrectos.";
-    case "auth/email-already-in-use":
-      return "Este usuario o correo ya se encuentra registrado.";
-    case "auth/weak-password":
-      return "La contraseña debe tener al menos 6 caracteres.";
-    case "auth/popup-closed-by-user":
-      return "Se cerró la ventana de inicio de sesión de Google.";
+    case "auth/invalid-credential": return "Usuario o contraseña incorrectos.";
+    case "auth/email-already-in-use": return "Este usuario o correo ya se encuentra registrado.";
+    case "auth/weak-password": return "La contraseña debe tener al menos 6 caracteres.";
+    case "auth/popup-closed-by-user": return "Se cerró la ventana de inicio de sesión de Google.";
     case "auth/operation-not-supported-in-this-environment":
       return "⚠️ Firebase requiere un servidor local. Ejecutá 'Iniciar.bat' y abrí http://localhost:8080/transporte/index.html (no funciona directamente con file://).";
     case "auth/configuration-not-found":
       return "⚠️ El proveedor de Google no está activado en Firebase Console. Activalo en Authentication > Sign-in method.";
-    default:
-      return "Error al autenticar: " + (error.message || "Intente nuevamente.");
+    default: return "Error al autenticar: " + (error.message || "Intente nuevamente.");
   }
 }
 

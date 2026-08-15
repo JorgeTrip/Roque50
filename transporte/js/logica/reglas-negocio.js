@@ -48,8 +48,7 @@ function isResolved(row) {
   if (row.transport === "ride-assigned") return true;
   if (row.confirmed !== "yes") return false;
   if (["car-no-space", "public"].includes(row.transport)) return true;
-  if (row.transport === "car-space") return !!row.assignmentDone || isCarFull(row);
-  return false;
+  return row.transport === "car-space" && (!!row.assignmentDone || isCarFull(row));
 }
 
 function matchesFilters(g) {
@@ -75,6 +74,7 @@ function matchesFilters(g) {
   if (currentFilter === "carSpace") return hasCarAvailableSpots(g);
   if (currentFilter === "carAssigned") return g.transport === "car-space" && g.confirmed !== "no" && Array.isArray(g.assignedPassengers) && g.assignedPassengers.length > 0;
   if (currentFilter === "needsRide") return g.transport === "needs-ride" && g.confirmed !== "no";
+  if (currentFilter === "publicTransport") return g.transport === "public" && g.confirmed !== "no";
   if (currentFilter === "adults") return (g.confirmed === "yes" || g.special) && (g.people || []).some(p => !p.isChild);
   if (currentFilter === "children") return (g.confirmed === "yes" || g.special) && (g.people || []).some(p => p.isChild);
   return true;

@@ -49,11 +49,11 @@ async function loadDataForUser(user) {
 
   if (typeof inicializarUsuarioFirebase === "function") {
     inicializarUsuarioFirebase(user, (data) => {
-      if (data && data.guests && Array.isArray(data.guests)) {
-        guests = sanitizeGuestsList(data.guests);
-        zoneOptions = data.zoneOptions || ZONE_DEFAULTS.slice();
-        settings = data.settings || { caba: 3, pba: 8 };
-        destination = data.destination || Object.assign({}, DEFAULT_DESTINATION);
+      if (data) {
+        guests = Array.isArray(data.guests) ? sanitizeGuestsList(data.guests) : (typeof data.guests === "object" && data.guests !== null ? sanitizeGuestsList(Object.values(data.guests)) : []);
+        zoneOptions = Array.isArray(data.zoneOptions) ? data.zoneOptions : ZONE_DEFAULTS.slice();
+        settings = data.settings || { caba: 3, pba: 8, eventName: "", hostNames: "" };
+        destination = data.destination || { name: "", lat: null, lon: null };
         migrateGuestCoords();
         syncSettingsInputs();
         render();
@@ -62,8 +62,8 @@ async function loadDataForUser(user) {
         const isJorge = user.email && user.email.toLowerCase() === "jorgeotripodi@gmail.com";
         guests = isJorge ? sanitizeGuestsList(DEFAULT_GUESTS.slice()) : [];
         zoneOptions = ZONE_DEFAULTS.slice();
-        settings = { caba: 3, pba: 8 };
-        destination = Object.assign({}, DEFAULT_DESTINATION);
+        settings = isJorge ? { caba: 3, pba: 8, eventName: "Cumple 50 de Roque", hostNames: "Roque y Jorge" } : { caba: 3, pba: 8, eventName: "", hostNames: "" };
+        destination = isJorge ? Object.assign({}, DEFAULT_DESTINATION) : { name: "", lat: null, lon: null };
         migrateGuestCoords();
         syncSettingsInputs();
         render();
@@ -79,6 +79,10 @@ function openZoneSuggestions(inputEl, id) {
 }
 
 function closeZoneSuggestions() {
+  if (typeof zoneSearchTimer !== "undefined" && zoneSearchTimer) {
+    clearTimeout(zoneSearchTimer);
+    zoneSearchTimer = null;
+  }
   zoneSearchTargetId = null;
   const existing = document.getElementById("zoneSuggDropdown");
   if (existing) existing.remove();
@@ -116,7 +120,7 @@ async function updateZoneSuggestions(inputEl, id, filterText) {
 
   if (cleanF.length >= 3 && typeof searchOnlineAutocomplete === "function") {
     const onlineResults = await searchOnlineAutocomplete(cleanF);
-    if (onlineResults.length > 0 && zoneSearchTargetId === id) {
+    if (onlineResults.length > 0 && zoneSearchTargetId === id && document.getElementById("zoneSuggDropdown")) {
       onlineResults.forEach(om => {
         const normOm = typeof normalizarTexto === "function" ? normalizarTexto(om.name) : om.name.toLowerCase();
         if (!matches.some(m => (typeof normalizarTexto === "function" ? normalizarTexto(m.name) === normOm : m.name.toLowerCase() === normOm))) {

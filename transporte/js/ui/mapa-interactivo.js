@@ -140,6 +140,9 @@ function cerrarMapaModal() {
   const overlay = document.getElementById('mapModalOverlay');
   if (!overlay) return;
 
+  if (document.activeElement && overlay.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('map-modal-open');

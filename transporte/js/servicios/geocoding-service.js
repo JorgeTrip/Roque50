@@ -52,7 +52,7 @@ async function geocodeAddressOnline(query) {
   } catch (e) {}
 
   try {
-    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=1&lang=es`;
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=1`;
     const res2 = await fetch(photonUrl);
     const data2 = await res2.json();
     if (data2 && data2.features && data2.features.length > 0) {
@@ -75,7 +75,7 @@ async function searchOnlineAutocomplete(query) {
   if (!query || query.trim().length < 3) return [];
   const cleanQ = query.trim(), results = [], seen = new Set();
   try {
-    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=5&lang=es`;
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQ)}&lat=-34.62&lon=-58.6&limit=7`;
     const res = await fetch(photonUrl);
     const data = await res.json();
     if (data && data.features && data.features.length > 0) {
@@ -91,21 +91,23 @@ async function searchOnlineAutocomplete(query) {
     }
   } catch (e) {}
 
-  if (results.length < 3 && /\d/.test(cleanQ)) {
+  if (results.length === 0 && cleanQ.length >= 5 && /\d/.test(cleanQ)) {
     try {
-      const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(cleanQ)}&countrycodes=ar&addressdetails=1&limit=4&accept-language=es`;
+      const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(cleanQ)}&countrycodes=ar&addressdetails=1&limit=3`;
       const res2 = await fetch(nomUrl, { headers: { "Accept": "application/json" } });
-      const data2 = await res2.json();
-      if (Array.isArray(data2)) {
-        data2.forEach(r => {
-          const lat = parseFloat(r.lat), lon = parseFloat(r.lon), addr = r.address || {};
-          let streetPart = addr.road || addr.pedestrian || r.display_name.split(",")[0];
-          if (addr.house_number && !streetPart.includes(addr.house_number)) streetPart = `${streetPart} ${addr.house_number}`;
-          const cityPart = addr.suburb || addr.neighbourhood || addr.city || addr.town || "";
-          const name = [streetPart, cityPart].filter(Boolean).join(", ") || r.display_name.split(",").slice(0, 2).join(",");
-          const key = name.toLowerCase();
-          if (!seen.has(key)) { seen.add(key); results.push({ name, lat, lon, region: guessRegion(lat, lon), kind: addr.house_number ? "address" : "zone" }); }
-        });
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (Array.isArray(data2)) {
+          data2.forEach(r => {
+            const lat = parseFloat(r.lat), lon = parseFloat(r.lon), addr = r.address || {};
+            let streetPart = addr.road || addr.pedestrian || r.display_name.split(",")[0];
+            if (addr.house_number && !streetPart.includes(addr.house_number)) streetPart = `${streetPart} ${addr.house_number}`;
+            const cityPart = addr.suburb || addr.neighbourhood || addr.city || addr.town || "";
+            const name = [streetPart, cityPart].filter(Boolean).join(", ") || r.display_name.split(",").slice(0, 2).join(",");
+            const key = name.toLowerCase();
+            if (!seen.has(key)) { seen.add(key); results.push({ name, lat, lon, region: guessRegion(lat, lon), kind: addr.house_number ? "address" : "zone" }); }
+          });
+        }
       }
     } catch (e) {}
   }

@@ -5,11 +5,11 @@
 function generateWhatsappMessage(guestId) {
   const g = guests.find(x => x.id === guestId);
   if (!g) return "";
-  const eventName = (settings && settings.eventName) ? settings.eventName.trim() : "Cumple 50 de Roque";
-  const hostNames = (settings && settings.hostNames) ? settings.hostNames.trim() : "Roque y Jorge";
-  const destName = (destination && destination.name) ? destination.name : "La Reja";
+  const eventName = (settings && settings.eventName && settings.eventName.trim()) ? settings.eventName.trim() : "el evento";
+  const hostNames = (settings && settings.hostNames && settings.hostNames.trim()) ? settings.hostNames.trim() : "Los Anfitriones";
+  const destName = (destination && destination.name && destination.name.trim()) ? destination.name : "el lugar del evento";
 
-  let msg = `Hola ${g.names}! 👋 Te escribimos por el ${eventName} (festejamos en ${destName}).\n\n`;
+  let msg = `Hola ${g.names}! 👋 Te escribimos por ${eventName} (festejamos en ${destName}).\n\n`;
   msg += `Queríamos confirmar cómo venís con la asistencia y la organización del transporte.\n`;
   if (g.zone) msg += `📍 Zona registrada: ${g.zone}\n`;
   if (g.transport && g.transport !== "pending") msg += `🚗 Modo transporte: ${TRANSPORT_LABELS[g.transport] || g.transport}\n`;

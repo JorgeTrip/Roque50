@@ -8,9 +8,9 @@ function updateHeaderDynamic() {
   const hDest = document.getElementById("headerDestText");
   const hHosts = document.getElementById("headerHostsText");
 
-  const eventName = (settings && settings.eventName) ? settings.eventName.trim() : "Cumple 50 de Roque";
-  const destName = (destination && destination.name) ? destination.name : "La Reja, Moreno";
-  const hostNames = (settings && settings.hostNames) ? settings.hostNames.trim() : "Roque y Jorge";
+  const eventName = (settings && settings.eventName && settings.eventName.trim()) ? settings.eventName.trim() : "Mi Evento";
+  const destName = (destination && destination.name && destination.name.trim()) ? destination.name.trim() : "Lugar a definir";
+  const hostNames = (settings && settings.hostNames && settings.hostNames.trim()) ? settings.hostNames.trim() : "Anfitrión";
 
   if (hTitle) hTitle.textContent = eventName;
   if (hSub) hSub.textContent = "Plataforma central para organizar invitaciones, confirmaciones de asistencia y viajes compartidos.";
@@ -26,29 +26,37 @@ function syncSettingsInputs() {
   const radiusPba = document.getElementById("radiusPba");
   const destInp = document.getElementById("destInput");
 
-  if (eventNameInp) eventNameInp.value = settings.eventName || "";
-  if (hostInp) hostInp.value = settings.hostNames || "";
-  if (radiusCaba) radiusCaba.value = settings.caba || 3;
-  if (radiusPba) radiusPba.value = settings.pba || 8;
-  if (destInp) destInp.value = (destination && destination.name) ? destination.name : "";
+  if (eventNameInp && document.activeElement !== eventNameInp) eventNameInp.value = settings.eventName || "";
+  if (hostInp && document.activeElement !== hostInp) hostInp.value = settings.hostNames || "";
+  if (radiusCaba && document.activeElement !== radiusCaba) radiusCaba.value = settings.caba || 3;
+  if (radiusPba && document.activeElement !== radiusPba) radiusPba.value = settings.pba || 8;
+  if (destInp && document.activeElement !== destInp) destInp.value = (destination && destination.name) ? destination.name : "";
 
   updateHeaderDynamic();
+}
+
+let timerSettingsDebounce = null;
+function debouncedSaveSettings() {
+  clearTimeout(timerSettingsDebounce);
+  timerSettingsDebounce = setTimeout(async () => {
+    await saveSettings();
+  }, 400);
 }
 
 function initSettingsListeners() {
   const eventNameInp = document.getElementById("eventNameInput");
   if (eventNameInp) {
-    eventNameInp.addEventListener("input", async (e) => {
+    eventNameInp.addEventListener("input", (e) => {
       if (!settings) settings = {};
       settings.eventName = e.target.value;
-      await saveSettings();
       updateHeaderDynamic();
+      debouncedSaveSettings();
     });
   }
 
   const hostInp = document.getElementById("hostNamesInput");
   if (hostInp) {
-    hostInp.addEventListener("input", async (e) => {
+    hostInp.addEventListener("input", (e) => {
       if (!settings) settings = {};
       const val = e.target.value;
       settings.hostNames = val;
@@ -56,10 +64,9 @@ function initSettingsListeners() {
       if (specialGuest) {
         specialGuest.names = val || "Anfitriones";
         refreshGroupName(specialGuest);
-        await saveGuests();
       }
-      await saveSettings();
-      render();
+      updateHeaderDynamic();
+      debouncedSaveSettings();
     });
   }
 
@@ -73,10 +80,9 @@ function initSettingsListeners() {
 
   const destInp = document.getElementById("destInput");
   if (destInp) {
-    destInp.addEventListener("focus", (e) => openZoneSuggestions(e.target, "destination"));
-    destInp.addEventListener("input", (e) => openZoneSuggestions(e.target, "destination"));
     destInp.addEventListener("blur", async (e) => {
       setTimeout(async () => {
+        if (typeof isSelectingSuggestion !== "undefined" && isSelectingSuggestion) return;
         const val = e.target.value.trim();
         if (val && val !== destination.name) {
           let geo = await geocodeAddressOnline(val);
@@ -112,6 +118,10 @@ function cerrarSettingsModal() {
   const overlay = document.getElementById('settingsModalOverlay');
   if (!overlay) return;
 
+  if (document.activeElement && overlay.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
+  if (typeof closeZoneSuggestions === "function") closeZoneSuggestions();
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('settings-modal-open');

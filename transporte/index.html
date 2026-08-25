@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transporte — Cumple 50 de Roque</title>
+  <title>Transporte — Logística de Eventos</title>
   
   <!-- Hojas de Estilos Modulares (< 200 líneas cada una) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -57,7 +57,7 @@
         <div id="userAvatarMenuWrap" class="user-avatar-wrap"></div>
       </div>
       <div class="header-titles">
-        <h1 id="headerTitle">Cumple 50 de Roque</h1>
+        <h1 id="headerTitle">Mi Evento</h1>
         <p id="headerSubtitle">Plataforma central para organizar invitaciones, confirmaciones de asistencia y viajes compartidos.</p>
       </div>
     </div>
@@ -93,6 +93,10 @@
         <input type="file" id="importFile" accept="application/json" style="display:none">
       </div>
 
+      <div class="guest-list" id="guestList"></div>
+    </div>
+  </div>
+
   <!-- Modal Flotante de Configuración del Evento -->
   <div id="settingsModalOverlay" class="settings-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="settingsModalTitle">
     <div class="settings-modal-card">
@@ -110,9 +114,9 @@
         <div class="settings-section">
           <h4 class="settings-section-title">📌 Información General</h4>
           <div class="settings-grid">
-            <div class="field"><label for="eventNameInput">Nombre del evento</label><input type="text" id="eventNameInput" placeholder="Ej: Cumple 50 de Roque"></div>
-            <div class="field"><label for="hostNamesInput">Nombres de los anfitriones</label><input type="text" id="hostNamesInput" placeholder="Ej: Roque y Jorge"></div>
-            <div class="field field-full"><label for="destInput">Dirección del evento</label><input type="text" class="zone-input" id="destInput" placeholder="Buscar dirección del destino..."></div>
+            <div class="field"><label for="eventNameInput">Nombre del evento</label><input type="text" id="eventNameInput" placeholder="Ej: Mi Cumpleaños, Casamiento..."></div>
+            <div class="field"><label for="hostNamesInput">Nombres de los anfitriones</label><input type="text" id="hostNamesInput" placeholder="Ej: Anfitrión / Organizador"></div>
+            <div class="field field-full"><label for="destInput">Dirección del evento</label><input type="text" class="zone-input" id="destInput" data-id="destination" placeholder="Buscar dirección del destino..."></div>
           </div>
         </div>
 

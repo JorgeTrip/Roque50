@@ -43,7 +43,14 @@ function initGuestCardsEventListeners() {
     setTimeout(() => { isSelectingSuggestion = false; }, 1000);
   });
 
-  // Clicks en la tarjeta (eliminar, integrante, whatsapp, pasajes)
+  // Cierre inmediato del desplegable de sugerencias al tocar o cliquear en cualquier parte de la pantalla
+  document.addEventListener("pointerdown", (e) => {
+    if (!e.target.closest("#zoneSuggDropdown") && !e.target.classList?.contains("zone-input")) {
+      closeZoneSuggestions();
+    }
+  }, true);
+
+  // Clicks en la tarjeta
   document.addEventListener("click", async (e) => {
     const t = e.target.closest("[data-action]") || e.target;
     const action = t.dataset ? t.dataset.action : null;
@@ -125,19 +132,16 @@ function initGuestCardsEventListeners() {
 
     if (t.classList && t.classList.contains("zone-input")) {
       if (id === "destination") {
-        let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
-        destination = { name: resolved.name || val, lat: resolved.lat, lon: resolved.lon };
+        let res = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+        destination = { name: res.name || val, lat: res.lat, lon: res.lon };
         await saveDestination(); updateHeaderDynamic();
         if (mapInitialized) refreshMapMarkers();
       } else if (id) {
         const g = guests.find(x => x.id === id);
         if (g) {
-          let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
-          if (!resolved.lat && val) {
-            const geo = await geocodeAddressOnline(val);
-            if (geo && geo.lat != null) resolved = await resolveZoneEntry(geo);
-          }
-          g.zone = resolved.name || val; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+          let res = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+          if (!res.lat && val) { const geo = await geocodeAddressOnline(val); if (geo && geo.lat != null) res = await resolveZoneEntry(geo); }
+          g.zone = res.name || val; g.zoneLat = res.lat; g.zoneLon = res.lon; g.zoneRegion = res.region; g.zoneKind = res.kind;
           await saveGuests();
         }
       }
@@ -148,7 +152,6 @@ function initGuestCardsEventListeners() {
       const g = guests.find(x => x.id === id);
       if (g) { g.notes = t.value; await saveGuests(); }
     }
-
     t.blur(); render();
   });
 
@@ -181,12 +184,9 @@ function initGuestCardsEventListeners() {
           const val = t.value.trim();
           if (!val || val === g.zone) return;
           closeZoneSuggestions();
-          let resolved = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
-          if (!resolved.lat && val) {
-            const geo = await geocodeAddressOnline(val);
-            if (geo && geo.lat != null) resolved = await resolveZoneEntry(geo);
-          }
-          g.zone = resolved.name || val; g.zoneLat = resolved.lat; g.zoneLon = resolved.lon; g.zoneRegion = resolved.region; g.zoneKind = resolved.kind;
+          let res = await resolveZoneEntry({ name: val, lat: null, lon: null, region: null, kind: null });
+          if (!res.lat && val) { const geo = await geocodeAddressOnline(val); if (geo && geo.lat != null) res = await resolveZoneEntry(geo); }
+          g.zone = res.name || val; g.zoneLat = res.lat; g.zoneLon = res.lon; g.zoneRegion = res.region; g.zoneKind = res.kind;
           await saveGuests(); render();
         }
       }, 200);
